@@ -4,5 +4,5 @@
   "displayName": "UFeel",
   "description": "uf.",
   "unity": "6000.0",
-  "dependencies": {}
+  "dependencies": { "com.unity.barracuda": "3.0.0" }
 }
