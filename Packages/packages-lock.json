@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.ufcorp.ufeel": {
+      "version": "git@github.com:augustin-grosnon/ufeel.git#main",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "f39c682a1f1a81f499e136a8d3980141d4ae4e39"
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.5",
       "depth": 0,
