@@ -1,0 +1,18 @@
+#pragma kernel Postprocess
+
+#include "Common.hlsl"
+
+Texture2D<float> _Scores;
+RWStructuredBuffer<uint> _InputCount;
+RWStructuredBuffer<Detection> Output;
+
+float _ImageSize;
+float _Threshold;
+
+[numthreads(1, 1, 1)]
+void Postprocess(uint3 id : SV_DispatchThreadID){
+
+    // Debug.Log(Output); // TODO: find why Debug is undefined
+
+
+}

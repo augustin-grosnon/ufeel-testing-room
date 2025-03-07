@@ -1,8 +1,7 @@
 using UnityEngine;
-using UnityEngine.UI;
 using MediaPipe.EmotionDetection;
 
-public class MediaPipeEmotionVisualizer : MonoBehaviour
+public class EmotionManager : MonoBehaviour
 {
     #region Editable Attributes
 
@@ -58,3 +57,6 @@ public class MediaPipeEmotionVisualizer : MonoBehaviour
 
     #endregion
 }
+
+// TODO: update to take as input a script to execute based on emotions / something similar, instead of directly updating the cube color changer
+// ? -> the goal is to send the retrieved data to the script one way or another so it can be easily used anywhere
