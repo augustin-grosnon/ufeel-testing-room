@@ -17,12 +17,23 @@ public class EmotionData
 
 public class EmotionReceiver : MonoBehaviour
 {
+    public EmotionController emotionController;
+
     UdpClient udp;
     Thread receiveThread;
     public EmotionData emotionData = new EmotionData();
 
     void Start()
     {
+        if (emotionController != null)
+        {
+            emotionController.EnsureServerRunning();
+        }
+        else
+        {
+            Debug.LogWarning("EmotionController reference not set in EmotionReceiver.");
+        }
+
         udp = new UdpClient(5005);
         receiveThread = new Thread(ReceiveData) { IsBackground = true };
         receiveThread.Start();
@@ -48,7 +59,7 @@ public class EmotionReceiver : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        receiveThread.Abort();
-        udp.Close();
+        receiveThread?.Abort();
+        udp?.Close();
     }
 }

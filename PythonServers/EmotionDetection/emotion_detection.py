@@ -1,7 +1,7 @@
 import torch, torch.nn as nn, torch.nn.functional as F
 import torchvision.transforms as transforms
 from PIL import Image
-import numpy as np, cv2, socket, json
+import numpy as np, cv2, socket, json, os
 
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
@@ -33,7 +33,12 @@ class GiMeFive(nn.Module):
 
 class_labels = ['happiness','surprise','sadness','anger','disgust','fear']
 model = GiMeFive().to(device)
-model.load_state_dict(torch.load('models/best_GiMeFive.pth', map_location=device))
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'models', 'best_GiMeFive.pth')
+
+model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+
 model.eval()
 
 transform = transforms.Compose([
