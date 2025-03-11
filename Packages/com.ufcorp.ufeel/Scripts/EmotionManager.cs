@@ -1,62 +1,37 @@
 using UnityEngine;
-using MediaPipe.EmotionDetection;
 
 public class EmotionManager : MonoBehaviour
 {
-    #region Editable Attributes
-
-    [SerializeField] private WebcamInput _webcam = null;
-    // [SerializeField] private RawImage _previewUI = null;
-    [Space]
-    [SerializeField] private ResourceSet _resources = null;
-    [SerializeField] private Shader _shader = null;
-    [SerializeField, Range(0, 1)] private float _threshold = 0.5f;
-
-    [SerializeField] private CubeColorChanger cubeColorChanger = null;
-
-    #endregion
-
-    #region Private Members
-
-    private EmotionDetector _detector;
-    private Material _material;
-
-    #endregion
-
-    #region MonoBehaviour Implementation
-
-    void Start()
-    {
-        _detector = new EmotionDetector(_resources);
-        _material = new Material(_shader);
-    }
+    [SerializeField] private EmotionReceiver emotionReceiver;
+    [SerializeField] private CubeColorChanger cubeColorChanger;
 
     void LateUpdate()
     {
-        string detectedEmotion = _detector.ProcessImage(_webcam.Texture, _threshold);
+        if (emotionReceiver == null || cubeColorChanger == null)
+            return;
 
-        if (cubeColorChanger != null)
-        {
-            cubeColorChanger.SetColor(detectedEmotion);
-        }
-
-        // _previewUI.texture = _webcam.Texture;
+        string dominantEmotion = GetDominantEmotion(emotionReceiver.emotionData);
+        cubeColorChanger.SetColor(dominantEmotion);
     }
 
-    void OnDestroy()
+    private string GetDominantEmotion(EmotionData data)
     {
-        if (_detector != null)
+        float[] percentages = {
+            data.happiness,
+            data.surprise,
+            data.sadness,
+            data.anger,
+            data.disgust,
+            data.fear
+        };
+        string[] labels = { "Happiness", "Surprise", "Sadness", "Anger", "Disgust", "Fear" };
+
+        int maxIndex = 0;
+        for (int i = 1; i < percentages.Length; i++)
         {
-            _detector.Dispose();
+            if (percentages[i] > percentages[maxIndex])
+                maxIndex = i;
         }
-        if (_material != null)
-        {
-            Destroy(_material);
-        }
+        return labels[maxIndex];
     }
-
-    #endregion
 }
-
-// TODO: update to take as input a script to execute based on emotions / something similar, instead of directly updating the cube color changer
-// ? -> the goal is to send the retrieved data to the script one way or another so it can be easily used anywhere

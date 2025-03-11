@@ -4,9 +4,7 @@
       "version": "file:com.ufcorp.ufeel",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {
-        "com.unity.barracuda": "3.0.0"
-      }
+      "dependencies": {}
     },
     "com.unity.ai.navigation": {
       "version": "2.0.6",
@@ -14,17 +12,6 @@
       "source": "registry",
       "dependencies": {
         "com.unity.modules.ai": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.barracuda": {
-      "version": "3.0.0",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.burst": "1.6.0",
-        "com.unity.modules.jsonserialize": "1.0.0",
-        "com.unity.modules.imageconversion": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },
