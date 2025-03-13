@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public sealed class EyeTrackingController : MonoBehaviour
+public sealed class EyeTrackingManager : MonoBehaviour
 {
     [SerializeField] private EyeTrackingReceiver _eyeReceiver;
     [SerializeField] private Transform _sphere;

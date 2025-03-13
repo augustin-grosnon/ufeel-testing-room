@@ -5,11 +5,11 @@ using System.IO;
 
 // TODO: check if the emotion controller should be a MonoBehaviour
 
-public class EmotionController : MonoBehaviour
+public class EmotionServerController : MonoBehaviour
 {
     private Process pythonProcess;
     [SerializeField] private string pythonExecutable = "python3";
-    readonly string scriptPath = Path.Combine(Application.dataPath, "../PythonServers/EmotionDetection/eval_livecam.py");
+    readonly string scriptPath = Path.Combine(Application.dataPath, "../PythonServers/EmotionDetection/emotion_detection.py");
 
     public bool IsServerRunning => pythonProcess != null && !pythonProcess.HasExited;
 

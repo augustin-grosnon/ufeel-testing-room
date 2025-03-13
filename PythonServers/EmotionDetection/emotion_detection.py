@@ -5,7 +5,7 @@ import numpy as np, cv2, socket, json, os
 
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
-UDP_IP, UDP_PORT = "127.0.0.1", 5005
+UDP_IP, UDP_PORT = "127.0.0.1", 4243
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 SHOW_WINDOW = False

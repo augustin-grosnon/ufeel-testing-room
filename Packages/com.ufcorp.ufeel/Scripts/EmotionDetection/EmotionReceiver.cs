@@ -17,11 +17,11 @@ public class EmotionData
 
 public class EmotionReceiver : MonoBehaviour
 {
-    public EmotionController emotionController;
+    public EmotionServerController emotionController;
 
-    UdpClient udp;
-    Thread receiveThread;
-    public EmotionData emotionData = new EmotionData();
+    private UdpClient udpClient;
+    private Thread receiveThread;
+    public EmotionData emotionData = new();
 
     void Start()
     {
@@ -31,21 +31,21 @@ public class EmotionReceiver : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("EmotionController reference not set in EmotionReceiver.");
+            Debug.LogWarning("EmotionServerController reference not set in EmotionReceiver.");
         }
 
-        udp = new UdpClient(5005);
+        udpClient = new UdpClient(4243);
         receiveThread = new Thread(ReceiveData) { IsBackground = true };
         receiveThread.Start();
     }
 
     void ReceiveData()
     {
-        IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 5005);
+        IPEndPoint remoteEndPoint = new(IPAddress.Any, 4243);
         while (true)
         {
-            byte[] data = udp.Receive(ref remoteEP);
-            string json = Encoding.ASCII.GetString(data);
+            byte[] receivedBytes = udpClient.Receive(ref remoteEndPoint);
+            string json = Encoding.ASCII.GetString(receivedBytes);
             try
             {
                 emotionData = JsonUtility.FromJson<EmotionData>(json);
@@ -60,6 +60,6 @@ public class EmotionReceiver : MonoBehaviour
     void OnApplicationQuit()
     {
         receiveThread?.Abort();
-        udp?.Close();
+        udpClient?.Close();
     }
 }

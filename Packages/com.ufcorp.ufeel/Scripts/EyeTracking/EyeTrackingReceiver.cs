@@ -6,17 +6,24 @@ using System.Threading;
 
 public class EyeTrackingReceiver : MonoBehaviour
 {
+    public EyeTrackingServerController eyeTrackingController;
     private UdpClient udpClient;
     private Thread receiveThread;
     private Vector2 gazePosition = new(0.5f, 0.5f);
 
     void Start()
     {
-        udpClient = new UdpClient(4242);
-        receiveThread = new Thread(new ThreadStart(ReceiveData))
+        if (eyeTrackingController != null)
         {
-            IsBackground = true
-        };
+            eyeTrackingController.EnsureServerRunning();
+        }
+        else
+        {
+            Debug.LogWarning("EmotionServerController reference not set in EmotionReceiver.");
+        }
+
+        udpClient = new UdpClient(4242);
+        receiveThread = new Thread(ReceiveData) { IsBackground = true };
         receiveThread.Start();
     }
 
@@ -54,7 +61,7 @@ public class EyeTrackingReceiver : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        receiveThread.Abort();
-        udpClient.Close();
+        receiveThread?.Abort();
+        udpClient?.Close();
     }
 }

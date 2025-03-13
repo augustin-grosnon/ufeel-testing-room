@@ -9,6 +9,7 @@ public class AsmRefGenerator : AssetPostprocessor
 
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
+        bool refreshNeeded = false;
         foreach (string asset in importedAssets)
         {
             if (IsValidScript(asset))
@@ -19,10 +20,14 @@ public class AsmRefGenerator : AssetPostprocessor
                 if (!File.Exists(asmRefPath))
                 {
                     File.WriteAllText(asmRefPath, AsmRefContent);
-                    AssetDatabase.Refresh();
+                    refreshNeeded = true;
                     Debug.Log($"[AsmRefGenerator] Created {AsmRefFileName} in {folder}");
                 }
             }
+        }
+        if (refreshNeeded)
+        {
+            AssetDatabase.Refresh();
         }
     }
 
