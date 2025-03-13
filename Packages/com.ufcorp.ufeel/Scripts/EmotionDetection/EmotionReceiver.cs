@@ -14,7 +14,7 @@ public class EmotionData
 
 public class EmotionReceiver : UDPReceiverBase
 {
-    public EmotionServerController emotionController;
+    public EmotionServerController emotionController = new();
     public EmotionData emotionData = new();
 
     protected override void Setup()

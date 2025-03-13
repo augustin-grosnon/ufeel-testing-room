@@ -3,7 +3,7 @@ using System.Text;
 
 public class EyeTrackingReceiver : UDPReceiverBase
 {
-    public EyeTrackingServerController eyeTrackingController;
+    public EyeTrackingServerController eyeTrackingController = new();
     public Vector2 gazePosition = new(0.5f, 0.5f);
 
     protected override void Setup()

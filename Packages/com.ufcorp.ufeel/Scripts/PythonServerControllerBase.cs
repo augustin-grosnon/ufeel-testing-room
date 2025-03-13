@@ -2,10 +2,10 @@ using UnityEngine;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
-public abstract class PythonServerControllerBase : MonoBehaviour
+public abstract class PythonServerControllerBase
 {
     protected Process pythonProcess;
-    [SerializeField] protected string pythonExecutable = "python3";
+    protected readonly string pythonExecutable = "python3";
 
     protected abstract string ScriptPath { get; }
 

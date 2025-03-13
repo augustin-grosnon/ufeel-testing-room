@@ -485,51 +485,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!1 &1191111638
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1191111640}
-  - component: {fileID: 1191111639}
-  m_Layer: 0
-  m_Name: Eye Tracking Server Controller
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1191111639
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1191111638}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d5714cc13609dc86bd9f918c5d67110, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pythonExecutable: python3
---- !u!4 &1191111640
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1191111638}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1531777349
 GameObject:
   m_ObjectHideFlags: 0
@@ -606,7 +561,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9658a5b91e4e23e7a04de5816c83e29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  eyeTrackingController: {fileID: 1191111639}
+  port: 0
+  gazePosition: {x: 0.5, y: 0.5}
 --- !u!4 &1813647065
 Transform:
   m_ObjectHideFlags: 0
@@ -631,4 +587,3 @@ SceneRoots:
   - {fileID: 725370397}
   - {fileID: 1531777351}
   - {fileID: 1813647065}
-  - {fileID: 1191111640}
