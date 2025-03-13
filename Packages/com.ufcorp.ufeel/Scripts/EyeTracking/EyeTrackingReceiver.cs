@@ -1,17 +1,12 @@
 using UnityEngine;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 
-public class EyeTrackingReceiver : MonoBehaviour
+public class EyeTrackingReceiver : UDPReceiverBase
 {
     public EyeTrackingServerController eyeTrackingController;
-    private UdpClient udpClient;
-    private Thread receiveThread;
-    private Vector2 gazePosition = new(0.5f, 0.5f);
+    public Vector2 gazePosition = new(0.5f, 0.5f);
 
-    void Start()
+    protected override void Setup()
     {
         if (eyeTrackingController != null)
         {
@@ -19,49 +14,23 @@ public class EyeTrackingReceiver : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("EmotionServerController reference not set in EmotionReceiver.");
+            Debug.LogWarning("EyeTrackingServerController reference not set in EyeTrackingReceiver.");
         }
 
-        udpClient = new UdpClient(4242);
-        receiveThread = new Thread(ReceiveData) { IsBackground = true };
-        receiveThread.Start();
+        port = 4242;
+        base.Setup();
     }
 
-    void ReceiveData()
+    protected override void ProcessData(byte[] data)
     {
-        IPEndPoint remoteEndPoint = new(IPAddress.Any, 4242);
-
-        while (true)
+        string receivedText = Encoding.ASCII.GetString(data);
+        string[] parts = receivedText.Split(',');
+        if (parts.Length == 2)
         {
-            try
+            if (float.TryParse(parts[0], out float x) && float.TryParse(parts[1], out float y))
             {
-                byte[] receivedBytes = udpClient.Receive(ref remoteEndPoint);
-                string receivedText = Encoding.ASCII.GetString(receivedBytes);
-                string[] parts = receivedText.Split(',');
-
-                if (parts.Length == 2)
-                {
-                    float x = float.Parse(parts[0]);
-                    float y = float.Parse(parts[1]);
-
-                    gazePosition = new Vector2(x, y);
-                }
-            }
-            catch
-            {
-                // TODO: handle exceptions
+                gazePosition = new Vector2(x, y);
             }
         }
-    }
-
-    public Vector2 GetGazePosition()
-    {
-        return gazePosition;
-    }
-
-    void OnApplicationQuit()
-    {
-        receiveThread?.Abort();
-        udpClient?.Close();
     }
 }

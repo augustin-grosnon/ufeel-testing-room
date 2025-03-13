@@ -1,8 +1,5 @@
 using UnityEngine;
-using System.Net;
-using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 
 [System.Serializable]
 public class EmotionData
@@ -15,15 +12,12 @@ public class EmotionData
     public float fear;
 }
 
-public class EmotionReceiver : MonoBehaviour
+public class EmotionReceiver : UDPReceiverBase
 {
     public EmotionServerController emotionController;
-
-    private UdpClient udpClient;
-    private Thread receiveThread;
     public EmotionData emotionData = new();
 
-    void Start()
+    protected override void Setup()
     {
         if (emotionController != null)
         {
@@ -34,32 +28,20 @@ public class EmotionReceiver : MonoBehaviour
             Debug.LogWarning("EmotionServerController reference not set in EmotionReceiver.");
         }
 
-        udpClient = new UdpClient(4243);
-        receiveThread = new Thread(ReceiveData) { IsBackground = true };
-        receiveThread.Start();
+        port = 4243;
+        base.Setup();
     }
 
-    void ReceiveData()
+    protected override void ProcessData(byte[] data)
     {
-        IPEndPoint remoteEndPoint = new(IPAddress.Any, 4243);
-        while (true)
+        string json = Encoding.ASCII.GetString(data);
+        try
         {
-            byte[] receivedBytes = udpClient.Receive(ref remoteEndPoint);
-            string json = Encoding.ASCII.GetString(receivedBytes);
-            try
-            {
-                emotionData = JsonUtility.FromJson<EmotionData>(json);
-            }
-            catch (System.Exception e)
-            {
-                Debug.Log("Error parsing emotion JSON: " + e.Message);
-            }
+            emotionData = JsonUtility.FromJson<EmotionData>(json);
         }
-    }
-
-    void OnApplicationQuit()
-    {
-        receiveThread?.Abort();
-        udpClient?.Close();
+        catch (System.Exception e)
+        {
+            Debug.Log("Error parsing emotion JSON: " + e.Message);
+        }
     }
 }

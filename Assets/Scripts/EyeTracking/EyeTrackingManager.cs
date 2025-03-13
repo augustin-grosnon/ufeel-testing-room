@@ -8,7 +8,7 @@ public sealed class EyeTrackingManager : MonoBehaviour
 
     void Update()
     {
-        Vector2 eyePos = _eyeReceiver.GetGazePosition();
+        Vector2 eyePos = _eyeReceiver.gazePosition;
 
         Vector3 targetPos = new(
             Mathf.Lerp(-_movementArea.x / 2, _movementArea.x / 2, eyePos.x),
