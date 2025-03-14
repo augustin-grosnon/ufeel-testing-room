@@ -4,14 +4,19 @@ using Debug = UnityEngine.Debug;
 
 public abstract class PythonServerControllerBase
 {
-    protected Process pythonProcess;
-    protected readonly string pythonExecutable = "python3";
+    protected Process _pythonProcess;
+    protected readonly string _pythonExecutable = "python3";
+
+    protected PythonServerControllerBase()
+    {
+        Application.quitting += OnApplicationQuit;
+    }
 
     protected abstract string ScriptPath { get; }
 
     protected abstract string ServerName { get; }
 
-    public bool IsServerRunning => pythonProcess != null && !pythonProcess.HasExited;
+    public bool IsServerRunning => _pythonProcess != null && !_pythonProcess.HasExited;
 
     public void EnsureServerRunning()
     {
@@ -27,7 +32,7 @@ public abstract class PythonServerControllerBase
         {
             ProcessStartInfo psi = new ProcessStartInfo
             {
-                FileName = pythonExecutable,
+                FileName = _pythonExecutable,
                 Arguments = ScriptPath,
                 UseShellExecute = false,
                 CreateNoWindow = true,
@@ -35,21 +40,21 @@ public abstract class PythonServerControllerBase
                 RedirectStandardError = true
             };
 
-            pythonProcess = Process.Start(psi);
+            _pythonProcess = Process.Start(psi);
 
-            pythonProcess.OutputDataReceived += (sender, args) =>
+            _pythonProcess.OutputDataReceived += (sender, args) =>
             {
                 if (!string.IsNullOrEmpty(args.Data))
                     Debug.Log($"{ServerName} Python output: {args.Data}");
             };
-            pythonProcess.ErrorDataReceived += (sender, args) =>
+            _pythonProcess.ErrorDataReceived += (sender, args) =>
             {
                 if (!string.IsNullOrEmpty(args.Data))
                     Debug.LogError($"{ServerName} Python error: {args.Data}");
             };
 
-            pythonProcess.BeginOutputReadLine();
-            pythonProcess.BeginErrorReadLine();
+            _pythonProcess.BeginOutputReadLine();
+            _pythonProcess.BeginErrorReadLine();
 
             Debug.Log($"{ServerName} Python server started.");
         }
@@ -65,9 +70,9 @@ public abstract class PythonServerControllerBase
         {
             try
             {
-                pythonProcess.Kill();
-                pythonProcess.WaitForExit();
-                pythonProcess = null;
+                _pythonProcess.Kill();
+                _pythonProcess.WaitForExit();
+                _pythonProcess = null;
                 Debug.Log($"{ServerName} Python server stopped.");
             }
             catch (System.Exception e)
@@ -80,5 +85,6 @@ public abstract class PythonServerControllerBase
     void OnApplicationQuit()
     {
         StopServer();
+        Application.quitting -= OnApplicationQuit;
     }
 }

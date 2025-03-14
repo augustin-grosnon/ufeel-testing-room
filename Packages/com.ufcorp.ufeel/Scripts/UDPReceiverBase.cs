@@ -3,33 +3,34 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-public abstract class UDPReceiverBase : MonoBehaviour
+public abstract class UDPReceiverBase
 {
-    public int port;
+    public int Port;
+    protected UdpClient _udpClient;
+    protected Thread _receiveThread;
 
-    protected UdpClient udpClient;
-    protected Thread receiveThread;
-
-    protected virtual void Start()
+    protected UDPReceiverBase(int port)
     {
+        this.Port = port;
         Setup();
+        Application.quitting += OnApplicationQuit;
     }
 
     protected virtual void Setup()
     {
-        udpClient = new UdpClient(port);
-        receiveThread = new Thread(ReceiveData) { IsBackground = true };
-        receiveThread.Start();
+        _udpClient = new UdpClient(Port);
+        _receiveThread = new Thread(ReceiveData) { IsBackground = true };
+        _receiveThread.Start();
     }
 
     protected void ReceiveData()
     {
-        IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, port);
+        IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, Port);
         while (true)
         {
             try
             {
-                byte[] receivedBytes = udpClient.Receive(ref remoteEndPoint);
+                byte[] receivedBytes = _udpClient.Receive(ref remoteEndPoint);
                 ProcessData(receivedBytes);
             }
             catch (ThreadAbortException)
@@ -52,9 +53,15 @@ public abstract class UDPReceiverBase : MonoBehaviour
 
     protected virtual void OnApplicationQuit()
     {
-        if (receiveThread != null && receiveThread.IsAlive)
-            receiveThread.Abort();
-        if (udpClient != null)
-            udpClient.Close();
+        StopReceiver();
+        Application.quitting -= OnApplicationQuit;
+    }
+
+    public void StopReceiver()
+    {
+        if (_receiveThread != null && _receiveThread.IsAlive)
+            _receiveThread.Abort();
+        if (_udpClient != null)
+            _udpClient.Close();
     }
 }

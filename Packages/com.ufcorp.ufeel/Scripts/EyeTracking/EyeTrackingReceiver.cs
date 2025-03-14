@@ -3,10 +3,21 @@ using System.Text;
 
 public class EyeTrackingReceiver : UDPReceiverBase
 {
-    public EyeTrackingServerController eyeTrackingController = new();
-    public Vector2 gazePosition = new(0.5f, 0.5f);
+    private static EyeTrackingReceiver _instance;
+    public static EyeTrackingReceiver Instance
+    {
+        get
+        {
+            _instance ??= new EyeTrackingReceiver();
+            return _instance;
+        }
+    }
 
-    protected override void Setup()
+    public static Vector2 CurrentGaze { get; private set; } = new(0.5f, 0.5f);
+
+    private readonly EyeTrackingServerController eyeTrackingController = new();
+
+    private EyeTrackingReceiver() : base(4242)
     {
         if (eyeTrackingController != null)
         {
@@ -16,9 +27,6 @@ public class EyeTrackingReceiver : UDPReceiverBase
         {
             Debug.LogWarning("EyeTrackingServerController reference not set in EyeTrackingReceiver.");
         }
-
-        port = 4242;
-        base.Setup();
     }
 
     protected override void ProcessData(byte[] data)
@@ -29,7 +37,7 @@ public class EyeTrackingReceiver : UDPReceiverBase
         {
             if (float.TryParse(parts[0], out float x) && float.TryParse(parts[1], out float y))
             {
-                gazePosition = new Vector2(x, y);
+                CurrentGaze = new Vector2(x, y);
             }
         }
     }

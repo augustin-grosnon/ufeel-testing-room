@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class CubeColorChanger : MonoBehaviour
 {
-    private readonly Dictionary<string, Color> emotionColors = new Dictionary<string, Color>()
+    private readonly Dictionary<string, Color> _emotionColors = new()
     {
         {"Neutral", Color.white},
         {"Happiness", Color.yellow},
@@ -17,7 +17,7 @@ public class CubeColorChanger : MonoBehaviour
 
     public void SetColor(string emotion)
     {
-        if (emotionColors.TryGetValue(emotion, out Color newColor))
+        if (_emotionColors.TryGetValue(emotion, out Color newColor))
         {
             GetComponent<Renderer>().material.color = newColor;
             Debug.Log($"Cube color changed to {newColor} for emotion: {emotion}");

@@ -14,10 +14,21 @@ public class EmotionData
 
 public class EmotionReceiver : UDPReceiverBase
 {
-    public EmotionServerController emotionController = new();
-    public EmotionData emotionData = new();
+    private static EmotionReceiver _instance;
+    public static EmotionReceiver Instance
+    {
+        get
+        {
+            _instance ??= new EmotionReceiver();
+            return _instance;
+        }
+    }
 
-    protected override void Setup()
+    public static EmotionData CurrentEmotions { get; private set; } = new();
+
+    private readonly EmotionServerController emotionController = new();
+
+    private EmotionReceiver() : base(4243)
     {
         if (emotionController != null)
         {
@@ -27,9 +38,6 @@ public class EmotionReceiver : UDPReceiverBase
         {
             Debug.LogWarning("EmotionServerController reference not set in EmotionReceiver.");
         }
-
-        port = 4243;
-        base.Setup();
     }
 
     protected override void ProcessData(byte[] data)
@@ -37,7 +45,7 @@ public class EmotionReceiver : UDPReceiverBase
         string json = Encoding.ASCII.GetString(data);
         try
         {
-            emotionData = JsonUtility.FromJson<EmotionData>(json);
+            CurrentEmotions = JsonUtility.FromJson<EmotionData>(json);
         }
         catch (System.Exception e)
         {

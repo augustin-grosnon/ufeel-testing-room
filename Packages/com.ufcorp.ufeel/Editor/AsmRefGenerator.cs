@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class AsmRefGenerator : AssetPostprocessor
 {
-    private const string AsmRefFileName = "UFeel.asmref";
-    private const string AsmRefContent = "{ \"reference\": \"UFeel\" }";
+    private const string _asmRefFileName = "UFeel.asmref";
+    private const string _asmRefContent = "{ \"reference\": \"UFeel\" }";
 
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
@@ -15,13 +15,13 @@ public class AsmRefGenerator : AssetPostprocessor
             if (IsValidScript(asset))
             {
                 string folder = Path.GetDirectoryName(asset);
-                string asmRefPath = Path.Combine(folder, AsmRefFileName);
+                string asmRefPath = Path.Combine(folder, _asmRefFileName);
 
                 if (!File.Exists(asmRefPath))
                 {
-                    File.WriteAllText(asmRefPath, AsmRefContent);
+                    File.WriteAllText(asmRefPath, _asmRefContent);
                     refreshNeeded = true;
-                    Debug.Log($"[AsmRefGenerator] Created {AsmRefFileName} in {folder}");
+                    Debug.Log($"[AsmRefGenerator] Created {_asmRefFileName} in {folder}");
                 }
             }
         }

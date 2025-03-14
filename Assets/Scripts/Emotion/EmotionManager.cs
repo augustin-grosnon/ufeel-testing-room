@@ -2,16 +2,20 @@ using UnityEngine;
 
 public class EmotionManager : MonoBehaviour
 {
-    [SerializeField] private EmotionReceiver emotionReceiver;
-    [SerializeField] private CubeColorChanger cubeColorChanger;
+    [SerializeField] private CubeColorChanger _cubeColorChanger;
+
+    void Awake()
+    {
+        var _ = EmotionReceiver.Instance;
+    }
 
     void LateUpdate()
     {
-        if (emotionReceiver == null || cubeColorChanger == null)
+        if (_cubeColorChanger == null)
             return;
 
-        string dominantEmotion = GetDominantEmotion(emotionReceiver.emotionData);
-        cubeColorChanger.SetColor(dominantEmotion);
+        string dominantEmotion = GetDominantEmotion(EmotionReceiver.CurrentEmotions);
+        _cubeColorChanger.SetColor(dominantEmotion);
     }
 
     private string GetDominantEmotion(EmotionData data)
