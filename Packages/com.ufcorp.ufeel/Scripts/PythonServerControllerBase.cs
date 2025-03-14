@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
+// TODO: check if we should use singleton for every server controller
+
 public abstract class PythonServerControllerBase
 {
     protected Process _pythonProcess;
@@ -30,7 +32,7 @@ public abstract class PythonServerControllerBase
     {
         try
         {
-            ProcessStartInfo psi = new ProcessStartInfo
+            ProcessStartInfo psi = new()
             {
                 FileName = _pythonExecutable,
                 Arguments = ScriptPath,

@@ -25,7 +25,7 @@ public abstract class UDPReceiverBase
 
     protected void ReceiveData()
     {
-        IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, Port);
+        IPEndPoint remoteEndPoint = new(IPAddress.Any, Port);
         while (true)
         {
             try
@@ -61,7 +61,6 @@ public abstract class UDPReceiverBase
     {
         if (_receiveThread != null && _receiveThread.IsAlive)
             _receiveThread.Abort();
-        if (_udpClient != null)
-            _udpClient.Close();
+        _udpClient?.Close();
     }
 }
