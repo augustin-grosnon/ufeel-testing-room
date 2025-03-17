@@ -31,7 +31,7 @@ class GiMeFive(nn.Module):
         x = self.dropout2(F.relu(self.fc1(x)))
         return self.fc3(F.relu(self.fc2(x)))
 
-class_labels = ['happiness','surprise','sadness','anger','disgust','fear']
+class_labels = ['happiness','surprise','sadness','anger','neutral','fear']
 model = GiMeFive().to(device)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

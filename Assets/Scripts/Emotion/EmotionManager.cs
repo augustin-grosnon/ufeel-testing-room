@@ -25,10 +25,10 @@ public class EmotionManager : MonoBehaviour
             data.surprise,
             data.sadness,
             data.anger,
-            data.disgust,
+            data.neutral,
             data.fear
         };
-        string[] labels = { "Happiness", "Surprise", "Sadness", "Anger", "Disgust", "Fear" };
+        string[] labels = { "Happiness", "Surprise", "Sadness", "Anger", "Neutral", "Fear" };
 
         int maxIndex = 0;
         for (int i = 1; i < percentages.Length; i++)

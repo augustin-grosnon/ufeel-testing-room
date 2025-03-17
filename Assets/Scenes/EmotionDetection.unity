@@ -240,6 +240,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca440005b984ed1f8cd20020d7598ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  transitionSpeed: 2
+  emotionHistoryDuration: 1
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0

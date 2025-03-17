@@ -11,7 +11,7 @@ public abstract class UDPReceiverBase
 
     protected UDPReceiverBase(int port)
     {
-        this.Port = port;
+        Port = port;
         Setup();
         Application.quitting += OnApplicationQuit;
     }

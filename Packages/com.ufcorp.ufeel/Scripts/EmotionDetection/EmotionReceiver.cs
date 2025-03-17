@@ -8,7 +8,7 @@ public class EmotionData
     public float surprise;
     public float sadness;
     public float anger;
-    public float disgust;
+    public float neutral;
     public float fear;
 }
 
