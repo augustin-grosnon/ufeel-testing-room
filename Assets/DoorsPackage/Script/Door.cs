@@ -32,7 +32,7 @@ public class Door : MonoBehaviour {
 		}
 	}
 
-	public void OpenDoor(){
+	public void ToggleDoor(){
 		open =!open;
 		asource.clip = open?openDoor:closeDoor;
 		asource.Play ();

@@ -387,6 +387,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114024263972142150, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+      propertyPath: asource
+      value: 
+      objectReference: {fileID: 1082281373}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -913,6 +917,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 887390881}
   _offset: {x: 0, y: 0, z: 0}
+--- !u!114 &1082281372 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114024263972142150, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+  m_PrefabInstance: {fileID: 458625568}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 731917776111cfd4e8e238be7a676f44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!82 &1082281373 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 82379819288447364, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+  m_PrefabInstance: {fileID: 458625568}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1246220636 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 82379819288447364, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+  m_PrefabInstance: {fileID: 1927535518}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1490532830
 GameObject:
   m_ObjectHideFlags: 0
@@ -1130,6 +1155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f42a118ab4d684e8881b481d345e8362, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  door: {fileID: 1082281372}
 --- !u!4 &1699720911
 Transform:
   m_ObjectHideFlags: 0
@@ -1199,6 +1225,7 @@ MonoBehaviour:
   _instructionText: {fileID: 310220706}
   _doorController: {fileID: 1699720910}
   _requiredMatchDuration: 1
+  _player: {fileID: 887390881}
 --- !u!4 &1767820281
 Transform:
   m_ObjectHideFlags: 0
@@ -1374,6 +1401,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114024263972142150, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+      propertyPath: asource
+      value: 
+      objectReference: {fileID: 1246220636}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
