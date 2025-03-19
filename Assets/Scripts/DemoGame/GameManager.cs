@@ -10,9 +10,9 @@ public class GameManager : MonoBehaviour
     {
         "Happiness",
         "Surprise",
-        // "Sadness",
+        "Sadness",
         "Anger",
-        // "Fear",
+        "Fear",
     };
 
     [SerializeField] private Text _instructionText;
@@ -68,16 +68,18 @@ public class GameManager : MonoBehaviour
 
         _doorController.ToggleDoor();
 
+        yield return new WaitForSeconds(1f);
+
         if (_player != null)
         {
             Rigidbody playerRigidbody = _player.GetComponent<Rigidbody>();
             if (playerRigidbody != null)
             {
-                playerRigidbody.MovePosition(new Vector3(0f, 1f, -0.7f));
+                playerRigidbody.MovePosition(new Vector3(0f, 1f, -2f));
             }
             else
             {
-                _player.position = new Vector3(0f, 1f, -0.7f);
+                _player.position = new Vector3(0f, 1f, -2f);
             }
         }
 
@@ -99,13 +101,16 @@ public class GameManager : MonoBehaviour
         {
             { "Happiness", data.happiness },
             { "Surprise", data.surprise },
-            // { "Sadness", data.sadness },
+            { "Sadness", data.sadness },
             { "Anger", data.anger },
-            // { "Fear", data.fear },
+            { "Fear", data.fear },
         };
 
         return values.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
 }
 
-// TODO: teleport player properly
+// TODO: score nombre porte ouverte
+// TODO: add button to skip
+// TODO: poser une pastèque
+// TODO: add un level minimum de détection
