@@ -70,7 +70,15 @@ public class GameManager : MonoBehaviour
 
         if (_player != null)
         {
-            _player.position = new Vector3(0f, 1f, -0.7f);
+            Rigidbody playerRigidbody = _player.GetComponent<Rigidbody>();
+            if (playerRigidbody != null)
+            {
+                playerRigidbody.MovePosition(new Vector3(0f, 1f, -0.7f));
+            }
+            else
+            {
+                _player.position = new Vector3(0f, 1f, -0.7f);
+            }
         }
 
         SetNextTargetEmotion();
@@ -99,3 +107,5 @@ public class GameManager : MonoBehaviour
         return values.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
 }
+
+// TODO: teleport player properly
