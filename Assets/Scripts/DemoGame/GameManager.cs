@@ -17,10 +17,10 @@ public class GameManager : MonoBehaviour
 
     private readonly Dictionary<string, float> _emotionThresholds = new()
     {
-        { "happy", 0.2f },
-        { "surprised", 0.1f },
-        { "sad", 0.2f },
-        { "angry", 0.05f },
+        { "happy", 0.0f },
+        { "surprised", 0.0f },
+        { "sad", 0.0f },
+        { "angry", 0.0f },
         { "scared", 0.0f },
     };
 
@@ -29,6 +29,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private DoorController _doorController;
     [SerializeField] private float _requiredMatchDuration = 1f;
     [SerializeField] private Transform _player;
+    [SerializeField] private GameObject _watermelonPrefab;
+    [SerializeField] private Vector3 _spawnAreaCenter = new(0, 3, -1.5f);
+    [SerializeField] private Vector3 _spawnAreaSize = new(1f, 10f, 2f);
 
     private string _currentTarget;
     private float _matchTimer = 0f;
@@ -74,6 +77,7 @@ public class GameManager : MonoBehaviour
 
                 _score++;
                 UpdateScoreText();
+                SpawnWatermelon();
 
                 StartCoroutine(WaitAfterSuccess());
             }
@@ -112,6 +116,7 @@ public class GameManager : MonoBehaviour
                 _matchTimer = 0f;
                 _successTriggered = false;
                 SetNextTargetEmotion();
+                SpawnWatermelon();
             }
         }
     }
@@ -185,7 +190,25 @@ public class GameManager : MonoBehaviour
             _scoreText.text = "Score: " + _score;
         }
     }
+
+    private void SpawnWatermelon()
+    {
+        if (_watermelonPrefab == null)
+        {
+            Debug.LogWarning("No watermelon prefab assigned!");
+            return;
+        }
+
+        Vector3 randomPos = _spawnAreaCenter + new Vector3(
+            Random.Range(-_spawnAreaSize.x / 2, _spawnAreaSize.x / 2),
+            _spawnAreaSize.y,
+            Random.Range(-_spawnAreaSize.z / 2, _spawnAreaSize.z / 2)
+        );
+
+        Instantiate(_watermelonPrefab, randomPos, Quaternion.identity);
+    }
 }
 
-// TODO: poser une pastèque dans la room à chaque porte ouverte
 // TODO: update tp -> same distance from first door as we were from second door
+// TODO: avancer en bougeant les yeux (séquence spécifique)
+// TODO: modularize code
