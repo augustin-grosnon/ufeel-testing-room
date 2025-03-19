@@ -25,14 +25,17 @@ public class GameManager : MonoBehaviour
     };
 
     [SerializeField] private Text _instructionText;
+    [SerializeField] private Text _scoreText;
     [SerializeField] private DoorController _doorController;
     [SerializeField] private float _requiredMatchDuration = 1f;
     [SerializeField] private Transform _player;
 
     private string _currentTarget;
-    private string _previousTarget = "";
     private float _matchTimer = 0f;
     private bool _successTriggered = false;
+
+    private int _score = 0;
+
     private readonly KeyCode[] _devCode = { KeyCode.U, KeyCode.F };
     private int _devCodeProgress = 0;
     private float _devCodeTimeout = 2f;
@@ -43,6 +46,7 @@ public class GameManager : MonoBehaviour
         var _ = EmotionReceiver.Instance;
 
         SetNextTargetEmotion();
+        UpdateScoreText();
     }
 
     void Update()
@@ -67,6 +71,9 @@ public class GameManager : MonoBehaviour
                 _instructionText.color = Color.green;
                 _successTriggered = true;
                 _doorController.ToggleDoor();
+
+                _score++;
+                UpdateScoreText();
 
                 StartCoroutine(WaitAfterSuccess());
             }
@@ -145,7 +152,6 @@ public class GameManager : MonoBehaviour
         }
         while (newTarget == _currentTarget);
 
-        _previousTarget = _currentTarget;
         _currentTarget = newTarget;
 
         _instructionText.text = "Be " + _currentTarget;
@@ -171,7 +177,15 @@ public class GameManager : MonoBehaviour
 
         return filteredValues.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
+
+    private void UpdateScoreText()
+    {
+        if (_scoreText != null)
+        {
+            _scoreText.text = "Score: " + _score;
+        }
+    }
 }
 
-// TODO: add score nombre porte ouverte
 // TODO: poser une pastèque dans la room à chaque porte ouverte
+// TODO: update tp -> same distance from first door as we were from second door
