@@ -8,11 +8,20 @@ public class GameManager : MonoBehaviour
 {
     private readonly List<string> _targetEmotions = new()
     {
-        "Happiness",
-        "Surprise",
-        "Sadness",
-        "Anger",
-        "Fear",
+        "happy",
+        "surprised",
+        "sad",
+        "angry",
+        "scared",
+    };
+
+    private readonly Dictionary<string, float> _emotionThresholds = new()
+    {
+        { "happy", 0.2f },
+        { "surprised", 0.1f },
+        { "sad", 0.2f },
+        { "angry", 0.05f },
+        { "scared", 0.0f },
     };
 
     [SerializeField] private Text _instructionText;
@@ -21,8 +30,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform _player;
 
     private string _currentTarget;
+    private string _previousTarget = "";
     private float _matchTimer = 0f;
     private bool _successTriggered = false;
+    private readonly KeyCode[] _devCode = { KeyCode.U, KeyCode.F };
+    private int _devCodeProgress = 0;
+    private float _devCodeTimeout = 2f;
+    private float _devCodeTimer = 0f;
 
     void Start()
     {
@@ -35,6 +49,8 @@ public class GameManager : MonoBehaviour
     {
         if (_successTriggered)
             return;
+
+        HandleDebugSkipInput();
 
         string detectedEmotion = DetermineDominantEmotion(EmotionReceiver.CurrentEmotions);
 
@@ -59,6 +75,37 @@ public class GameManager : MonoBehaviour
         {
             _matchTimer = 0f;
             _instructionText.color = Color.red;
+        }
+    }
+
+    private void HandleDebugSkipInput()
+    {
+        if (_devCodeProgress > 0)
+        {
+            _devCodeTimer += Time.deltaTime;
+
+            if (_devCodeTimer > _devCodeTimeout)
+            {
+                _devCodeProgress = 0;
+                _devCodeTimer = 0f;
+            }
+        }
+
+        if (Input.GetKeyDown(_devCode[_devCodeProgress]))
+        {
+            _devCodeProgress++;
+            _devCodeTimer = 0f;
+
+            if (_devCodeProgress >= _devCode.Length)
+            {
+                Debug.Log("Debug skip triggered!");
+                _devCodeProgress = 0;
+                _devCodeTimer = 0f;
+
+                _matchTimer = 0f;
+                _successTriggered = false;
+                SetNextTargetEmotion();
+            }
         }
     }
 
@@ -90,8 +137,18 @@ public class GameManager : MonoBehaviour
 
     private void SetNextTargetEmotion()
     {
-        _currentTarget = _targetEmotions[Random.Range(0, _targetEmotions.Count)];
-        _instructionText.text = "Show " + _currentTarget;
+        string newTarget;
+
+        do
+        {
+            newTarget = _targetEmotions[Random.Range(0, _targetEmotions.Count)];
+        }
+        while (newTarget == _currentTarget);
+
+        _previousTarget = _currentTarget;
+        _currentTarget = newTarget;
+
+        _instructionText.text = "Be " + _currentTarget;
         _instructionText.color = Color.red;
     }
 
@@ -99,18 +156,22 @@ public class GameManager : MonoBehaviour
     {
         Dictionary<string, float> values = new()
         {
-            { "Happiness", data.happiness },
-            { "Surprise", data.surprise },
-            { "Sadness", data.sadness },
-            { "Anger", data.anger },
-            { "Fear", data.fear },
+            { "happy", data.happiness },
+            { "surprised", data.surprise },
+            { "sad", data.sadness },
+            { "angry", data.anger },
+            { "scared", data.fear },
         };
 
-        return values.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+        var filteredValues = values
+            .Where(kv => kv.Value >= _emotionThresholds[kv.Key])
+            .ToDictionary(kv => kv.Key, kv => kv.Value);
+
+        if (filteredValues.Count == 0) return "";
+
+        return filteredValues.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
 }
 
-// TODO: score nombre porte ouverte
-// TODO: add button to skip
-// TODO: poser une pastèque
-// TODO: add un level minimum de détection
+// TODO: add score nombre porte ouverte
+// TODO: poser une pastèque dans la room à chaque porte ouverte
