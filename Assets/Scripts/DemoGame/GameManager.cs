@@ -24,6 +24,15 @@ public class GameManager : MonoBehaviour
         { "scared", 0.0f },
     };
 
+    private readonly Dictionary<string, Color> _emotionColors = new()
+    {
+        { "happy", Color.yellow },
+        { "surprised", Color.magenta },
+        { "sad", Color.blue },
+        { "angry", Color.red },
+        { "scared", Color.gray },
+    };
+
     [SerializeField] private Text _instructionText;
     [SerializeField] private Text _scoreText;
     [SerializeField] private DoorController _doorController;
@@ -161,6 +170,11 @@ public class GameManager : MonoBehaviour
 
         _instructionText.text = "Be " + _currentTarget;
         _instructionText.color = Color.red;
+
+        if (_doorController != null && _emotionColors.ContainsKey(_currentTarget))
+        {
+            _doorController.SetDoorColor(_emotionColors[_currentTarget]);
+        }
     }
 
     private string DetermineDominantEmotion(EmotionData data)

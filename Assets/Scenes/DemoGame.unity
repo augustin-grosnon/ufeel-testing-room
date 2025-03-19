@@ -1026,17 +1026,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 887390881}
   _offset: {x: 0, y: 0, z: 0}
---- !u!114 &1082281372 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114024263972142150, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+--- !u!1 &1082281370 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1534469393933210, guid: 26790669cef646944a4d6561a0374e14, type: 3}
   m_PrefabInstance: {fileID: 458625568}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 731917776111cfd4e8e238be7a676f44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &1082281373 stripped
 AudioSource:
   m_CorrespondingSourceObject: {fileID: 82379819288447364, guid: 26790669cef646944a4d6561a0374e14, type: 3}
@@ -1359,7 +1353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f42a118ab4d684e8881b481d345e8362, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  door: {fileID: 1082281372}
+  _door: {fileID: 1082281370}
 --- !u!4 &1699720911
 Transform:
   m_ObjectHideFlags: 0
