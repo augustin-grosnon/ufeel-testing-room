@@ -8,7 +8,18 @@ device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 UDP_IP, UDP_PORT = "127.0.0.1", 4243
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-SHOW_WINDOW = False
+SHOW_WINDOW = True
+
+color_map = {
+    'happiness': (0, 255, 0),
+    'surprise': (255, 0, 255),
+    'sadness':  (255, 0, 0),
+    'anger':    (0, 0, 255),
+    'fear':     (0, 165, 255),
+    'neutral':  (200, 200, 200)
+}
+
+EMOTION_THRESHOLD = 0.05
 
 class GiMeFive(nn.Module):
     def __init__(self):
@@ -23,41 +34,40 @@ class GiMeFive(nn.Module):
         self.dropout1, self.dropout2 = nn.Dropout(0.2), nn.Dropout(0.5)
         self.fc3 = nn.Linear(1024, 6)
     def forward(self, x):
-        for conv, bn in [(self.conv1,self.bn1),(self.conv2,self.bn2),
-                         (self.conv3,self.bn3),(self.conv4,self.bn4)]:
+        for conv, bn in [(self.conv1, self.bn1), (self.conv2, self.bn2),
+                         (self.conv3, self.bn3), (self.conv4, self.bn4)]:
             x = self.dropout1(F.max_pool2d(F.relu(bn(conv(x))), 2))
         x = F.max_pool2d(F.relu(self.bn5(self.conv5(x))), 2)
         x = self.pool(x).view(x.size(0), -1)
         x = self.dropout2(F.relu(self.fc1(x)))
         return self.fc3(F.relu(self.fc2(x)))
 
-class_labels = ['happiness','surprise','sadness','anger','neutral','fear']
+class_labels = ['happiness', 'surprise', 'sadness', 'anger', 'neutral', 'fear']
 model = GiMeFive().to(device)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'models', 'best_GiMeFive.pth')
 
 model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
-
 model.eval()
 
 transform = transforms.Compose([
     transforms.Resize((64, 64)),
     transforms.Grayscale(num_output_channels=3),
     transforms.ToTensor(),
-    transforms.Normalize([0.485,0.456,0.406],[0.229,0.224,0.225])
+    transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])
 ])
 
 face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 cap = cv2.VideoCapture(0)
-font_params = dict(fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, color=(0,255,0), thickness=2, lineType=cv2.LINE_AA)
+default_font_params = dict(fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=2, lineType=cv2.LINE_AA)
 max_emotion = ''
 
 def detect_emotion(img):
     tensor = transform(img).unsqueeze(0).to(device)
     with torch.no_grad():
         scores = F.softmax(model(tensor), dim=1).cpu().numpy().flatten()
-    return [round(s,2) for s in scores]
+    return [round(s, 2) for s in scores]
 
 def detect_faces(frame, counter):
     global max_emotion
@@ -65,18 +75,36 @@ def detect_faces(frame, counter):
     faces = face_classifier.detectMultiScale(gray, 1.1, 5, minSize=(40,40))
     for (x, y, w, h) in faces:
         if SHOW_WINDOW:
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0,255,0), 2)
+            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
         crop = frame[y:y+h, x:x+w]
         scores = detect_emotion(Image.fromarray(crop))
         emo_dict = {lbl: float(scores[i]) for i, lbl in enumerate(class_labels)}
+
         if counter == 0:
-            max_emotion = class_labels[np.argmax(scores)]
+            non_neutral = [(lbl, scores[i]) for i, lbl in enumerate(class_labels) if lbl != 'neutral']
+            if non_neutral:
+                max_score = max(score for lbl, score in non_neutral)
+                selected = [lbl for lbl, score in non_neutral if score >= max_score - EMOTION_THRESHOLD]
+                max_emotion = " & ".join(selected)
+            else:
+                max_emotion = ""
             sock.sendto(json.dumps(emo_dict).encode(), (UDP_IP, UDP_PORT))
+
         if SHOW_WINDOW:
-            cv2.putText(frame, max_emotion, (x, y-15), **font_params)
+            if max_emotion:
+                cv2.putText(frame, max_emotion, (x, y-15),
+                            fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
+                            color=(0, 0, 0), thickness=2, lineType=cv2.LINE_AA)
+
+            j = 0
             for i, lbl in enumerate(class_labels):
-                pos = (x+w+10, y-20+40*(i+1))
-                cv2.putText(frame, f'{lbl}: {scores[i]:.2f}', pos, **font_params)
+                if lbl == 'neutral':
+                    continue
+                pos = (x+w+10, y - 20 + 40*(j+1))
+                cv2.putText(frame, f'{lbl}: {scores[i]:.2f}', pos,
+                            fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
+                            color=color_map.get(lbl, (0, 255, 0)), thickness=2, lineType=cv2.LINE_AA)
+                j += 1
     return faces
 
 counter, freq = 0, 5
@@ -85,7 +113,7 @@ while True:
     if not ret: break
     detect_faces(frame, counter)
     if SHOW_WINDOW:
-        cv2.imshow("GiMeFive", frame)
+        cv2.imshow("Emotion debug", frame)
         if cv2.waitKey(1) & 0xFF == ord("q"): break
     counter = (counter + 1) % freq
 
