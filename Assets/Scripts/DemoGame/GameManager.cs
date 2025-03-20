@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator WaitAfterSuccess()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1.5f);
 
         _doorController.ToggleDoor();
 
@@ -223,6 +223,5 @@ public class GameManager : MonoBehaviour
     }
 }
 
-// TODO: update tp -> same distance from first door as we were from second door
 // TODO: avancer en bougeant les yeux (séquence spécifique)
 // TODO: modularize code
