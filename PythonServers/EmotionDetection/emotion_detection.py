@@ -8,20 +8,14 @@ import cv2
 import socket
 import json
 import os
-import sys
 
 def suppress_stderr():
     devnull_fd = os.open(os.devnull, os.O_WRONLY)
     os.dup2(devnull_fd, 1)
     os.dup2(devnull_fd, 2)
-
-def restore_stderr():
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
-
 suppress_stderr()
+
 import mediapipe as mp
-restore_stderr()
 
 device = torch.device("cpu")
 

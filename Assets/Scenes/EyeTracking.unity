@@ -530,7 +530,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sphere: {fileID: 725370397}
-  _movementArea: {x: 5, y: 5, z: 0}
+  _movementArea: {x: 10, y: 10, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

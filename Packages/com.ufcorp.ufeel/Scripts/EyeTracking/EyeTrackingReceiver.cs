@@ -1,6 +1,16 @@
 using UnityEngine;
 using System.Text;
 
+[System.Serializable]
+public class EyeDirectionData
+{
+    public bool left;
+    public bool right;
+    public bool up;
+    public bool down;
+    public bool center;
+}
+
 public class EyeTrackingReceiver : UDPReceiverBase
 {
     private static EyeTrackingReceiver _instance;
@@ -13,9 +23,9 @@ public class EyeTrackingReceiver : UDPReceiverBase
         }
     }
 
-    public static Vector2 CurrentGaze { get; private set; } = new(0.5f, 0.5f);
+    public static EyeDirectionData CurrentEyeData { get; private set; } = new EyeDirectionData();
 
-    private readonly EyeTrackingServerController eyeTrackingController = new();
+    private readonly EyeTrackingServerController eyeTrackingController = new EyeTrackingServerController();
 
     private EyeTrackingReceiver() : base(4242)
     {
@@ -31,14 +41,14 @@ public class EyeTrackingReceiver : UDPReceiverBase
 
     protected override void ProcessData(byte[] data)
     {
-        string receivedText = Encoding.ASCII.GetString(data);
-        string[] parts = receivedText.Split(',');
-        if (parts.Length == 2)
+        string json = Encoding.ASCII.GetString(data);
+        try
         {
-            if (float.TryParse(parts[0], out float x) && float.TryParse(parts[1], out float y))
-            {
-                CurrentGaze = new Vector2(x, y);
-            }
+            CurrentEyeData = JsonUtility.FromJson<EyeDirectionData>(json);
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("Error parsing eye direction JSON: " + e.Message);
         }
     }
 }
