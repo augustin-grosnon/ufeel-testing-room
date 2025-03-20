@@ -1,7 +1,27 @@
-import torch, torch.nn as nn, torch.nn.functional as F
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 import torchvision.transforms as transforms
 from PIL import Image
-import numpy as np, cv2, socket, json, os
+import numpy as np
+import cv2
+import socket
+import json
+import os
+import sys
+
+def suppress_stderr():
+    devnull_fd = os.open(os.devnull, os.O_WRONLY)
+    os.dup2(devnull_fd, 1)
+    os.dup2(devnull_fd, 2)
+
+def restore_stderr():
+    sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
+
+suppress_stderr()
+import mediapipe as mp
+restore_stderr()
 
 device = torch.device("cpu")
 
@@ -20,7 +40,11 @@ color_map = {
 }
 
 MIN_SCORE_THRESHOLD = 0.1
-EMOTION_DIFFERENCE_THRESHOLD = 0.05
+EMOTION_DIFFERENCE_THRESHOLD = 0.2
+
+mp_face_detection = mp.solutions.face_detection
+mp_drawing = mp.solutions.drawing_utils
+face_detection = mp_face_detection.FaceDetection(model_selection=0, min_detection_confidence=0.5)
 
 class GiMeFive(nn.Module):
     def __init__(self):
@@ -59,7 +83,6 @@ transform = transforms.Compose([
     transforms.Normalize([0.485, 0.456, 0.406],[0.229, 0.224, 0.225])
 ])
 
-face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 cap = cv2.VideoCapture(0)
 default_font_params = dict(fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=2, lineType=cv2.LINE_AA)
 max_emotion = ''
@@ -72,12 +95,32 @@ def detect_emotion(img):
 
 def detect_faces(frame, counter):
     global max_emotion
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    faces = face_classifier.detectMultiScale(gray, 1.1, 5, minSize=(40,40))
-    for (x, y, w, h) in faces:
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = face_detection.process(frame_rgb)
+
+    if not results.detections:
+        return []
+
+    height, width, _ = frame.shape
+    faces_detected = []
+
+    for detection in results.detections:
+        bboxC = detection.location_data.relative_bounding_box
+        x = int(bboxC.xmin * width)
+        y = int(bboxC.ymin * height)
+        w = int(bboxC.width * width)
+        h = int(bboxC.height * height)
+
+        x, y = max(0, x), max(0, y)
+        w, h = min(width - x, w), min(height - y, h)
+
         if SHOW_WINDOW:
-            cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        crop = frame[y:y+h, x:x+w]
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        crop = frame[y:y + h, x:x + w]
+        if crop.size == 0:
+            continue
+
         scores = detect_emotion(Image.fromarray(crop))
         emo_dict = {lbl: float(scores[i]) for i, lbl in enumerate(class_labels)}
 
@@ -98,38 +141,43 @@ def detect_faces(frame, counter):
             if max_emotion:
                 y_offset = y - 15
                 for i, emotion in enumerate(max_emotion):
-                    if i == 0:
-                        cv2.putText(frame, emotion, (x, y_offset),
-                                    fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
-                                    color=(0, 0, 0), thickness=2, lineType=cv2.LINE_AA)
-                    else:
-                        y_offset -= 30
-                        cv2.putText(frame, emotion, (x, y_offset),
-                                    fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
-                                    color=(0, 0, 0), thickness=2, lineType=cv2.LINE_AA)
+                    offset = y_offset - (30 * i)
+                    cv2.putText(frame, emotion, (x, offset),
+                                **default_font_params, color=(0, 0, 0))
 
             j = 0
             for i, lbl in enumerate(class_labels):
                 if lbl == 'neutral':
                     continue
-                pos = (x+w+10, y - 20 + 40*(j+1))
+                pos = (x + w + 10, y - 20 + 40 * (j + 1))
                 cv2.putText(frame, f'{lbl}: {scores[i]:.2f}', pos,
-                            fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
-                            color=color_map.get(lbl, (0, 255, 0)), thickness=2, lineType=cv2.LINE_AA)
+                            **default_font_params, color=color_map.get(lbl, (0, 255, 0)))
                 j += 1
-    return faces
+
+        faces_detected.append((x, y, w, h))
+
+    return faces_detected
 
 counter = 0
 freq = 5
+
 while True:
     ret, frame = cap.read()
-    if not ret: break
+    if not ret:
+        break
+    frame = cv2.flip(frame, 1)
+
     detect_faces(frame, counter)
+
     if SHOW_WINDOW:
         cv2.imshow("Emotion debug", frame)
-        if cv2.waitKey(1) & 0xFF == ord("q"): break
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+
     counter = (counter + 1) % freq
 
 cap.release()
 if SHOW_WINDOW:
     cv2.destroyAllWindows()
+
+face_detection.close()

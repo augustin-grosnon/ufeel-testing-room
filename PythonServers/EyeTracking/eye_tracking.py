@@ -1,14 +1,6 @@
 import cv2, sys, os, socket
-import mediapipe as mp
 import numpy as np
 from enum import Enum
-
-class EyeDirection(Enum):
-    CENTER = 0
-    LEFT = 1
-    RIGHT = 2
-    UP = 3
-    DOWN = 4
 
 def suppress_stderr():
     devnull_fd = os.open(os.devnull, os.O_WRONLY)
@@ -18,6 +10,17 @@ def suppress_stderr():
 def restore_stderr():
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
+
+suppress_stderr()
+import mediapipe as mp
+restore_stderr()
+
+class EyeDirection(Enum):
+    CENTER = 0
+    LEFT = 1
+    RIGHT = 2
+    UP = 3
+    DOWN = 4
 
 def get_eye_direction(avg_gaze_ratio_: int, avg_vertical_ratio_: int) -> tuple[EyeDirection, tuple[int, int, int]]:
     if avg_gaze_ratio_ < 0.4:
@@ -29,9 +32,6 @@ def get_eye_direction(avg_gaze_ratio_: int, avg_vertical_ratio_: int) -> tuple[E
     if avg_vertical_ratio_ > 0.6:
         return EyeDirection.DOWN, (255, 255, 0)
     return EyeDirection.CENTER, (0, 255, 0)
-
-#suppress_stderr()
-#restore_stderr()
 
 UDP_IP = "127.0.0.1"
 UDP_PORT = 4242
