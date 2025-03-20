@@ -3,7 +3,7 @@ import torchvision.transforms as transforms
 from PIL import Image
 import numpy as np, cv2, socket, json, os
 
-device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+device = torch.device("cpu")
 
 UDP_IP, UDP_PORT = "127.0.0.1", 4243
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -19,7 +19,8 @@ color_map = {
     'neutral':  (200, 200, 200)
 }
 
-EMOTION_THRESHOLD = 0.05
+MIN_SCORE_THRESHOLD = 0.1
+EMOTION_DIFFERENCE_THRESHOLD = 0.05
 
 class GiMeFive(nn.Module):
     def __init__(self):
@@ -83,18 +84,29 @@ def detect_faces(frame, counter):
         if counter == 0:
             non_neutral = [(lbl, scores[i]) for i, lbl in enumerate(class_labels) if lbl != 'neutral']
             if non_neutral:
-                max_score = max(score for lbl, score in non_neutral)
-                selected = [lbl for lbl, score in non_neutral if score >= max_score - EMOTION_THRESHOLD]
-                max_emotion = " & ".join(selected)
+                max_score = max(score for _, score in non_neutral)
+                selected = [
+                    lbl for lbl, score in non_neutral
+                    if score >= MIN_SCORE_THRESHOLD and max_score - score <= EMOTION_DIFFERENCE_THRESHOLD
+                ]
+                max_emotion = selected
             else:
-                max_emotion = ""
+                max_emotion = []
             sock.sendto(json.dumps(emo_dict).encode(), (UDP_IP, UDP_PORT))
 
         if SHOW_WINDOW:
             if max_emotion:
-                cv2.putText(frame, max_emotion, (x, y-15),
-                            fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
-                            color=(0, 0, 0), thickness=2, lineType=cv2.LINE_AA)
+                y_offset = y - 15
+                for i, emotion in enumerate(max_emotion):
+                    if i == 0:
+                        cv2.putText(frame, emotion, (x, y_offset),
+                                    fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
+                                    color=(0, 0, 0), thickness=2, lineType=cv2.LINE_AA)
+                    else:
+                        y_offset -= 30
+                        cv2.putText(frame, emotion, (x, y_offset),
+                                    fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1,
+                                    color=(0, 0, 0), thickness=2, lineType=cv2.LINE_AA)
 
             j = 0
             for i, lbl in enumerate(class_labels):
@@ -107,7 +119,8 @@ def detect_faces(frame, counter):
                 j += 1
     return faces
 
-counter, freq = 0, 5
+counter = 0
+freq = 5
 while True:
     ret, frame = cap.read()
     if not ret: break
