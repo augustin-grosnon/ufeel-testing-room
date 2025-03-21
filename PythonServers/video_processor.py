@@ -10,6 +10,7 @@ class VideoProcessor:
         self.eye_tracker = EyeTracker()
         self.counter = 0
         self.freq = 5
+        self.scale_factor = 1.3
 
     def process(self):
         while self.cap.isOpened():
@@ -20,7 +21,14 @@ class VideoProcessor:
             self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
             self.eye_tracker.process(frame)
             if self.show_window:
-                cv2.imshow("Combined Output", frame)
+                resized_frame = cv2.resize(
+                    frame,
+                    None,
+                    fx=self.scale_factor,
+                    fy=self.scale_factor,
+                    interpolation=cv2.INTER_LINEAR
+                )
+                cv2.imshow("Combined Output", resized_frame)
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
             self.counter = (self.counter + 1) % self.freq
