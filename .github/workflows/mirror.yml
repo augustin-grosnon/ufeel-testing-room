@@ -10,6 +10,7 @@ env:
 jobs:
   push_to_mirror:
     runs-on: ubuntu-latest
+    if: github.repository == 'augustin-grosnon/ufeel-testing-room'
     steps:
 
     - name: Checkout repo
