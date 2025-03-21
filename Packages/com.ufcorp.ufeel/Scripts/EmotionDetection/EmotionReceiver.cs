@@ -15,6 +15,7 @@ public class EmotionData
 public class EmotionReceiver : UDPReceiverBase
 {
     private static EmotionReceiver _instance;
+
     public static EmotionReceiver Instance
     {
         get
@@ -26,18 +27,9 @@ public class EmotionReceiver : UDPReceiverBase
 
     public static EmotionData CurrentEmotions { get; private set; } = new();
 
-    private readonly EmotionServerController emotionController = new();
-
     private EmotionReceiver() : base(4243)
     {
-        if (emotionController != null)
-        {
-            emotionController.EnsureServerRunning();
-        }
-        else
-        {
-            Debug.LogWarning("EmotionServerController reference not set in EmotionReceiver.");
-        }
+        PythonServerController.Instance.EnsureServerRunning();
     }
 
     protected override void ProcessData(byte[] data)

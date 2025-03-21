@@ -2,21 +2,36 @@ using UnityEngine;
 using System.Diagnostics;
 using Debug = UnityEngine.Debug;
 
-// TODO: check if we should use singleton for every server controller
-
-public abstract class PythonServerControllerBase
+public class PythonServerController
 {
-    protected Process _pythonProcess;
-    protected readonly string _pythonExecutable = "python3";
+    private static PythonServerController _instance;
 
-    protected PythonServerControllerBase()
+    public static PythonServerController Instance
     {
-        Application.quitting += OnApplicationQuit;
+        get
+        {
+            if (_instance == null)
+            {
+                string scriptPath = Application.dataPath + "/../PythonServers/main.py";
+                _instance = new PythonServerController(scriptPath, "Server");
+            }
+
+            return _instance;
+        }
     }
 
-    protected abstract string ScriptPath { get; }
+    private Process _pythonProcess;
+    private readonly string _pythonExecutable = "python3";
+    private readonly string _scriptPath;
+    private readonly string _serverName;
 
-    protected abstract string ServerName { get; }
+    private PythonServerController(string scriptPath, string serverName)
+    {
+        _scriptPath = scriptPath;
+        _serverName = serverName;
+
+        Application.quitting += OnApplicationQuit;
+    }
 
     public bool IsServerRunning => _pythonProcess != null && !_pythonProcess.HasExited;
 
@@ -28,14 +43,14 @@ public abstract class PythonServerControllerBase
         }
     }
 
-    public void StartServer()
+    private void StartServer()
     {
         try
         {
-            ProcessStartInfo psi = new()
+            ProcessStartInfo psi = new ProcessStartInfo()
             {
                 FileName = _pythonExecutable,
-                Arguments = ScriptPath,
+                Arguments = _scriptPath,
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
@@ -47,22 +62,22 @@ public abstract class PythonServerControllerBase
             _pythonProcess.OutputDataReceived += (sender, args) =>
             {
                 if (!string.IsNullOrEmpty(args.Data))
-                    Debug.Log($"{ServerName} Python output: {args.Data}");
+                    Debug.Log($"{_serverName} Python output: {args.Data}");
             };
             _pythonProcess.ErrorDataReceived += (sender, args) =>
             {
                 if (!string.IsNullOrEmpty(args.Data))
-                    Debug.LogError($"{ServerName} Python error: {args.Data}");
+                    Debug.LogError($"{_serverName} Python error: {args.Data}");
             };
 
             _pythonProcess.BeginOutputReadLine();
             _pythonProcess.BeginErrorReadLine();
 
-            Debug.Log($"{ServerName} Python server started.");
+            Debug.Log($"{_serverName} Python server started.");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Failed to start {ServerName} Python server: {e.Message}");
+            Debug.LogError($"Failed to start {_serverName} Python server: {e.Message}");
         }
     }
 
@@ -75,16 +90,17 @@ public abstract class PythonServerControllerBase
                 _pythonProcess.Kill();
                 _pythonProcess.WaitForExit();
                 _pythonProcess = null;
-                Debug.Log($"{ServerName} Python server stopped.");
+
+                Debug.Log($"{_serverName} Python server stopped.");
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"Failed to stop {ServerName} Python server: {e.Message}");
+                Debug.LogError($"Failed to stop {_serverName} Python server: {e.Message}");
             }
         }
     }
 
-    void OnApplicationQuit()
+    private void OnApplicationQuit()
     {
         StopServer();
         Application.quitting -= OnApplicationQuit;

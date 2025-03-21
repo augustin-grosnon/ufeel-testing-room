@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _requiredMatchDuration = 1f;
     [SerializeField] private Transform _player;
     [SerializeField] private GameObject _watermelonPrefab;
-    [SerializeField] private Vector3 _spawnAreaCenter = new(0, 3, -1.5f);
+    [SerializeField] private Vector3 _spawnAreaCenter = new(0, 3, 3f);
     [SerializeField] private Vector3 _spawnAreaSize = new(1f, 10f, 2f);
 
     private string _currentTarget;
@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour
                 _matchTimer = 0f;
                 _successTriggered = false;
                 SetNextTargetEmotion();
-                SpawnWatermelon();
+                // SpawnWatermelon();
             }
         }
     }
@@ -223,5 +223,4 @@ public class GameManager : MonoBehaviour
     }
 }
 
-// TODO: avancer en bougeant les yeux (séquence spécifique)
 // TODO: modularize code

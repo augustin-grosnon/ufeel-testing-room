@@ -14,6 +14,7 @@ public class EyeDirectionData
 public class EyeTrackingReceiver : UDPReceiverBase
 {
     private static EyeTrackingReceiver _instance;
+
     public static EyeTrackingReceiver Instance
     {
         get
@@ -23,20 +24,11 @@ public class EyeTrackingReceiver : UDPReceiverBase
         }
     }
 
-    public static EyeDirectionData CurrentEyeData { get; private set; } = new EyeDirectionData();
-
-    private readonly EyeTrackingServerController eyeTrackingController = new EyeTrackingServerController();
+    public static EyeDirectionData CurrentEyeData { get; private set; } = new();
 
     private EyeTrackingReceiver() : base(4242)
     {
-        if (eyeTrackingController != null)
-        {
-            eyeTrackingController.EnsureServerRunning();
-        }
-        else
-        {
-            Debug.LogWarning("EyeTrackingServerController reference not set in EyeTrackingReceiver.");
-        }
+        PythonServerController.Instance.EnsureServerRunning();
     }
 
     protected override void ProcessData(byte[] data)

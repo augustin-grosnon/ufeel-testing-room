@@ -647,6 +647,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 2
   _jumpForce: 5
+  _forwardMoveDistance: 5
+  _sequenceTimeWindow: 2
+  _autoMovementTimeout: 2
+  _inputThreshold: 0.1
+  _stoppingDistance: 0.1
 --- !u!136 &887390878
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1426,7 +1431,7 @@ MonoBehaviour:
   _requiredMatchDuration: 1
   _player: {fileID: 887390881}
   _watermelonPrefab: {fileID: 6130156142760794052, guid: de06f8832a562704bafe28d68fb1d08b, type: 3}
-  _spawnAreaCenter: {x: 0, y: 3, z: -1.5}
+  _spawnAreaCenter: {x: 0, y: 3, z: 3}
   _spawnAreaSize: {x: 1, y: 10, z: 2}
 --- !u!4 &1767820281
 Transform:
