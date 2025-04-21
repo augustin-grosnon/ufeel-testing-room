@@ -1,4 +1,5 @@
 import os
+from sys import argv
 
 def suppress_stderr():
     devnull_fd = os.open(os.devnull, os.O_WRONLY)
@@ -9,7 +10,7 @@ suppress_stderr()
 from video_processor import VideoProcessor
 
 def main():
-    vp = VideoProcessor(show_window=True)
+    vp = VideoProcessor(calibration="--calibration" in argv, show_window=True)
     vp.process()
 
 if __name__ == '__main__':

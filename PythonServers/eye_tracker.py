@@ -10,7 +10,6 @@ class EyeTracker:
         self.UDP_IP = "127.0.0.1"
         self.UDP_PORT = 4242
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.show_window = False
         self.mp_face_mesh = mp.solutions.face_mesh
         self.face_mesh = self.mp_face_mesh.FaceMesh(refine_landmarks=True)
         self.RIGHT_EYE_OUTER = 33
@@ -23,16 +22,30 @@ class EyeTracker:
         self.RIGHT_EYE_BOTTOM = 145
         self.LEFT_EYE_TOP = 386
         self.LEFT_EYE_BOTTOM = 374
+        self.json_ratios = None
+        self.SHIFT = 0.025
 
     def get_eye_directions(self, avg_gaze_ratio: float, avg_vertical_ratio: float) -> dict:
-        left  = bool(avg_gaze_ratio < 0.4)
-        right = bool(avg_gaze_ratio > 0.6)
-        up    = bool(avg_vertical_ratio < 0.3)
-        down  = bool(avg_vertical_ratio > 0.5)
+        left  = bool(avg_gaze_ratio < self.json_ratios["left"]["horizontal"] + self.SHIFT)
+        right = bool(avg_gaze_ratio > self.json_ratios["right"]["horizontal"] - self.SHIFT)
+        up    = bool(avg_vertical_ratio < self.json_ratios["up"]["vertical"] + self.SHIFT)
+        down  = bool(avg_vertical_ratio > self.json_ratios["down"]["vertical"] - self.SHIFT)
         center = not (left or right or up or down)
         return {"left": left, "right": right, "up": up, "down": down, "center": center}
 
-    def process(self, frame):
+    def get_ratios(self, avg_gaze_ratio: float, avg_vertical_ratio: float) -> dict:
+        return {"horizontal": avg_gaze_ratio, "vertical": avg_vertical_ratio}
+
+    def read_ratios_from_file(self, filename):
+        with open (filename) as f:
+            self.json_ratios = json.load(f)
+        if self.json_ratios is None:
+            self.json_ratios = "{\"message\": \"error trying to read the file\"}"
+
+    def process(self, frame, calibration, show_window=True):
+        if self.json_ratios is None:
+            self.read_ratios_from_file("./eye_tracker_values.json")
+
         results = self.face_mesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         if not results.multi_face_landmarks:
             return
@@ -66,9 +79,12 @@ class EyeTracker:
             left_vertical_ratio = get_vertical_gaze_ratio(left_eye_top, left_eye_bottom, left_pupil)
             avg_gaze_ratio = (right_gaze_ratio + left_gaze_ratio) / 2
             avg_vertical_ratio = (right_vertical_ratio + left_vertical_ratio) / 2
-            eye_directions = self.get_eye_directions(avg_gaze_ratio, avg_vertical_ratio)
+            if not calibration:
+                eye_directions = self.get_eye_directions(avg_gaze_ratio, avg_vertical_ratio)
+            else:
+                eye_directions = self.get_ratios(avg_gaze_ratio, avg_vertical_ratio)
             self.sock.sendto(json.dumps(eye_directions).encode(), (self.UDP_IP, self.UDP_PORT))
-            if self.show_window:
+            if show_window:
                 cv2.circle(frame, right_pupil, 3, (0, 255, 0), -1)
                 cv2.circle(frame, left_pupil, 3, (0, 255, 0), -1)
                 display_text = ", ".join([k for k, v in eye_directions.items() if v])

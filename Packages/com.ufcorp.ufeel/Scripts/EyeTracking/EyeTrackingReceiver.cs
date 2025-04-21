@@ -11,6 +11,21 @@ public class EyeDirectionData
     public bool center;
 }
 
+[System.Serializable]
+public class EyeDirectionRatio
+{
+    public float horizontal;
+    public float vertical;
+}
+
+enum Direction
+{
+    Left = 0,
+    Right,
+    Up,
+    Down
+}
+
 public class EyeTrackingReceiver : UDPReceiverBase
 {
     private static EyeTrackingReceiver _instance;
@@ -25,6 +40,7 @@ public class EyeTrackingReceiver : UDPReceiverBase
     }
 
     public static EyeDirectionData CurrentEyeData { get; private set; } = new();
+    public static EyeDirectionRatio CurrentEyeRatios { get; private set; } = new();
 
     private EyeTrackingReceiver() : base(4242)
     {
@@ -37,6 +53,7 @@ public class EyeTrackingReceiver : UDPReceiverBase
         try
         {
             CurrentEyeData = JsonUtility.FromJson<EyeDirectionData>(json);
+            CurrentEyeRatios = JsonUtility.FromJson<EyeDirectionRatio>(json);
         }
         catch (System.Exception e)
         {
