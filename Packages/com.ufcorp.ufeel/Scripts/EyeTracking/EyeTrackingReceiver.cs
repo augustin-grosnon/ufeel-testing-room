@@ -18,14 +18,6 @@ public class EyeDirectionRatio
     public float vertical;
 }
 
-enum Direction
-{
-    Left = 0,
-    Right,
-    Up,
-    Down
-}
-
 public class EyeTrackingReceiver : UDPReceiverBase
 {
     private static EyeTrackingReceiver _instance;

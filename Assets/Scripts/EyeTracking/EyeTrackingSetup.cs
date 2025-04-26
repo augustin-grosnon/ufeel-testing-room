@@ -1,10 +1,21 @@
 using System;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Plastic.Newtonsoft.Json;
+
+[System.Serializable]
+public class EyeTrackingSaveObject
+{
+    public float[] left;
+    public float[] right;
+    public float[] up;
+    public float[] down;
+}
 
 public class EyeTrackingSetup : MonoBehaviour
 {
-    private static readonly string[] Directions = {"to the left", "to the right", "up", "down"};
+    private static readonly string[] Directions = {"left", "right", "up", "down"};
     private int _directionIndex = 0;
     private bool _displayStartupMessage = true;
     private static readonly EyeDirectionRatio[] EyeDirectionRatios = new EyeDirectionRatio[Directions.Length];
@@ -14,7 +25,8 @@ public class EyeTrackingSetup : MonoBehaviour
     private static String GetDirectionMessage(int directionIndex)
     {
         String operation = directionIndex == Directions.Length - 1 ? "finish" : "continue";
-        return "Look " + Directions[directionIndex] + "\nPress Enter to " + operation;
+        String directionName = (directionIndex <= 1 ? "to the " : "") + Directions[directionIndex];
+        return "Look " + directionName + "\nPress Enter to " + operation;
     }
     
     void Awake()
@@ -51,9 +63,19 @@ public class EyeTrackingSetup : MonoBehaviour
                 return;
             }
             text.gameObject.SetActive(false);
-            
-            foreach(EyeDirectionRatio edr in EyeDirectionRatios)
-                Debug.Log("horizontal = " + edr.horizontal + " ; vertical = " + edr.vertical);
+
+            // TODO: make this cleaner
+            var eyeTrackingSaveObject = new EyeTrackingSaveObject
+            {
+                left = new []{EyeDirectionRatios[0].horizontal, EyeDirectionRatios[0].vertical},
+                right = new []{EyeDirectionRatios[1].horizontal, EyeDirectionRatios[1].vertical},
+                up = new []{EyeDirectionRatios[2].horizontal, EyeDirectionRatios[2].vertical},
+                down = new []{EyeDirectionRatios[3].horizontal, EyeDirectionRatios[3].vertical}
+            };
+
+            string fileName = Application.dataPath + @"/../PythonServers/eye_tracker_values.json";
+            String jsonObj = JsonUtility.ToJson(eyeTrackingSaveObject, true);
+            System.IO.File.WriteAllText(fileName, jsonObj);
         }
     }
 }

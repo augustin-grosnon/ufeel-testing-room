@@ -1,5 +1,4 @@
 import cv2
-import os
 import socket
 import json
 import numpy as np
@@ -26,10 +25,10 @@ class EyeTracker:
         self.SHIFT = 0.025
 
     def get_eye_directions(self, avg_gaze_ratio: float, avg_vertical_ratio: float) -> dict:
-        left  = bool(avg_gaze_ratio < self.json_ratios["left"]["horizontal"] + self.SHIFT)
-        right = bool(avg_gaze_ratio > self.json_ratios["right"]["horizontal"] - self.SHIFT)
-        up    = bool(avg_vertical_ratio < self.json_ratios["up"]["vertical"] + self.SHIFT)
-        down  = bool(avg_vertical_ratio > self.json_ratios["down"]["vertical"] - self.SHIFT)
+        left  = bool(avg_gaze_ratio < self.json_ratios["left"][0] + self.SHIFT)
+        right = bool(avg_gaze_ratio > self.json_ratios["right"][0] - self.SHIFT)
+        up    = bool(avg_vertical_ratio < self.json_ratios["up"][1] + self.SHIFT)
+        down  = bool(avg_vertical_ratio > self.json_ratios["down"][1] - self.SHIFT)
         center = not (left or right or up or down)
         return {"left": left, "right": right, "up": up, "down": down, "center": center}
 
