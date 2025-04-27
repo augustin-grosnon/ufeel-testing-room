@@ -19,8 +19,10 @@ public class EyeTrackingSetup : MonoBehaviour
     private int _directionIndex = 0;
     private bool _displayStartupMessage = true;
     private static readonly EyeDirectionRatio[] EyeDirectionRatios = new EyeDirectionRatio[Directions.Length];
+    private string error;
 
     public GameObject startupMessage;
+    public RawImage eyeDetection;
 
     private static String GetDirectionMessage(int directionIndex)
     {
@@ -36,6 +38,17 @@ public class EyeTrackingSetup : MonoBehaviour
 
     void Update()
     {
+        error = EyeTrackingReceiver.Error.error;
+        // TODO: don't spam toggle setActive true/false
+        eyeDetection.gameObject.SetActive(true);
+        
+        if (!String.IsNullOrEmpty(error))
+        {
+            Debug.Log("Got error from EyeTrackingReceiver: " + error);
+            if (EyeTrackingReceiver.Error.error == "No eyes detected")
+                eyeDetection.gameObject.SetActive(false);
+        }
+        
         if (!Input.GetKeyDown(KeyCode.Return))
             return;
         if (_displayStartupMessage)

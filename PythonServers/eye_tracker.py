@@ -38,8 +38,7 @@ class EyeTracker:
     def read_ratios_from_file(self, filename):
         with open (filename) as f:
             self.json_ratios = json.load(f)
-        if self.json_ratios is None:
-            self.json_ratios = "{\"message\": \"error trying to read the file\"}"
+        # TODO: check if the file opening has failed
 
     def process(self, frame, calibration, show_window=True):
         if self.json_ratios is None:
@@ -47,6 +46,7 @@ class EyeTracker:
 
         results = self.face_mesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         if not results.multi_face_landmarks:
+            self.sock.sendto(json.dumps({"error": "No eyes detected"}).encode(), (self.UDP_IP, self.UDP_PORT))
             return
         h, w, _ = frame.shape
         for face_landmarks in results.multi_face_landmarks:

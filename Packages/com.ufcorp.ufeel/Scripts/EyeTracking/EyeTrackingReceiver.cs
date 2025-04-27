@@ -18,6 +18,12 @@ public class EyeDirectionRatio
     public float vertical;
 }
 
+[System.Serializable]
+public class EyeDirectionError
+{
+    public string error;
+}
+
 public class EyeTrackingReceiver : UDPReceiverBase
 {
     private static EyeTrackingReceiver _instance;
@@ -33,6 +39,7 @@ public class EyeTrackingReceiver : UDPReceiverBase
 
     public static EyeDirectionData CurrentEyeData { get; private set; } = new();
     public static EyeDirectionRatio CurrentEyeRatios { get; private set; } = new();
+    public static EyeDirectionError Error { get; private set; } = new EyeDirectionError {error = "a"};
 
     private EyeTrackingReceiver() : base(4242)
     {
@@ -46,6 +53,7 @@ public class EyeTrackingReceiver : UDPReceiverBase
         {
             CurrentEyeData = JsonUtility.FromJson<EyeDirectionData>(json);
             CurrentEyeRatios = JsonUtility.FromJson<EyeDirectionRatio>(json);
+            Error = JsonUtility.FromJson<EyeDirectionError>(json);
         }
         catch (System.Exception e)
         {

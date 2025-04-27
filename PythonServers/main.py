@@ -10,7 +10,7 @@ suppress_stderr()
 from video_processor import VideoProcessor
 
 def main():
-    vp = VideoProcessor(calibration="--calibration" in argv, show_window=True)
+    vp = VideoProcessor(calibration="--calibration" in argv, show_window=False)
     vp.process()
 
 if __name__ == '__main__':
