@@ -6,31 +6,22 @@ public class DoorChainController : MonoBehaviour
     public Transform chain;
     public Transform door;
     public float chainExtensionSpeed = 5f;
-    public float maxChainLength = 11f;
-    public float doorLowerSpeed = 3f;
-    public float minChainLength = 0f;
+    public float maxChainLength = 5.7f;
 
+    private float originalChainLength;
     private bool isExtending = false;
-    private float originalChainHeight;
-    private Vector3 originalDoorPosition;
 
     void Start()
     {
-        originalChainHeight = chain.localScale.y;
-        originalDoorPosition = door.position;
+        originalChainLength = chain.localScale.y;
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
-        {
-            TriggerChainExtension(true);
-        }
-
+            isExtending = true;
         if (Input.GetKeyDown(KeyCode.F))
-        {
-            TriggerChainExtension(false);
-        }
+            isExtending = false;
 
         ExtendChainAndMoveDoor();
     }
@@ -42,21 +33,18 @@ public class DoorChainController : MonoBehaviour
 
     void ExtendChainAndMoveDoor()
     {
-        if (isExtending)
-        {
-            if (chain.localScale.y < maxChainLength)
-            {
-                chain.localScale += new Vector3(0f, chainExtensionSpeed * Time.deltaTime, 0f);
-                door.position = new Vector3(door.position.x, originalDoorPosition.y - (chain.localScale.y - originalChainHeight), door.position.z);
-            }
-        }
-        else
-        {
-            if (chain.localScale.y > minChainLength)
-            {
-                chain.localScale -= new Vector3(0f, chainExtensionSpeed * Time.deltaTime, 0f);
-                door.position = new Vector3(door.position.x, originalDoorPosition.y - (chain.localScale.y - originalChainHeight), door.position.z);
-            }
-        }
+        float delta = chainExtensionSpeed * Time.deltaTime;
+        float scaleDelta = delta * 0.5f;
+
+        float currentScaleY = chain.localScale.y;
+        float targetScaleY = isExtending
+            ? Mathf.Min(currentScaleY + scaleDelta, maxChainLength)
+            : Mathf.Max(currentScaleY - scaleDelta, originalChainLength);
+
+        float appliedScaleDelta = targetScaleY - currentScaleY;
+
+        chain.localScale = new Vector3(chain.localScale.x, targetScaleY, chain.localScale.z);
+        chain.position += Vector3.down * appliedScaleDelta;
+        door.position += Vector3.down * (appliedScaleDelta * 2f);
     }
 }
