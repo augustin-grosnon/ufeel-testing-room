@@ -40,7 +40,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4970741399400872}
   m_Layer: 0
-  m_Name: Door_2_Black
+  m_Name: Door_Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
