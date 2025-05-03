@@ -11,9 +11,10 @@ public class CarouselRotator : MonoBehaviour
     [Header("Target Rotation")]
     public bool rotateToTarget = false;
     public float targetAngle = 0f;
-    public float rotationSmoothSpeed = 90f;
+    public float rotationSmoothSpeed = 3f;
 
     private Transform[] doorHolders;
+    private float currentAngle = 0f;
 
     void Start()
     {
@@ -28,18 +29,20 @@ public class CarouselRotator : MonoBehaviour
                 i++;
             }
         }
+
+        PositionDoors();
     }
 
     void Update()
     {
-        if (isRotatingContinuously)
-        {
-            RotateCarousel(rotationSpeed * Time.deltaTime);
-        }
-
         if (rotateToTarget)
         {
             RotateToAngle(targetAngle);
+        }
+        else if (isRotatingContinuously)
+        {
+            currentAngle += rotationSpeed * Time.deltaTime * 360f / 20f;
+            PositionDoors();
         }
 
         HandleInput();
@@ -53,19 +56,25 @@ public class CarouselRotator : MonoBehaviour
         }
     }
 
-    public void RotateCarousel(float amount)
+    void PositionDoors()
     {
-        // transform.Rotate(Vector3.up, amount, Space.Self);
+        float angleStep = 360f / doorHolders.Length;
 
         for (int i = 0; i < doorHolders.Length; i++)
         {
-            float angle = i * (360f / doorHolders.Length) + (rotationSpeed * Time.time * 360f / 20f);
+            float angle = i * angleStep + currentAngle;
             float angleRad = Mathf.Deg2Rad * angle;
             float x = Mathf.Sin(angleRad) * radius;
             float z = Mathf.Cos(angleRad) * radius;
 
             doorHolders[i].localPosition = new Vector3(x, doorHolders[i].localPosition.y, z);
         }
+    }
+
+    public void RotateCarousel(float amount)
+    {
+        currentAngle += amount;
+        PositionDoors();
     }
 
     public void SetIsRotating(bool shouldRotate)
@@ -75,11 +84,11 @@ public class CarouselRotator : MonoBehaviour
 
     public void RotateToAngle(float angle)
     {
-        float currentY = transform.localEulerAngles.y;
-        float newY = Mathf.MoveTowardsAngle(currentY, angle, rotationSmoothSpeed * Time.deltaTime);
-        transform.localRotation = Quaternion.Euler(0f, newY, 0f);
+        float newAngle = Mathf.MoveTowardsAngle(currentAngle, angle, rotationSmoothSpeed * Time.deltaTime);
+        currentAngle = newAngle;
+        PositionDoors();
 
-        if (Mathf.Approximately(newY, angle))
+        if (Mathf.Approximately(newAngle, angle))
         {
             rotateToTarget = false;
         }
@@ -90,5 +99,12 @@ public class CarouselRotator : MonoBehaviour
         targetAngle = angle;
         rotateToTarget = true;
         isRotatingContinuously = false;
+    }
+
+    public void RotateToDoor(int doorIndex)
+    {
+        float angleStep = 360f / doorHolders.Length;
+        float targetDoorAngle = -doorIndex * angleStep;
+        TriggerRotateTo(targetDoorAngle);
     }
 }

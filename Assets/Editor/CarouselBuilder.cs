@@ -53,14 +53,26 @@ public class CarouselBuilder : EditorWindow
             float x = Mathf.Sin(angle) * radius;
             float z = Mathf.Cos(angle) * radius;
 
-            Vector3 pos = new Vector3(x, 0f, z);
-            Quaternion rot = Quaternion.Euler(0f, -i * angleStep, 0f);
+            Vector3 pos = new(x, 0f, z);
+            // Quaternion rot = Quaternion.Euler(0f, -i * angleStep, 0f);
 
             GameObject holder = (GameObject)PrefabUtility.InstantiatePrefab(doorHolderPrefab);
             holder.name = $"DoorHolder_{i + 1}";
+
+            var doorID = i + 1;
+
+            if (holder.TryGetComponent<DoorIdentifier>(out var doorIDComponent))
+            {
+                doorIDComponent.doorID = doorID;
+            }
+            else
+            {
+                doorIDComponent = holder.AddComponent<DoorIdentifier>();
+                doorIDComponent.doorID = doorID;
+            }
+
             holder.transform.SetParent(carouselTop, false);
             holder.transform.localPosition = pos;
-            // holder.transform.localRotation = rot;
         }
 
         Debug.Log($"Placed {doorCount} doors around carousel.");

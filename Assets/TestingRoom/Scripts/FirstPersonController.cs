@@ -9,6 +9,7 @@ public class FirstPersonController : MonoBehaviour
     public Transform cameraRoot;
     public float mouseSensitivity = 2f;
     private float pitch = 0f;
+    private bool isUsingMouseToMoveView = true;
 
     [Header("Gravity")]
     public float gravity = -9.81f;
@@ -25,7 +26,32 @@ public class FirstPersonController : MonoBehaviour
     void Update()
     {
         HandleMovement();
-        HandleMouseLook();
+
+        if (isUsingMouseToMoveView)
+        {
+            HandleMouseLook();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            ToggleCursor();
+        }
+    }
+
+    void ToggleCursor()
+    {
+        if (Cursor.lockState == CursorLockMode.Locked)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        isUsingMouseToMoveView = !isUsingMouseToMoveView;
     }
 
     void HandleMovement()
@@ -38,7 +64,7 @@ public class FirstPersonController : MonoBehaviour
 
         move.y = verticalVelocity;
 
-        controller.Move(move * moveSpeed * Time.deltaTime);
+        controller.Move(moveSpeed * Time.deltaTime * move);
     }
 
     void HandleMouseLook()

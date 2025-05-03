@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5396850443719852430}
   - component: {fileID: 1889311066702588197}
+  - component: {fileID: 3326336205907145282}
   m_Layer: 0
   m_Name: DoorHolder_01
   m_TagString: DoorHolder
@@ -52,6 +53,18 @@ MonoBehaviour:
   maxChainLength: 11
   doorLowerSpeed: 3
   minChainLength: 0
+--- !u!114 &3326336205907145282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6585791946563480160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d733cf2a8f3197883aa5c7d5d3e178, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8338033674735192335
 GameObject:
   m_ObjectHideFlags: 0
