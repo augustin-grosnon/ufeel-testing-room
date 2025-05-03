@@ -49,8 +49,9 @@ MonoBehaviour:
   chain: {fileID: 3090934929204730002}
   door: {fileID: 5672190293415079176}
   chainExtensionSpeed: 5
-  maxChainLength: 16
+  maxChainLength: 11
   doorLowerSpeed: 3
+  minChainLength: 0
 --- !u!1 &8338033674735192335
 GameObject:
   m_ObjectHideFlags: 0

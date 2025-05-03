@@ -6,7 +6,7 @@ public class DoorChainController : MonoBehaviour
     public Transform chain;
     public Transform door;
     public float chainExtensionSpeed = 5f;
-    public float maxChainLength = 16f;
+    public float maxChainLength = 11f;
     public float doorLowerSpeed = 3f;
     public float minChainLength = 0f;
 
@@ -47,10 +47,6 @@ public class DoorChainController : MonoBehaviour
             if (chain.localScale.y < maxChainLength)
             {
                 chain.localScale += new Vector3(0f, chainExtensionSpeed * Time.deltaTime, 0f);
-            }
-
-            if (chain.localScale.y < maxChainLength)
-            {
                 door.position = new Vector3(door.position.x, originalDoorPosition.y - (chain.localScale.y - originalChainHeight), door.position.z);
             }
         }
@@ -59,10 +55,6 @@ public class DoorChainController : MonoBehaviour
             if (chain.localScale.y > minChainLength)
             {
                 chain.localScale -= new Vector3(0f, chainExtensionSpeed * Time.deltaTime, 0f);
-            }
-
-            if (chain.localScale.y > minChainLength)
-            {
                 door.position = new Vector3(door.position.x, originalDoorPosition.y - (chain.localScale.y - originalChainHeight), door.position.z);
             }
         }
