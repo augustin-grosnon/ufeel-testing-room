@@ -19,10 +19,12 @@ public class EyeTrackingSetup : MonoBehaviour
     private int _directionIndex = 0;
     private bool _displayStartupMessage = true;
     private static readonly EyeDirectionRatio[] EyeDirectionRatios = new EyeDirectionRatio[Directions.Length];
-    private string error;
+    private EyeTrackingError error;
 
     public GameObject startupMessage;
     public RawImage eyeDetection;
+    public Texture normalEyeDetectionTexture;
+    public Texture notEyeDetectionTexture;
 
     private static String GetDirectionMessage(int directionIndex)
     {
@@ -39,14 +41,15 @@ public class EyeTrackingSetup : MonoBehaviour
     void Update()
     {
         error = EyeTrackingReceiver.Error.error;
-        // TODO: don't spam toggle setActive true/false
-        eyeDetection.gameObject.SetActive(true);
         
-        if (!String.IsNullOrEmpty(error))
+        if (error == EyeTrackingError.NONE)
         {
-            Debug.Log("Got error from EyeTrackingReceiver: " + error);
-            if (EyeTrackingReceiver.Error.error == "No eyes detected")
-                eyeDetection.gameObject.SetActive(false);
+            eyeDetection.texture = normalEyeDetectionTexture;
+        }
+        else
+        {
+            eyeDetection.texture = notEyeDetectionTexture;
+            return;
         }
         
         if (!Input.GetKeyDown(KeyCode.Return))
@@ -54,10 +57,15 @@ public class EyeTrackingSetup : MonoBehaviour
         if (_displayStartupMessage)
         {
             _displayStartupMessage = false;
-            Text text = startupMessage.GetComponent<Text>();
-            text.text = GetDirectionMessage(_directionIndex);
+            startupMessage.GetComponent<Text>().text = GetDirectionMessage(_directionIndex);
             return;
         }
+        
+        if (EyeTrackingReceiver.Error.error == EyeTrackingError.NO_EYES_DETECTED)
+        {
+            return;
+        }
+        
         if (!_displayStartupMessage && _directionIndex < Directions.Length)
         {
             var data = EyeTrackingReceiver.CurrentEyeRatios;
@@ -76,6 +84,7 @@ public class EyeTrackingSetup : MonoBehaviour
                 return;
             }
             text.gameObject.SetActive(false);
+            eyeDetection.gameObject.SetActive(false);
 
             // TODO: make this cleaner
             var eyeTrackingSaveObject = new EyeTrackingSaveObject

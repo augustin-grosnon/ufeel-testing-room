@@ -3,6 +3,10 @@ import socket
 import json
 import numpy as np
 import mediapipe as mp
+from enum import Enum
+
+class EyeTrackingError(Enum):
+    NO_EYES_DETECTED = 1
 
 class EyeTracker:
     def __init__(self):
@@ -46,7 +50,7 @@ class EyeTracker:
 
         results = self.face_mesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         if not results.multi_face_landmarks:
-            self.sock.sendto(json.dumps({"error": "No eyes detected"}).encode(), (self.UDP_IP, self.UDP_PORT))
+            self.sock.sendto(json.dumps({"error": EyeTrackingError.NO_EYES_DETECTED.value}).encode(), (self.UDP_IP, self.UDP_PORT))
             return
         h, w, _ = frame.shape
         for face_landmarks in results.multi_face_landmarks:
