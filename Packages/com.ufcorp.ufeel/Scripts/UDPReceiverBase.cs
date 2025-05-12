@@ -44,7 +44,7 @@ public abstract class UDPReceiverBase
             }
             catch (System.Exception e)
             {
-                Debug.Log("Exception in ReceiveData: " + e.Message);
+                Debug.LogError("Exception in ReceiveData: " + e.Message);
             }
         }
     }

@@ -41,7 +41,7 @@ public class EmotionReceiver : UDPReceiverBase
         }
         catch (System.Exception e)
         {
-            Debug.Log("Error parsing emotion JSON: " + e.Message);
+            Debug.LogError("Error parsing emotion JSON: " + e.Message);
         }
     }
 }

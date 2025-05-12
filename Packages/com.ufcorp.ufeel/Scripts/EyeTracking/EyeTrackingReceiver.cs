@@ -40,7 +40,7 @@ public class EyeTrackingReceiver : UDPReceiverBase
         }
         catch (System.Exception e)
         {
-            Debug.Log("Error parsing eye direction JSON: " + e.Message);
+            Debug.LogError("Error parsing eye direction JSON: " + e.Message);
         }
     }
 }
