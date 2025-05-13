@@ -18,10 +18,10 @@ public class DoorChainController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
-            isExtending = true;
-        if (Input.GetKeyDown(KeyCode.F))
-            isExtending = false;
+        // if (Input.GetKeyDown(KeyCode.E))
+        //     isExtending = true;
+        // if (Input.GetKeyDown(KeyCode.F))
+        //     isExtending = false;
 
         ExtendChainAndMoveDoor();
     }

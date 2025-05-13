@@ -3263,6 +3263,10 @@ PrefabInstance:
       propertyPath: doorID
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3326336205907145282, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
+      propertyPath: doorName
+      value: Demo game
+      objectReference: {fileID: 0}
     - target: {fileID: 5396850443719852430, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3303,6 +3307,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5638924712091768260, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5638924712091768260, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
+      propertyPath: m_Size.y
+      value: 2.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5638924712091768260, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
+      propertyPath: m_Size.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5638924712091768260, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6585791946563480160, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
       propertyPath: m_Name
       value: DoorHolder_1
@@ -3311,12 +3331,12 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6585791946563480160, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 5666496242464194362, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1898389482}
-    - targetCorrespondingSourceObject: {fileID: 6585791946563480160, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
+      addedObject: {fileID: 2027688535}
+    - targetCorrespondingSourceObject: {fileID: 5666496242464194362, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1898389481}
+      addedObject: {fileID: 2027688534}
   m_SourcePrefab: {fileID: 100100000, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
 --- !u!1001 &975112456
 PrefabInstance:
@@ -5226,37 +5246,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5396850443719852430, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
   m_PrefabInstance: {fileID: 253232559}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1898389477 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6585791946563480160, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
-  m_PrefabInstance: {fileID: 962633702}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1898389481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1898389477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f42a118ab4d684e8881b481d345e8362, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _door: {fileID: 2027688527}
---- !u!114 &1898389482
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1898389477}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e71469d886560a9bb416fa3a3bd8b75, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetSceneName: DemoGame
 --- !u!1 &1910048832
 GameObject:
   m_ObjectHideFlags: 0
@@ -40479,6 +40468,32 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5666496242464194362, guid: fe9deabdbadf2e6ac877082cfe29c8c2, type: 3}
   m_PrefabInstance: {fileID: 962633702}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2027688534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027688527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e71469d886560a9bb416fa3a3bd8b75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetSceneName: EyeTracking
+--- !u!114 &2027688535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027688527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f42a118ab4d684e8881b481d345e8362, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _door: {fileID: 2027688527}
 --- !u!1 &2030936042
 GameObject:
   m_ObjectHideFlags: 0

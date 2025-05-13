@@ -21,16 +21,18 @@ public class SceneLoader : MonoBehaviour
         }
     }
 
-    public void LoadSceneAsync(string sceneName)
+    public void LoadSceneAsync(string sceneName, float delay = 0.0f)
     {
         if (!isLoading)
         {
-            StartCoroutine(LoadSceneCoroutine(sceneName));
+            StartCoroutine(LoadSceneCoroutine(sceneName, delay));
         }
     }
 
-    private IEnumerator LoadSceneCoroutine(string sceneName)
+    private IEnumerator LoadSceneCoroutine(string sceneName, float delay)
     {
+        yield return new WaitForSeconds(delay);
+
         isLoading = true;
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
@@ -53,4 +55,4 @@ public class SceneLoader : MonoBehaviour
     }
 }
 
-        // TODO: perform fade-out transition
+// TODO: perform fade-out transition

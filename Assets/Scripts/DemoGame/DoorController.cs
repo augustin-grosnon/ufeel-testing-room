@@ -30,3 +30,5 @@ public class DoorController : MonoBehaviour
         }
     }
 }
+
+// TODO: update to directly retrieve the door from the attached object
