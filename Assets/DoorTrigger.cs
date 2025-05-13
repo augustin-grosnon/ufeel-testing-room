@@ -11,7 +11,7 @@ public class DoorTrigger : MonoBehaviour
         if (TryGetComponent<DoorController>(out var doorController))
         {
             _doorController = doorController;
-            _doorController.SetDoorColor(Color.red);
+            // _doorController.SetDoorColor(Color.red);
         }
         else
         {
@@ -25,7 +25,7 @@ public class DoorTrigger : MonoBehaviour
         {
             if (!string.IsNullOrEmpty(targetSceneName))
             {
-                SceneLoader.Instance.LoadSceneAsync(targetSceneName, 1.5f);
+                SceneLoader.Instance.LoadSceneAsync(targetSceneName, 3.0f);
                 _doorController.ToggleDoor();
                 // TODO: load scene only if the player enters the door
             }
@@ -52,16 +52,16 @@ public class DoorTrigger : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
-    {
-        if (TryGetComponent<BoxCollider>(out var box) && box.isTrigger) // ! needs the box collider to be trigger -» setup in prefab for all doors
-        {
-            Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
+    // void OnDrawGizmos()
+    // {
+    //     if (TryGetComponent<BoxCollider>(out var box) && box.isTrigger) // ! needs the box collider to be trigger -» setup in prefab for all doors
+    //     {
+    //         Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
 
-            Gizmos.matrix = transform.localToWorldMatrix;
-            Gizmos.DrawCube(box.center, box.size);
+    //         Gizmos.matrix = transform.localToWorldMatrix;
+    //         Gizmos.DrawCube(box.center, box.size);
 
-            Gizmos.matrix = Matrix4x4.identity;
-        }
-    }
+    //         Gizmos.matrix = Matrix4x4.identity;
+    //     }
+    // }
 }

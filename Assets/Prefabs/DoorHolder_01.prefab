@@ -231,11 +231,64 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 65161449079294308, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 65161449079294308, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+      propertyPath: m_Size.y
+      value: 2.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 65161449079294308, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+      propertyPath: m_Size.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 65161449079294308, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1534469393933210, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5841302458948666766}
+    - targetCorrespondingSourceObject: {fileID: 1534469393933210, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 523172004727368778}
   m_SourcePrefab: {fileID: 100100000, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+--- !u!1 &5666496242464194362 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1534469393933210, guid: 26790669cef646944a4d6561a0374e14, type: 3}
+  m_PrefabInstance: {fileID: 5667221407777234080}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5841302458948666766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5666496242464194362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f42a118ab4d684e8881b481d345e8362, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _door: {fileID: 5666496242464194362}
+--- !u!114 &523172004727368778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5666496242464194362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e71469d886560a9bb416fa3a3bd8b75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetSceneName: EyeTracking
 --- !u!4 &5672190293415079176 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4970741399400872, guid: 26790669cef646944a4d6561a0374e14, type: 3}

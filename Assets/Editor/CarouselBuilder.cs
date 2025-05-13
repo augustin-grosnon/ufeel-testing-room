@@ -5,7 +5,7 @@ public class CarouselBuilder : EditorWindow
 {
     GameObject doorHolderPrefab;
     Transform carouselTop;
-    int doorCount = 64;
+    int doorCount = 44;
     float radius = 14.8f;
 
     [MenuItem("Tools/Build Carousel")]
@@ -78,3 +78,9 @@ public class CarouselBuilder : EditorWindow
         Debug.Log($"Placed {doorCount} doors around carousel.");
     }
 }
+
+// TODO: implement logic to setup the named doors and corresponding scenes easily
+// ? -> for now everything will send to EyeTracking, we need to update the prefab after adding this feature to the tool
+
+// TODO: add parametrization for door color customization
+// ? for now color, later texture and details
