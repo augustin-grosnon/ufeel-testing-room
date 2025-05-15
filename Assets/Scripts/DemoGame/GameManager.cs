@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private Text _instructionText;
     [SerializeField] private Text _scoreText;
-    [SerializeField] private DoorController _doorController;
+    // [SerializeField] private DoorController _doorController;
     [SerializeField] private float _requiredMatchDuration = 1f;
     [SerializeField] private Transform _player;
     [SerializeField] private GameObject _watermelonPrefab;
@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
             {
                 _instructionText.color = Color.green;
                 _successTriggered = true;
-                _doorController.ToggleDoor();
+                // _doorController.ToggleDoor();
 
                 _score++;
                 UpdateScoreText();
@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
 
-        _doorController.ToggleDoor();
+        // _doorController.ToggleDoor();
 
         yield return new WaitForSeconds(1f);
 
@@ -171,10 +171,10 @@ public class GameManager : MonoBehaviour
         _instructionText.text = "Be " + _currentTarget;
         _instructionText.color = Color.red;
 
-        if (_doorController != null && _emotionColors.ContainsKey(_currentTarget))
-        {
-            _doorController.SetDoorColor(_emotionColors[_currentTarget]);
-        }
+        // if (_doorController != null && _emotionColors.ContainsKey(_currentTarget))
+        // {
+        //     _doorController.SetDoorColor(_emotionColors[_currentTarget]);
+        // }
     }
 
     private string DetermineDominantEmotion(EmotionData data)

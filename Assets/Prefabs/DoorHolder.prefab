@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 5396850443719852430}
   - component: {fileID: 1889311066702588197}
   - component: {fileID: 3326336205907145282}
+  - component: {fileID: 3980208049992079370}
   m_Layer: 0
-  m_Name: DoorHolder_01
+  m_Name: DoorHolder
   m_TagString: DoorHolder
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,6 +66,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   doorID: 0
   doorName: 
+  targetSceneName: 
+--- !u!114 &3980208049992079370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6585791946563480160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee8735f03f6956d6585e62972d24e8eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trigger: {fileID: 523172004727368778}
+  controller: {fileID: 4306668581189957823}
 --- !u!1 &8338033674735192335
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,29 +269,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1534469393933210, guid: 26790669cef646944a4d6561a0374e14, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5841302458948666766}
+      addedObject: {fileID: 523172004727368778}
     - targetCorrespondingSourceObject: {fileID: 1534469393933210, guid: 26790669cef646944a4d6561a0374e14, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 523172004727368778}
+      addedObject: {fileID: 4306668581189957823}
   m_SourcePrefab: {fileID: 100100000, guid: 26790669cef646944a4d6561a0374e14, type: 3}
 --- !u!1 &5666496242464194362 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1534469393933210, guid: 26790669cef646944a4d6561a0374e14, type: 3}
   m_PrefabInstance: {fileID: 5667221407777234080}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5841302458948666766
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5666496242464194362}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f42a118ab4d684e8881b481d345e8362, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _door: {fileID: 5666496242464194362}
 --- !u!114 &523172004727368778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -288,7 +291,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e71469d886560a9bb416fa3a3bd8b75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetSceneName: EyeTracking
+  targetSceneName: 
+--- !u!114 &4306668581189957823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5666496242464194362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 030b072ca01e4658caab884fc8e1d729, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _door: {fileID: 5666496242464194362}
 --- !u!4 &5672190293415079176 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4970741399400872, guid: 26790669cef646944a4d6561a0374e14, type: 3}

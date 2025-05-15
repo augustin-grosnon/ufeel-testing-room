@@ -4,6 +4,7 @@ public class DoorTrigger : MonoBehaviour
 {
     private bool playerInRange = false;
     private DoorController _doorController;
+    // [SerializeField] private DoorIdentifier doorIdentifier;
     public string targetSceneName;
 
     void Start()
@@ -52,16 +53,20 @@ public class DoorTrigger : MonoBehaviour
         }
     }
 
-    // void OnDrawGizmos()
-    // {
-    //     if (TryGetComponent<BoxCollider>(out var box) && box.isTrigger) // ! needs the box collider to be trigger -» setup in prefab for all doors
-    //     {
-    //         Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
+    void OnDrawGizmos()
+    {
+        if (TryGetComponent<BoxCollider>(out var box) && box.isTrigger)
+        {
+            Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
 
-    //         Gizmos.matrix = transform.localToWorldMatrix;
-    //         Gizmos.DrawCube(box.center, box.size);
+            Gizmos.matrix = transform.localToWorldMatrix;
+            Gizmos.DrawCube(box.center, box.size);
 
-    //         Gizmos.matrix = Matrix4x4.identity;
-    //     }
-    // }
+            Gizmos.matrix = Matrix4x4.identity;
+        }
+    }
 }
+
+// TODO: clean public -» check good practive between private SerializedField and public
+
+// TODO: reorder architecture, put everything where it should be
