@@ -1,8 +1,6 @@
 using System;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-using Unity.Plastic.Newtonsoft.Json;
 
 [System.Serializable]
 public class EyeTrackingSaveObject
@@ -19,7 +17,6 @@ public class EyeTrackingSetup : MonoBehaviour
     private int _directionIndex = 0;
     private bool _displayStartupMessage = true;
     private static readonly EyeDirectionRatio[] EyeDirectionRatios = new EyeDirectionRatio[Directions.Length];
-    private EyeTrackingError error;
 
     public GameObject startupMessage;
     public RawImage eyeDetection;
@@ -36,13 +33,12 @@ public class EyeTrackingSetup : MonoBehaviour
     void Awake()
     {
         var _ = EyeTrackingReceiver.Instance;
+        eyeDetection.color = Color.red;
     }
 
     void Update()
     {
-        error = EyeTrackingReceiver.Error.error;
-        
-        if (error == EyeTrackingError.NONE)
+        if (EyeTrackingReceiver.Error.error == EyeTrackingError.NONE)
         {
             eyeDetection.texture = normalEyeDetectionTexture;
         }
@@ -58,11 +54,6 @@ public class EyeTrackingSetup : MonoBehaviour
         {
             _displayStartupMessage = false;
             startupMessage.GetComponent<Text>().text = GetDirectionMessage(_directionIndex);
-            return;
-        }
-        
-        if (EyeTrackingReceiver.Error.error == EyeTrackingError.NO_EYES_DETECTED)
-        {
             return;
         }
         
@@ -86,7 +77,6 @@ public class EyeTrackingSetup : MonoBehaviour
             text.gameObject.SetActive(false);
             eyeDetection.gameObject.SetActive(false);
 
-            // TODO: make this cleaner
             var eyeTrackingSaveObject = new EyeTrackingSaveObject
             {
                 left = new []{EyeDirectionRatios[0].horizontal, EyeDirectionRatios[0].vertical},

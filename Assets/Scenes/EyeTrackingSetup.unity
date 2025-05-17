@@ -234,6 +234,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startupMessage: {fileID: 379865073}
   eyeDetection: {fileID: 1333073981}
+  normalEyeDetectionTexture: {fileID: 2800000, guid: 00c1f0d8341aaee4ab62db1955f82982, type: 3}
+  notEyeDetectionTexture: {fileID: 2800000, guid: 9fa4fd3bbb6ed95459468b9600b584d6, type: 3}
 --- !u!224 &510302935
 RectTransform:
   m_ObjectHideFlags: 0
