@@ -3,7 +3,7 @@ name: Mirror Repository
 on:
   push:
     branches:
-      - main
+      - '**'
 
 env:
   MIRROR_URL: git@github.com:EpitechPromo2027/G-EIP-600-STG-6-1-eip-noe.tritsch.git
