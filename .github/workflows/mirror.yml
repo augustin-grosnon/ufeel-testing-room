@@ -29,4 +29,5 @@ jobs:
     - name: Push to Mirror Repository
       run: |
         git remote add mirror $MIRROR_URL
-        git push --mirror mirror
+        git push mirror --all
+        git push mirror --tags
