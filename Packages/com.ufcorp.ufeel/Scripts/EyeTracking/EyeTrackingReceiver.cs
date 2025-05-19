@@ -52,6 +52,11 @@ public class EyeTrackingReceiver : UDPReceiverBase
         PythonServerController.Instance.EnsureServerRunning();
     }
 
+    public static bool IsError()
+    {
+        return Error.error != EyeTrackingError.NONE;
+    }
+    
     protected override void ProcessData(byte[] data)
     {
         string json = Encoding.ASCII.GetString(data);

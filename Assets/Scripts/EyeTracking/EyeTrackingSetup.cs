@@ -19,6 +19,7 @@ public class EyeTrackingSetup : MonoBehaviour
     private static readonly EyeDirectionRatio[] EyeDirectionRatios = new EyeDirectionRatio[Directions.Length];
 
     public GameObject startupMessage;
+    public Text noEyesDetectedMessage;
     public RawImage eyeDetection;
     public Texture normalEyeDetectionTexture;
     public Texture notEyeDetectionTexture;
@@ -38,14 +39,16 @@ public class EyeTrackingSetup : MonoBehaviour
 
     void Update()
     {
-        if (EyeTrackingReceiver.Error.error == EyeTrackingError.NONE)
+        noEyesDetectedMessage.gameObject.SetActive(EyeTrackingReceiver.Error.error == EyeTrackingError.NO_EYES_DETECTED);
+        
+        switch (EyeTrackingReceiver.Error.error)
         {
-            eyeDetection.texture = normalEyeDetectionTexture;
-        }
-        else
-        {
-            eyeDetection.texture = notEyeDetectionTexture;
-            return;
+            case EyeTrackingError.NO_EYES_DETECTED:
+                eyeDetection.texture = notEyeDetectionTexture;
+                return;
+            default:
+                eyeDetection.texture = normalEyeDetectionTexture;
+                break;
         }
         
         if (!Input.GetKeyDown(KeyCode.Return))
@@ -53,6 +56,7 @@ public class EyeTrackingSetup : MonoBehaviour
         if (_displayStartupMessage)
         {
             _displayStartupMessage = false;
+            // TODO: use Text Object directly
             startupMessage.GetComponent<Text>().text = GetDirectionMessage(_directionIndex);
             return;
         }
@@ -60,7 +64,6 @@ public class EyeTrackingSetup : MonoBehaviour
         if (!_displayStartupMessage && _directionIndex < Directions.Length)
         {
             var data = EyeTrackingReceiver.CurrentEyeRatios;
-            Text text = startupMessage.GetComponent<Text>();
             
             EyeDirectionRatios[_directionIndex] = new EyeDirectionRatio
             {
@@ -71,10 +74,11 @@ public class EyeTrackingSetup : MonoBehaviour
 
             if (_directionIndex < Directions.Length)
             {
-                text.text = GetDirectionMessage(_directionIndex);
+                // TODO: use Text Object directly
+                startupMessage.GetComponent<Text>().text = GetDirectionMessage(_directionIndex);
                 return;
             }
-            text.gameObject.SetActive(false);
+            startupMessage.gameObject.SetActive(false);
             eyeDetection.gameObject.SetActive(false);
 
             var eyeTrackingSaveObject = new EyeTrackingSaveObject
