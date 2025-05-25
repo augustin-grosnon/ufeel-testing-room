@@ -9,6 +9,7 @@ public class EyeDirectionData
     public bool up;
     public bool down;
     public bool center;
+    public int mainDirection;
 }
 
 [System.Serializable]
