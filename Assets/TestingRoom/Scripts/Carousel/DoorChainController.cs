@@ -6,7 +6,7 @@ public class DoorChainController : MonoBehaviour
     public Transform chain;
     public Transform door;
     public float chainExtensionSpeed = 5f;
-    public float maxChainLength = 5.7f;
+    public float maxChainLength = 5.9f;
 
     private float originalChainLength;
     private bool isExtending = false;

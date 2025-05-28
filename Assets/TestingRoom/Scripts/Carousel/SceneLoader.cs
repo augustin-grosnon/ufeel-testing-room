@@ -53,6 +53,45 @@ public class SceneLoader : MonoBehaviour
 
         isLoading = false;
     }
+
+    public void LoadAdditiveSceneAtPosition(string sceneName, Vector3 targetPosition, System.Action onLoaded = null)
+    {
+        if (!isLoading)
+        {
+            StartCoroutine(LoadAdditiveSceneCoroutine(sceneName, targetPosition, onLoaded));
+        }
+    }
+
+    private IEnumerator LoadAdditiveSceneCoroutine(string sceneName, Vector3 targetPosition, System.Action onLoaded)
+    {
+        isLoading = true;
+
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+
+        while (!asyncLoad.isDone)
+            yield return null;
+
+        Scene loadedScene = SceneManager.GetSceneByName(sceneName);
+        while (!loadedScene.isLoaded)
+            yield return null;
+
+        foreach (GameObject rootObj in loadedScene.GetRootGameObjects())
+        {
+            if (rootObj.name == "CorridorRoot") // TODO: check if this main object detection logic is appropriate
+            {
+                rootObj.transform.position = targetPosition;
+                break;
+            }
+        }
+
+        onLoaded?.Invoke();
+        isLoading = false;
+    }
+
+    public bool IsLoading()
+    {
+        return isLoading;
+    }
 }
 
 // TODO: perform fade-out transition
