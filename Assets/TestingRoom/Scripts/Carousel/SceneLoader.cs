@@ -77,7 +77,7 @@ public class SceneLoader : MonoBehaviour
 
         foreach (GameObject rootObj in loadedScene.GetRootGameObjects())
         {
-            if (rootObj.name == "CorridorRoot") // TODO: check if this main object detection logic is appropriate
+            if (rootObj.name == "Root") // TODO: check if this main object detection logic is appropriate
             {
                 rootObj.transform.position = targetPosition;
                 break;
