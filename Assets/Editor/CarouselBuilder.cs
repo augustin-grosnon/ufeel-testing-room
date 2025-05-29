@@ -6,6 +6,7 @@ public class CarouselBuilder : EditorWindow
 {
     GameObject doorHolderPrefab;
     Transform carouselTop;
+    GameObject wallToDisable;
     int doorCount = 44;
     float radius = 19.7f;
 
@@ -36,6 +37,7 @@ public class CarouselBuilder : EditorWindow
 
         doorHolderPrefab = (GameObject)EditorGUILayout.ObjectField("Door Holder Prefab", doorHolderPrefab, typeof(GameObject), false);
         carouselTop = (Transform)EditorGUILayout.ObjectField("Door Holder Container (Parent)", carouselTop, typeof(Transform), true);
+        wallToDisable = (GameObject)EditorGUILayout.ObjectField("Wall To Disable", wallToDisable, typeof(GameObject), true);
         doorCount = EditorGUILayout.IntField("Number of Doors", doorCount);
         radius = EditorGUILayout.FloatField("Radius", radius);
 
@@ -111,7 +113,14 @@ public class CarouselBuilder : EditorWindow
                 {
                     idComp.targetSceneName = special.targetSceneName; // TODO: integrate enum (DoorIdentifierName), avoid duplicata
                     references.trigger.targetSceneName = special.targetSceneName; // TODO: remove
-                    references.controller.SetDoorColor(special.doorColor); // TODO: check for potential null value
+
+                    if (special.doorColor != null)
+                        references.controller.SetDoorColor(special.doorColor);
+
+                    if (wallToDisable != null)
+                    {
+                        references.trigger.wallToDisable = wallToDisable;
+                    }
                 }
             }
         }
