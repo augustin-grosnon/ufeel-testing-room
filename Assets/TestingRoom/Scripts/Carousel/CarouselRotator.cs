@@ -5,7 +5,7 @@ public class CarouselRotator : MonoBehaviour
     [Header("Rotation Settings")]
     public float rotationSpeed = 0.5f;
     public bool isRotatingContinuously = true;
-    public float radius = 14.8f;
+    public float radius = 19.7f;
     public Transform doorHoldersParent;
 
     [Header("Target Rotation")]

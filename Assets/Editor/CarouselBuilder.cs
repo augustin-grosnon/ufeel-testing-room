@@ -7,7 +7,7 @@ public class CarouselBuilder : EditorWindow
     GameObject doorHolderPrefab;
     Transform carouselTop;
     int doorCount = 44;
-    float radius = 14.8f;
+    float radius = 19.7f;
 
     [System.Serializable]
     public class SpecialDoorConfig
