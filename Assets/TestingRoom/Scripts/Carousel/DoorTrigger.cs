@@ -46,13 +46,13 @@ public class DoorTrigger : MonoBehaviour
 
             // SceneLoader.Instance.LoadSceneAsync(targetSceneName, 3.0f);
 
-            SceneLoader.Instance.LoadAdditiveSceneAtPosition(targetSceneName, new Vector3(0.0f, 0.0f, 20f));
+            SceneLoader.Instance.LoadAdditiveSceneAtPosition(targetSceneName, new Vector3(0.0f, 0.0f, 20f), () =>
+            {
+                _doorController.ToggleDoor();
+            }
+            );
 
-            // TODO: toggle door only when the scene is loaded
             // TODO: start loading when the door touches the ground
-
-            _doorController.ToggleDoor();
-            // TODO: load scene only if the player enters the door
         }
     }
 
