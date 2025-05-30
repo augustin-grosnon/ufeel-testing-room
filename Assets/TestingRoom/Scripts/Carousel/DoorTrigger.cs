@@ -35,14 +35,14 @@ public class DoorTrigger : MonoBehaviour
                 return;
             }
 
-                if (wallToDisable != null)
-                {
-                    wallToDisable.SetActive(false);
-                }
-                else
-                {
-                    Debug.LogWarning("Wall to disable is not set.");
-                }
+            if (wallToDisable != null)
+            {
+                wallToDisable.SetActive(false);
+            }
+            else
+            {
+                Debug.LogWarning("Wall to disable is not set.");
+            }
 
             // SceneLoader.Instance.LoadSceneAsync(targetSceneName, 3.0f);
 
