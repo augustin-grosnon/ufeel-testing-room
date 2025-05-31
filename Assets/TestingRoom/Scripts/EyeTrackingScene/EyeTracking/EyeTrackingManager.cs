@@ -95,11 +95,7 @@ public sealed class EyeTrackingManager : MonoBehaviour
         if (data.up) direction.y += 1;
         if (data.down) direction.y -= 1;
 
-        if (direction == Vector2.zero || data.center)
-        {
-            direction = Vector2.zero;
-        }
-        else
+        if (direction != Vector2.zero && !data.center)
         {
             direction.Normalize();
         }
@@ -110,8 +106,20 @@ public sealed class EyeTrackingManager : MonoBehaviour
             0f
         );
 
-        Vector3 worldDirection = offset * playerCamera.transform.forward;
-        return playerCamera.transform.position + worldDirection.normalized * sphereDistance;
+        Vector3 directionFromCamera = offset * playerCamera.transform.forward;
+
+        Vector3 toSphere = _sphere.position - playerCamera.transform.position;
+        float currentDistance = toSphere.magnitude;
+
+        if (currentDistance < sphereDistance)
+        {
+            Vector3 newPosition = playerCamera.transform.position + directionFromCamera.normalized * sphereDistance;
+            return newPosition;
+        }
+        else
+        {
+            return playerCamera.transform.position + directionFromCamera.normalized * currentDistance;
+        }
     }
 
     void MoveSphere(Vector3 targetPosition)
