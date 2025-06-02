@@ -2,3 +2,4 @@ venv
 obj
 bin
 .mypy_cache
+emotion_receiver.log

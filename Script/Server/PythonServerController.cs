@@ -93,7 +93,6 @@ public class PythonServerController
             {
                 if (_pythonProcess != null)
                 {
-
                     _pythonProcess.Kill();
                     _pythonProcess.WaitForExit();
                     _pythonProcess = null;

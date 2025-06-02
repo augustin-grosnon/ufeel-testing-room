@@ -6,8 +6,18 @@ from PIL import Image
 import cv2
 import socket
 import json
+import threading
 import os
 import mediapipe as mp
+
+import logging
+
+logging.basicConfig(
+    filename="emotion_receiver.log",
+    filemode="a",  # Append mode
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.DEBUG  # Use DEBUG level to log everything
+)
 
 class GiMeFive(nn.Module):
     def __init__(self):
@@ -49,8 +59,18 @@ class EmotionDetector:
         ])
         self.mp_face_detection = mp.solutions.face_detection
         self.face_detection = self.mp_face_detection.FaceDetection(model_selection=0, min_detection_confidence=0.5)
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.UDP_IP, self.UDP_PORT = "127.0.0.1", 4243
+
+        self.UDP_IP = "127.0.0.1"
+
+        self.UDP_PORT_RECV = 4101
+        self.UDP_PORT_SEND = 4102
+
+        self.recv_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.recv_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.recv_socket.bind((self.UDP_IP, self.UDP_PORT_RECV))
+
+        self.send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
         self.min_score_threshold = 0.1
         self.emotion_diff_threshold = 0.2
         self.default_font_params = dict(fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=1, thickness=2, lineType=cv2.LINE_AA)
@@ -64,6 +84,33 @@ class EmotionDetector:
             'neutral':  (200, 200, 200)
         }
 
+        self.running = True
+        self.process_enable = False
+
+        thread = threading.Thread(target=self.listen, daemon=True)
+        thread.start()
+
+    def listen(self):
+        logging.info(f"Listening on {self.UDP_IP}:{self.UDP_PORT_RECV}...")
+        while self.running:
+            try:
+                data, _ = self.recv_socket.recvfrom(1024)
+                command_str = data.decode().strip()
+                self.handle_command(command_str)
+            except Exception as e:
+                logging.exception("Error:", e)
+
+    def handle_command(self, command: str):
+        if command == "emotion_detection_on":
+            self.process_enable = True
+            logging.info("Emotion detection enabled")
+        elif command == "emotion_detection_off":
+            self.process_enable = False
+            logging.info("Emotion detection disabled")
+        else:
+            logging.warning(f"Unknown command: {command}")
+
+
     def detect_emotion(self, img):
         tensor = self.transform(img).unsqueeze(0).to(self.device)
         with torch.no_grad():
@@ -71,6 +118,8 @@ class EmotionDetector:
         return [round(s, 2) for s in scores]
 
     def process(self, frame, counter, show_window=True):
+        if not self.process_enable:
+            return
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.face_detection.process(frame_rgb)
         if not results.detections:
@@ -101,7 +150,7 @@ class EmotionDetector:
                     selected = []
                 if selected:
                     self.selected = selected
-                self.sock.sendto(json.dumps(emo_dict).encode(), (self.UDP_IP, self.UDP_PORT))
+                self.send_socket.sendto(json.dumps(emo_dict).encode(), (self.UDP_IP, self.UDP_PORT_SEND))
             else:
                 selected = self.selected
             if show_window:

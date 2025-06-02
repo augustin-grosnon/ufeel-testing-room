@@ -3,6 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
+using System.Text;
+
+
 public abstract class UDPReceiverBase
 {
     public int Port;
@@ -19,30 +22,24 @@ public abstract class UDPReceiverBase
     protected virtual void Setup()
     {
         var udpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
         udpSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-
         udpSocket.Bind(new IPEndPoint(IPAddress.Any, Port));
-
         _udpClient = new UdpClient { Client = udpSocket };
+
         _receiveThread = new Thread(ReceiveData) { IsBackground = true };
         _receiveThread.Start();
     }
 
     protected void ReceiveData()
     {
-        Debug.Log("Salut toi");
         IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, Port);
         while (true)
         {
-            Debug.Log("Looping");
             try
             {
                 byte[]? receivedBytes = _udpClient?.Receive(ref remoteEndPoint);
-                Debug.Log("He narvalo on va te retrouver");
                 if (receivedBytes != null)
                 {
-                    Debug.Log("ReceivedBytes: " + receivedBytes);
                     ProcessData(receivedBytes);
                 }
             }
@@ -64,15 +61,19 @@ public abstract class UDPReceiverBase
     }
     public void SendData(byte[] data)
     {
-        return;
-        if (_udpClient == null)
+        UdpClient sender = new UdpClient();
+
+        if (sender == null)
         {
-            Debug.LogWarning("_udpClient not initialized");
+            Debug.LogWarning("sender not initialized");
             return;
         }
 
-        IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), Port);
-        _udpClient.Send(data, data.Length, serverEndpoint);
+        string json = Encoding.ASCII.GetString(data);
+        Debug.Log("Raw bytes: " + BitConverter.ToString(data));
+        Debug.Log("Sending to port " + (Port - 1) + ": " + json);
+        sender.Send(data, data.Length, "127.0.0.1", Port - 1);
+        sender.Close();
     }
     protected abstract void ProcessData(byte[] data);
 

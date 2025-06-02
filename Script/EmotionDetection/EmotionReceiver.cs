@@ -51,11 +51,13 @@ public class EmotionReceiver : UDPReceiverBase
     public EmotionReceiver(int port) : base(port)
     {
         PythonServerController.Instance.EnsureServerRunning();
+        var json = $"{{\"bluop\": {true.ToString().ToLower()}}}";
+        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
+        SendData(bytes);
     }
 
     protected override void ProcessData(byte[] data)
     {
-        Debug.Log("Here is data" + data);
         // check every time we need to process the data if the server is running ?
         // _emotionServerPython.EnsureServerRunning();
         string json = Encoding.ASCII.GetString(data);
