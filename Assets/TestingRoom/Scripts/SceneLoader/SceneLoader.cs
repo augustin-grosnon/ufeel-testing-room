@@ -84,8 +84,14 @@ public class SceneLoader : MonoBehaviour
             }
         }
 
+        ApplySceneLighting(loadedScene);
         onLoaded?.Invoke();
         isLoading = false;
+    }
+
+    private void ApplySceneLighting(Scene scene)
+    {
+        SceneManager.SetActiveScene(scene);
     }
 
     public bool IsLoading()

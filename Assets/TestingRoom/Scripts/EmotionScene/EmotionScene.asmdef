@@ -1,8 +1,9 @@
 {
-    "name": "TMP",
+    "name": "EmotionSceneDefs",
     "rootNamespace": "",
     "references": [
-        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+        "GUID:a006aee537650c2e0b08db680eeda414",
+        "GUID:7c68d958dcfc118839e766cfeab19e55"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
