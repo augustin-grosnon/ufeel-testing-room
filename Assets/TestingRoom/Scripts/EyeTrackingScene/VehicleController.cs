@@ -25,8 +25,6 @@ public class VehicleController : MonoBehaviour
 
     void Update()
     {
-        // TODO: replace with eye tracking handling
-
         var data = EyeTrackingReceiver.CurrentEyeData;
         if (data.left && !data.right)
             steeringInput = -0.3f;

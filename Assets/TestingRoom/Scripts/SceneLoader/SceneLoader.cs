@@ -94,6 +94,32 @@ public class SceneLoader : MonoBehaviour
         SceneManager.SetActiveScene(scene);
     }
 
+    public void UnloadAdditiveScene(string sceneName, System.Action complete = null)
+    {
+        if (!isLoading)
+        {
+            StartCoroutine(UnloadAdditiveSceneCoroutine(sceneName, complete));
+        }
+    }
+
+    private IEnumerator UnloadAdditiveSceneCoroutine(string sceneName, System.Action complete)
+    {
+        isLoading = true; // TODO: check if we should set loading to true while unloading.
+                          // -> probably important to avoid spamming unload
+                          // -> but the "isLoading" name is not appropriate in this case as it handles both loading and unloading
+
+        AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(sceneName);
+
+        while (!asyncUnload.isDone)
+            yield return null;
+
+        isLoading = false;
+
+        var testingRoomScene = SceneManager.GetSceneByName("TestingRoom");
+        ApplySceneLighting(testingRoomScene);
+        complete?.Invoke();
+    }
+
     public bool IsLoading()
     {
         return isLoading;

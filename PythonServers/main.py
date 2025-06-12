@@ -9,8 +9,8 @@ suppress_stderr()
 from video_processor import VideoProcessor
 
 def main():
-    # vp = VideoProcessor(show_window=True)
-    vp = VideoProcessor(show_window=False)
+    vp = VideoProcessor(show_window=True)
+    # vp = VideoProcessor(show_window=False)
     vp.process()
 
 if __name__ == '__main__':

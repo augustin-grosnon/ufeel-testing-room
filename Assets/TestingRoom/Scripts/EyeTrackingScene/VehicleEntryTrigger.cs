@@ -59,7 +59,12 @@ public class VehicleEntryTrigger : MonoBehaviour
         Debug.Log("Entered vehicle.");
     }
 
-    private void ExitVehicle()
+    public GameObject GetPlayer()
+    {
+        return playerObject;
+    }
+
+    public GameObject ExitVehicle()
     {
         hasEntered = false;
 
@@ -76,5 +81,7 @@ public class VehicleEntryTrigger : MonoBehaviour
             vehicleCamera.enabled = false;
 
         Debug.Log("Exited vehicle.");
+
+        return playerObject;
     }
 }

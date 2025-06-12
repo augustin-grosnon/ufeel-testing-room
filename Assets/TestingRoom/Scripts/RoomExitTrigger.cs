@@ -6,13 +6,12 @@ public class RoomExitTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player")) return;
+
+        if (environmentToDisable != null)
         {
-            if (environmentToDisable != null)
-            {
-                environmentToDisable.SetActive(false);
-                // Debug.Log("Environment disabled after player passed through the door.");
-            }
+            environmentToDisable.SetActive(false);
+            // Debug.Log("Environment disabled after player passed through the door.");
         }
     }
 }
