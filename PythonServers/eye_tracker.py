@@ -1,3 +1,5 @@
+import sys
+
 import cv2
 import socket
 import json
@@ -26,17 +28,17 @@ class EyeTracker:
         self.LEFT_EYE_TOP = 386
         self.LEFT_EYE_BOTTOM = 374
         self.json_ratios = None
-        self.SHIFT = 0.025
+        self.SHIFT = 0.035
 
     def get_eye_directions(self, avg_gaze_ratio: float, avg_vertical_ratio: float) -> dict:
-        directions = [self.json_ratios["left"][0], self.json_ratios["right"][0], self.json_ratios["up"][1], self.json_ratios["down"][1]]
+        directions = [self.json_ratios["left"], self.json_ratios["right"], self.json_ratios["up"], self.json_ratios["down"]]
         left  = bool(avg_gaze_ratio < directions[0] + self.SHIFT)
         right = bool(avg_gaze_ratio > directions[1] - self.SHIFT)
-        up    = bool(avg_vertical_ratio < directions[2] + self.SHIFT)
-        down  = bool(avg_vertical_ratio > directions[3] - self.SHIFT)
+        up    = bool(avg_vertical_ratio > directions[2] - self.SHIFT)
+        down  = bool(avg_vertical_ratio < directions[3] + self.SHIFT)
         center = not (left or right or up or down)
         main_direction = directions.index(max(directions))
-        return {"left": left, "right": right, "up": up, "down": down, "center": center, "mainDirection": main_direction}
+        return {"left": left, "right": right, "up": up, "down": down, "center": center} # "mainDirection": main_direction
 
     def get_ratios(self, avg_gaze_ratio: float, avg_vertical_ratio: float) -> dict:
         return {"horizontal": avg_gaze_ratio, "vertical": avg_vertical_ratio}
