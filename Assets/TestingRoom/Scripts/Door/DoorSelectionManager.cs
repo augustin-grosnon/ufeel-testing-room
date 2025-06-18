@@ -102,11 +102,11 @@ public class DoorSelectionManager : MonoBehaviour
 
     private System.Collections.IEnumerator WaitAndDropDoor(Transform doorHolder)
     {
-        yield return new WaitUntil(() => !carouselRotator.rotateToTarget);
         if (savedChainControllers?.IsExtending() ?? false)
         {
             savedChainControllers.ToggleChainExtension();
         }
+        yield return new WaitUntil(() => !carouselRotator.rotateToTarget);
         DoorChainController chainController = doorHolder.GetComponentInChildren<DoorChainController>();
         if (chainController != null)
         {
