@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 public class DoorSelectionManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class DoorSelectionManager : MonoBehaviour
     public TMP_Dropdown doorNameDropdown;
 
     private string currentDropdownSelection = "";
+    private DoorChainController savedChainControllers = null;
 
     void Awake()
     {
@@ -96,19 +98,20 @@ public class DoorSelectionManager : MonoBehaviour
                 return;
             }
         }
-
-        // Debug.LogWarning("Door name not found: " + name);
     }
 
     private System.Collections.IEnumerator WaitAndDropDoor(Transform doorHolder)
     {
         yield return new WaitUntil(() => !carouselRotator.rotateToTarget);
+        if (savedChainControllers?.IsExtending() ?? false)
+        {
+            savedChainControllers.ToggleChainExtension();
+        }
         DoorChainController chainController = doorHolder.GetComponentInChildren<DoorChainController>();
         if (chainController != null)
         {
-            chainController.TriggerChainExtension(true);
+            chainController.ToggleChainExtension();
+            savedChainControllers = chainController;
         }
     }
 }
-
-// TODO: check if a door was down to make it go up before bringing the new one down

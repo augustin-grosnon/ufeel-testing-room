@@ -26,13 +26,15 @@ public class DoorChainController : MonoBehaviour
         ExtendChainAndMoveDoor();
     }
 
-    public void TriggerChainExtension(bool extend)
+    public void ToggleChainExtension()
     {
-        isExtending = extend;
+        isExtending = !isExtending;
     }
 
+    // ? isExtending is still true even when the door is down so it can be used for extended checks
     void ExtendChainAndMoveDoor()
     {
+        // TODO: check if door is already extended and ignore this logic if it is
         float delta = chainExtensionSpeed * Time.deltaTime;
         float scaleDelta = delta * 0.5f;
 
@@ -46,5 +48,10 @@ public class DoorChainController : MonoBehaviour
         chain.localScale = new Vector3(chain.localScale.x, targetScaleY, chain.localScale.z);
         chain.position += Vector3.down * appliedScaleDelta;
         door.position += Vector3.down * (appliedScaleDelta * 2f);
+    }
+
+    public bool IsExtending()
+    {
+        return isExtending;
     }
 }
