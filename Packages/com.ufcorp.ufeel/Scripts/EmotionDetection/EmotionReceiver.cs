@@ -10,6 +10,7 @@ public class EmotionData
     public float anger;
     public float neutral;
     public float fear;
+    public float disgust;
 }
 
 public class EmotionReceiver : UDPReceiverBase

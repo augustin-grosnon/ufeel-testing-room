@@ -13,6 +13,10 @@ public class PythonServerController
             if (_instance == null)
             {
                 string scriptPath = Application.dataPath + "/../PythonServers/main.py";
+                // string scriptPath = "-c \"import cv2; print(cv2.__version__)\"";
+                // string scriptPath = "--version";
+                // string scriptPath = Application.dataPath + "/../PythonServers/debug.py";
+
                 _instance = new PythonServerController(scriptPath, "Server");
             }
 

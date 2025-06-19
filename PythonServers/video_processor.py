@@ -1,13 +1,15 @@
 import cv2
 from emotion_detector import EmotionDetector
 from eye_tracker import EyeTracker
+from emotion_detector_human import EmotionDetectorHuman
 
 class VideoProcessor:
     def __init__(self, show_window=True, capture_id=0):
         self.show_window = show_window
         self.cap = cv2.VideoCapture(capture_id)
-        self.emotion_detector = EmotionDetector()
-        self.eye_tracker = EyeTracker()
+        # self.emotion_detector = EmotionDetector()
+        # self.eye_tracker = EyeTracker()
+        self.emotion_detector_human = EmotionDetectorHuman()
         self.counter = 0
         self.freq = 5
         self.scale_factor = 1.3
@@ -18,8 +20,9 @@ class VideoProcessor:
             if not ret:
                 break
             frame = cv2.flip(frame, 1)
-            self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
-            self.eye_tracker.process(frame)
+            # self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
+            # self.eye_tracker.process(frame)
+            self.emotion_detector_human.process(frame)
             if self.show_window:
                 resized_frame = cv2.resize(
                     frame,
@@ -36,4 +39,4 @@ class VideoProcessor:
         if self.show_window:
             cv2.destroyAllWindows()
         self.emotion_detector.close()
-        self.eye_tracker.close()
+        # self.eye_tracker.close()
