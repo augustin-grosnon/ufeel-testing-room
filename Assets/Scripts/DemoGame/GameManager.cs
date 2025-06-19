@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
         "surprised",
         "sad",
         "angry",
-        // "scared",
+        "scared",
     };
 
     private readonly Dictionary<string, float> _emotionThresholds = new()
@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
         { "surprised", 0.0f },
         { "sad", 0.0f },
         { "angry", 0.0f },
-        // { "scared", 0.0f },
+        { "scared", 0.0f },
     };
 
     private readonly Dictionary<string, Color> _emotionColors = new()
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         { "surprised", Color.magenta },
         { "sad", Color.blue },
         { "angry", Color.red },
-        // { "scared", Color.gray },
+        { "scared", Color.gray },
     };
 
     [SerializeField] private Text _instructionText;
@@ -185,7 +185,7 @@ public class GameManager : MonoBehaviour
             { "surprised", data.surprise },
             { "sad", data.sadness },
             { "angry", data.anger },
-            // { "scared", data.fear },
+            { "scared", data.fear },
         };
 
         var filteredValues = values

@@ -22,7 +22,7 @@ class VideoProcessor:
             frame = cv2.flip(frame, 1)
             # self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
             # self.eye_tracker.process(frame)
-            self.emotion_detector_human.process(frame)
+            self.emotion_detector_human.process(frame, self.counter, show_window=self.show_window)
             if self.show_window:
                 resized_frame = cv2.resize(
                     frame,
@@ -38,5 +38,6 @@ class VideoProcessor:
         self.cap.release()
         if self.show_window:
             cv2.destroyAllWindows()
-        self.emotion_detector.close()
+        # self.emotion_detector.close()
+        self.emotion_detector_human.close()
         # self.eye_tracker.close()
