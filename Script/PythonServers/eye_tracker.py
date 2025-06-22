@@ -7,9 +7,10 @@ import threading
 from enum import Enum
 
 import logging
+from client_base import ClientBase
 
 logging.basicConfig(
-    filename="emotion_receiver.log",
+    filename="eye_receiver.log",
     filemode="a",  # Append mode
     format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.DEBUG  # Use DEBUG level to log everything
@@ -18,18 +19,12 @@ logging.basicConfig(
 class EyeTrackingError(Enum):
     NO_EYES_DETECTED = 1
 
-class EyeTracker:
+class EyeTracker(ClientBase):
     def __init__(self):
-        self.UDP_IP = "127.0.0.1"
-        self.UDP_PORT_RECV = 4001
-        self.UDP_PORT_SEND = 4002
-
-        self.recv_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.recv_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.recv_socket.bind((self.UDP_IP, self.UDP_PORT_RECV))
-
-        self.send_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+        super().__init__("127.0.0.1", 4000)
+        self.handlers = {
+            "eye_detection": self.toggle_eye_detection,
+        }
         self.mp_face_mesh = mp.solutions.face_mesh
         self.face_mesh = self.mp_face_mesh.FaceMesh(refine_landmarks=True)
         self.RIGHT_EYE_OUTER = 33
@@ -47,28 +42,12 @@ class EyeTracker:
 
         self.running = True
         self.process_enable = False
-        thread = threading.Thread(target=self.listen, daemon=True)
-        thread.start()
 
-    def listen(self):
-        logging.info(f"Listening on {self.UDP_IP}:{self.UDP_PORT_RECV}...")
-        while self.running:
-            try:
-                data, _ = self.recv_socket.recvfrom(1024)
-                command_str = data.decode().strip()
-                self.handle_command(command_str)
-            except Exception as e:
-                logging.exception("Error:", e)
+    def toggle_eye_detection(self, state):
+        self.process_enable = state
+        status = "enabled" if state else "disabled"
+        logging.info(f"Eye detection {status}")
 
-    def handle_command(self, command: str):
-        if command == "eye_tracking_on":
-            self.process_enable = True
-            logging.info("Eye tracking enabled")
-        elif command == "eye_tracking_off":
-            self.process_enable = False
-            logging.info("Eye tracking disabled")
-        else:
-            logging.warning(f"Unknown command: {command}")
 
     def get_eye_directions(self, avg_gaze_ratio: float, avg_vertical_ratio: float) -> dict:
         left  = bool(avg_gaze_ratio < self.json_ratios["left"][0] + self.SHIFT)
@@ -94,7 +73,7 @@ class EyeTracker:
 
         results = self.face_mesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         if not results.multi_face_landmarks:
-            self.send_socket.sendto(json.dumps({"error": EyeTrackingError.NO_EYES_DETECTED.value}).encode(), (self.UDP_IP, self.UDP_PORT_SEND))
+            self.send({"error": EyeTrackingError.NO_EYES_DETECTED.value})
             return
         h, w, _ = frame.shape
         for face_landmarks in results.multi_face_landmarks:
@@ -130,7 +109,7 @@ class EyeTracker:
             eye_directions = self.get_eye_directions(avg_gaze_ratio, avg_vertical_ratio)
             # else:
                 # eye_directions = self.get_ratios(avg_gaze_ratio, avg_vertical_ratio)
-            self.send_socket.sendto(json.dumps(eye_directions).encode(), (self.UDP_IP, self.UDP_PORT_SEND))
+            self.send(eye_directions)
             if show_window:
                 cv2.circle(frame, right_pupil, 3, (0, 255, 0), -1)
                 cv2.circle(frame, left_pupil, 3, (0, 255, 0), -1)

@@ -44,16 +44,13 @@ public class EmotionData
         return max.Value > 0f ? max.Key : EmotionType.None;
     }
 }
-public class EmotionReceiver : UDPReceiverBase
+public class EmotionReceiver : ClientBase
 {
     public EmotionData? _currentEmotions { get; private set; } = null;
 
     public EmotionReceiver(int port) : base(port)
     {
         PythonServerController.Instance.EnsureServerRunning();
-        var json = $"{{\"bluop\": {true.ToString().ToLower()}}}";
-        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
-        SendData(bytes);
     }
 
     protected override void ProcessData(byte[] data)

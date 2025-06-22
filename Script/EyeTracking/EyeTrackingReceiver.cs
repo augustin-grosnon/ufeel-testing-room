@@ -59,7 +59,7 @@ public class EyeTrackingData
     }
 }
 
-public class EyeTrackingReceiver : UDPReceiverBase
+public class EyeTrackingReceiver : ClientBase
 {
     public EyeTrackingData? CurrentEyeTrackingData { get; private set; } = new();
 

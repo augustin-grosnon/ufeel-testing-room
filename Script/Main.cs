@@ -8,7 +8,7 @@ class Program
         Thread.Sleep(5_000);
 
         instance.StartEmotionDetection();
-        instance.status();
+        instance.Status();
 
         // need to sleep to be sure the python server is start for the two print
         Thread.Sleep(5_000);
@@ -27,10 +27,11 @@ class Program
 
 
         instance.StopEmotionDetection();
-        instance.status();
+        instance.Status();
         instance.StopEmotionDetection();
 
         instance.StartEyeTrackingDetection();
+        Thread.Sleep(5_000);
 
         Debug.Log("Here is the current eye data " + instance.GetCurrentDirections());
         Debug.Log("Here is the dominant emotion " + instance.GetDominantDirection());
@@ -46,8 +47,8 @@ class Program
 
 
         instance.StartEmotionDetection();
-        instance.stopAPI();
-        instance.status();
+        instance.StopAPI();
+        instance.Status();
 
         Debug.Log("Testing UFEEL Script");
 

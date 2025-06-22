@@ -5,9 +5,9 @@ using System.Text;
 public class UfeelAPI : MonoBehaviour
 {
     private static UfeelAPI? _instance;
-    private static EmotionReceiver _emotionReceiver = new EmotionReceiver(4102);
+    private static EmotionReceiver _emotionReceiver = new EmotionReceiver(4100);
     private static bool _emotionIsRunning = false;
-    private static EyeTrackingReceiver _eyeTrackingReceiver = new EyeTrackingReceiver(4002);
+    private static EyeTrackingReceiver _eyeTrackingReceiver = new EyeTrackingReceiver(4000);
     private static bool _eyeTrackingIsRunning = false;
 
     public static UfeelAPI Instance
@@ -17,13 +17,12 @@ public class UfeelAPI : MonoBehaviour
             if (_instance == null)
             {
                 _instance = new UfeelAPI();
-
             }
             return _instance;
         }
     }
 
-    public void status()
+    public void Status()
     {
         Debug.Log("-------------------------------------");
         Debug.Log("Currently the emotion receiver is: " + (_emotionIsRunning ? "running" : "shut down"));
@@ -31,42 +30,43 @@ public class UfeelAPI : MonoBehaviour
         Debug.Log("-------------------------------------");
     }
 
-    private static void toggleCamera(UDPReceiverBase receiver, bool status)
-    {
-        var json = $"{{\"camera\": {status.ToString().ToLower()}}}";
-        byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
-        receiver.SendData(bytes);
-    }
+    // private static void toggleCamera(ClientBase receiver, bool status)
+    // {
+    //     var json = $"{{\"camera\": {status.ToString().ToLower()}}}";
+    //     byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
+    //     receiver.SendData(bytes);
+    // }
 
 
-    // --- Emotion Detection Methods ---
-    public static void enableCameraEmotion()
-    {
-        toggleCamera(_emotionReceiver, true);
-    }
+    // // --- Emotion Detection Methods ---
+    // public static void enableCameraEmotion()
+    // {
+    //     toggleCamera(_emotionReceiver, true);
+    // }
 
-    public static void disableCameraEmotion()
-    {
-        toggleCamera(_emotionReceiver, false);
-    }
+    // public static void disableCameraEmotion()
+    // {
+    //     toggleCamera(_emotionReceiver, false);
+    // }
 
-    private static void toggleEmotionDetection(bool status)
+    private static void ToggleEmotionDetection(bool status)
     {
-        string message = status ? "emotion_detection_on" : "emotion_detection_off";
-        byte[] bytes = Encoding.UTF8.GetBytes(message);
+        byte[] bytes = ClientBase.CreateData("emotion_detection", status);
+
         _emotionReceiver?.SendData(bytes);
     }
 
+
     public void StartEmotionDetection()
     {
-        toggleEmotionDetection(true);
+        ToggleEmotionDetection(true);
         _emotionIsRunning = true;
         Debug.Log("Emotion detection started.");
     }
 
     public void StopEmotionDetection()
     {
-        toggleEmotionDetection(false);
+        ToggleEmotionDetection(false);
         _emotionIsRunning = false;
         Debug.Log("Emotion detection stopped.");
     }
@@ -115,33 +115,33 @@ public class UfeelAPI : MonoBehaviour
     // }
 
     // --- Eye Tracking Detection Methods ---
-     public static void enableCameraEyeTracking()
-    {
-        toggleCamera(_eyeTrackingReceiver, true);
-    }
+    //  public static void enableCameraEyeTracking()
+    // {
+    //     toggleCamera(_eyeTrackingReceiver, true);
+    // }
 
-    public static void disableCameraEyeTracking()
-    {
-        toggleCamera(_eyeTrackingReceiver, false);
-    }
+    // public static void disableCameraEyeTracking()
+    // {
+    //     toggleCamera(_eyeTrackingReceiver, false);
+    // }
 
-    private static void toggleEyeTrackingDetection(bool status)
+    private static void ToggleEyeTrackingDetection(bool status)
     {
-        string message = status ? "eye_tracking_on" : "eye_tracking_off";
-        byte[] bytes = Encoding.UTF8.GetBytes(message);
+        byte[] bytes = ClientBase.CreateData("eye_detection", status);
+
         _eyeTrackingReceiver?.SendData(bytes);
     }
 
     public void StartEyeTrackingDetection()
     {
-        toggleEyeTrackingDetection(true);
+        ToggleEyeTrackingDetection(true);
         _eyeTrackingIsRunning = true;
         Debug.Log("Eye Tracking detection started.");
     }
 
     public void StopEyeTrackingDetection()
     {
-        toggleEyeTrackingDetection(true);
+        ToggleEyeTrackingDetection(true);
         _eyeTrackingIsRunning = false;
         Debug.Log("Eye Tracking detection stopped.");
     }
@@ -170,10 +170,10 @@ public class UfeelAPI : MonoBehaviour
             action.Invoke();
     }
 
-    public void stopAPI()
+    public void StopAPI()
     {
-        toggleEmotionDetection(false);
-        toggleEyeTrackingDetection(false);
+        ToggleEmotionDetection(false);
+        ToggleEyeTrackingDetection(false);
 
         PythonServerController.Instance.StopServer();
     }
