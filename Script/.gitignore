@@ -3,3 +3,4 @@ obj
 bin
 .mypy_cache
 *.log
+Build/
