@@ -1,10 +1,13 @@
 using UnityEngine;
 using System.Diagnostics;
+using System.Threading;
 using Debug = UnityEngine.Debug;
 
 public class PythonServerController
 {
     private static PythonServerController _instance;
+    private static SynchronizationContext _mainContext;
+    // TODO: Add centralized logging queue later if needed
 
     public static PythonServerController Instance
     {
@@ -30,6 +33,7 @@ public class PythonServerController
         _scriptPath = scriptPath;
         _serverName = serverName;
 
+        _mainContext = SynchronizationContext.Current ?? new SynchronizationContext();
         Application.quitting += OnApplicationQuit;
     }
 
@@ -39,7 +43,11 @@ public class PythonServerController
     {
         if (!IsServerRunning)
         {
-            StartServer();
+            Thread serverThread = new(StartServer)
+            {
+                IsBackground = true
+            };
+            serverThread.Start();
         }
     }
 
@@ -62,22 +70,27 @@ public class PythonServerController
             _pythonProcess.OutputDataReceived += (sender, args) =>
             {
                 if (!string.IsNullOrEmpty(args.Data))
-                    Debug.Log($"{_serverName} Python output: {args.Data}");
+                {
+                    _Log($"{_serverName} Python output: {args.Data}");
+                }
             };
             _pythonProcess.ErrorDataReceived += (sender, args) =>
             {
                 if (!string.IsNullOrEmpty(args.Data))
-                    Debug.LogError($"{_serverName} Python error: {args.Data}");
+                {
+
+                    _Log($"{_serverName} Python error: {args.Data}", true);
+                }
             };
 
             _pythonProcess.BeginOutputReadLine();
             _pythonProcess.BeginErrorReadLine();
 
-            Debug.Log($"{_serverName} Python server started.");
+            _Log($"{_serverName} Python server started.");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"Failed to start {_serverName} Python server: {e.Message}");
+            _Log($"Failed to start {_serverName} Python server: {e.Message}", true);
         }
     }
 
@@ -91,11 +104,11 @@ public class PythonServerController
                 _pythonProcess.WaitForExit();
                 _pythonProcess = null;
 
-                Debug.Log($"{_serverName} Python server stopped.");
+                _Log($"{_serverName} Python server stopped.");
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"Failed to stop {_serverName} Python server: {e.Message}");
+                _Log($"Failed to stop {_serverName} Python server: {e.Message}", true);
             }
         }
     }
@@ -105,4 +118,17 @@ public class PythonServerController
         StopServer();
         Application.quitting -= OnApplicationQuit;
     }
+
+    private void _Log(string message, bool isError = false)
+    {
+        _mainContext.Post(_ =>
+        {
+            if (isError)
+                Debug.LogError(message);
+            else
+                Debug.Log(message);
+        }, null);
+    }
 }
+
+// TODO: check if it causes any issue

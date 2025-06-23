@@ -23,19 +23,17 @@ public abstract class UDPReceiverBase
         _receiveThread.Start();
     }
 
+    volatile bool _running = true;
+
     protected void ReceiveData()
     {
         IPEndPoint remoteEndPoint = new(IPAddress.Any, Port);
-        while (true)
+        while (_running)
         {
             try
             {
                 byte[] receivedBytes = _udpClient.Receive(ref remoteEndPoint);
                 ProcessData(receivedBytes);
-            }
-            catch (ThreadAbortException)
-            {
-                break;
             }
             catch (SocketException e)
             {
@@ -59,8 +57,7 @@ public abstract class UDPReceiverBase
 
     public void StopReceiver()
     {
-        if (_receiveThread != null && _receiveThread.IsAlive)
-            _receiveThread.Abort();
+        _running = false;
         _udpClient?.Close();
     }
 }
