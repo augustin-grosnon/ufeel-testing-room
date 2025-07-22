@@ -32,7 +32,7 @@ class EyeTracker:
         center = not (left or right or up or down)
         return {"left": left, "right": right, "up": up, "down": down, "center": center}
 
-    def process(self, frame):
+    def process(self, frame, show_window=True):
         results = self.face_mesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         if not results.multi_face_landmarks:
             return
@@ -68,13 +68,13 @@ class EyeTracker:
             avg_vertical_ratio = (right_vertical_ratio + left_vertical_ratio) / 2
             eye_directions = self.get_eye_directions(avg_gaze_ratio, avg_vertical_ratio)
             self.sock.sendto(json.dumps(eye_directions).encode(), (self.UDP_IP, self.UDP_PORT))
-            if self.show_window:
+            if show_window:
                 cv2.circle(frame, right_pupil, 3, (0, 255, 0), -1)
                 cv2.circle(frame, left_pupil, 3, (0, 255, 0), -1)
                 display_text = ", ".join([k for k, v in eye_directions.items() if v])
-                cv2.putText(frame, display_text, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
-                cv2.putText(frame, f"Horiz: {avg_gaze_ratio:.3f}  Vert: {avg_vertical_ratio:.3f}", (50, 50),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+                # cv2.putText(frame, display_text, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
+                # cv2.putText(frame, f"Horiz: {avg_gaze_ratio:.3f}  Vert: {avg_vertical_ratio:.3f}", (50, 50),
+                #             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
     def close(self):
         self.face_mesh.close()

@@ -19,7 +19,7 @@ class VideoProcessor:
                 break
             frame = cv2.flip(frame, 1)
             self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
-            self.eye_tracker.process(frame)
+            self.eye_tracker.process(frame) # TODO: check if we process on the already modified frame
             if self.show_window:
                 resized_frame = cv2.resize(
                     frame,
