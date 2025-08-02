@@ -10,10 +10,11 @@ class EmotionDetectorHuman:
         base_dir = os.path.dirname(os.path.abspath(__file__))
         if model_path is None:
             # model_path = os.path.join(base_dir, 'models', 'fer2013_mini_XCEPTION.119-0.65.hdf5')
-            model_path = os.path.join(base_dir, 'models', 'fer2013_big_XCEPTION.54-0.66.hdf5')
+            # model_path = os.path.join(base_dir, 'models', 'fer2013_big_XCEPTION.54-0.66.hdf5')
+            # model_path = os.path.join(base_dir, 'models', 'simple_CNN_converted_tf.h5') # python 3.12 version
+            model_path = os.path.join(base_dir, 'models', 'simple_CNN.985-0.66.hdf5') # python 3.10 version
 
         self.model = load_model(model_path, compile=False)
-        # self.emotion_labels = ['angry', 'disgust', 'fear', 'happy', 'sad', 'surprise', 'neutral']
         self.emotion_labels = ['anger', 'disgust', 'fear', 'happiness', 'sadness', 'surprise', 'neutral']
         self.face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
@@ -23,8 +24,8 @@ class EmotionDetectorHuman:
         self.default_font_params = dict(fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.6, thickness=1, lineType=cv2.LINE_AA)
         self.color = (255, 255, 255)
 
-    # def preprocess_face(self, face_img, target_size=(48, 48)):
-    def preprocess_face(self, face_img, target_size=(64, 64)):
+    def preprocess_face(self, face_img, target_size=(48, 48)):
+    # def preprocess_face(self, face_img, target_size=(64, 64)):
         face_img = cv2.resize(face_img, target_size)
         face_img = face_img.astype('float32') / 255.0
         face_img = np.expand_dims(face_img, axis=0)

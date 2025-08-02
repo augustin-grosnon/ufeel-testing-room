@@ -2,7 +2,7 @@ import os
 
 def suppress_stderr():
     devnull_fd = os.open(os.devnull, os.O_WRONLY)
-    # os.dup2(devnull_fd, 1)
+    os.dup2(devnull_fd, 1)
     os.dup2(devnull_fd, 2)
 suppress_stderr()
 
