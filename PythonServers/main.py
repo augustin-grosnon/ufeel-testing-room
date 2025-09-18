@@ -7,10 +7,13 @@ def suppress_stderr():
 suppress_stderr()
 
 from video_processor import VideoProcessor
+from mic_processor import MicProcessor
 
 def main():
-    vp = VideoProcessor(show_window=True)
-    vp.process()
+    # vp = VideoProcessor(show_window=True)
+    # vp.process()
+    mp = MicProcessor()
+    mp.process()
 
 if __name__ == '__main__':
     main()
