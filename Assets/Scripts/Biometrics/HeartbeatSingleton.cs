@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public struct BPM
 {
-    public int bpm { get; set; }
+    public int bpm
 }
 
 public class HeartbeatSingleton
