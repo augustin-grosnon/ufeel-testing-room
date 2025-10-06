@@ -17,7 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestingRoom_EyeTracking.unity
     guid: 6170d2c256c9e91d9b878c8ef374679f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/EyeTracking.unity
     guid: 62e50900b9cf846589b218e0ee620d53
   m_configObjects:
