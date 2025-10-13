@@ -77,3 +77,6 @@ crashlytics-build.properties
 
 .vscode
 __pycache__
+*.blob
+*.log
+venv

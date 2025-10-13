@@ -2,31 +2,68 @@ using UnityEngine;
 using System.Text;
 
 [System.Serializable]
-public class EyeDirectionData
+public class EyeTrackingData
 {
-    public bool left;
-    public bool right;
-    public bool up;
-    public bool down;
-    public bool center;
-}
+    public bool Left { get; set; }
+    public bool Right { get; set; }
+    public bool Up { get; set; }
+    public bool Down { get; set; }
+    public bool Center { get; set; }
 
-public class EyeTrackingReceiver : UDPReceiverBase
-{
-    private static EyeTrackingReceiver _instance;
-
-    public static EyeTrackingReceiver Instance
+    public override string ToString()
     {
-        get
-        {
-            _instance ??= new EyeTrackingReceiver();
-            return _instance;
-        }
+        return $"EyeTrackingData: " +
+            $"Left: {Left}, Right: {Right}, Up: {Up}, Down: {Down}, Center: {Center}";
     }
 
-    public static EyeDirectionData CurrentEyeData { get; private set; } = new();
+    public enum EyeTrackingType
+    {
+        None,
+        Center,
+        Left,
+        Right,
+        Up,
+        Down,
+        UpLeft,
+        UpRight,
+        DownLeft,
+        DownRight,
+    }
 
-    private EyeTrackingReceiver() : base(4242)
+    public EyeTrackingType GetEyeTrackingType()
+    {
+        (bool condition, EyeTrackingType type)[] cases = new (bool, EyeTrackingType)[]
+        {
+            (Center, EyeTrackingType.Center),
+
+            // Combinaisons
+            (Up && Left, EyeTrackingType.UpLeft),
+            (Up && Right, EyeTrackingType.UpRight),
+            (Down && Left, EyeTrackingType.DownLeft),
+            (Down && Right, EyeTrackingType.DownRight),
+
+            // Directions simples
+            (Up, EyeTrackingType.Up),
+            (Down, EyeTrackingType.Down),
+            (Left, EyeTrackingType.Left),
+            (Right, EyeTrackingType.Right),
+        };
+
+        foreach (var (condition, type) in cases)
+        {
+            if (condition)
+                return type;
+        }
+
+        return EyeTrackingType.None;
+    }
+}
+
+public class EyeTrackingReceiver : ClientBase
+{
+    public EyeTrackingData CurrentEyeTrackingData { get; private set; } = new();
+
+    public EyeTrackingReceiver(int port) : base(port)
     {
         PythonServerController.Instance.EnsureServerRunning();
     }
@@ -36,7 +73,7 @@ public class EyeTrackingReceiver : UDPReceiverBase
         string json = Encoding.ASCII.GetString(data);
         try
         {
-            CurrentEyeData = JsonUtility.FromJson<EyeDirectionData>(json);
+            CurrentEyeTrackingData = JsonUtility.FromJson<EyeTrackingData>(json);
         }
         catch (System.Exception e)
         {
