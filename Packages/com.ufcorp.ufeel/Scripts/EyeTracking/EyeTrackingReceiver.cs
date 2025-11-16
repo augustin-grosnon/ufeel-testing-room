@@ -2,18 +2,18 @@ using UnityEngine;
 using System.Text;
 
 [System.Serializable]
-public class EyeTrackingData
+public struct EyeTrackingData
 {
-    public bool Left { get; set; }
-    public bool Right { get; set; }
-    public bool Up { get; set; }
-    public bool Down { get; set; }
-    public bool Center { get; set; }
+    public bool left;
+    public bool right;
+    public bool up;
+    public bool down;
+    public bool center;
 
     public override string ToString()
     {
         return $"EyeTrackingData: " +
-            $"Left: {Left}, Right: {Right}, Up: {Up}, Down: {Down}, Center: {Center}";
+            $"Left: {left}, Right: {right}, Up: {up}, Down: {down}, Center: {center}";
     }
 
     public enum EyeTrackingType
@@ -34,19 +34,19 @@ public class EyeTrackingData
     {
         (bool condition, EyeTrackingType type)[] cases = new (bool, EyeTrackingType)[]
         {
-            (Center, EyeTrackingType.Center),
+            (center, EyeTrackingType.Center),
 
             // Combinaisons
-            (Up && Left, EyeTrackingType.UpLeft),
-            (Up && Right, EyeTrackingType.UpRight),
-            (Down && Left, EyeTrackingType.DownLeft),
-            (Down && Right, EyeTrackingType.DownRight),
+            (up && left, EyeTrackingType.UpLeft),
+            (up && right, EyeTrackingType.UpRight),
+            (down && left, EyeTrackingType.DownLeft),
+            (down && right, EyeTrackingType.DownRight),
 
             // Directions simples
-            (Up, EyeTrackingType.Up),
-            (Down, EyeTrackingType.Down),
-            (Left, EyeTrackingType.Left),
-            (Right, EyeTrackingType.Right),
+            (up, EyeTrackingType.Up),
+            (down, EyeTrackingType.Down),
+            (left, EyeTrackingType.Left),
+            (right, EyeTrackingType.Right),
         };
 
         foreach (var (condition, type) in cases)
@@ -61,7 +61,7 @@ public class EyeTrackingData
 
 public class EyeTrackingReceiver : ClientBase
 {
-    public EyeTrackingData CurrentEyeTrackingData { get; private set; } = new();
+    public EyeTrackingData? CurrentEyeTrackingData { get; private set; } = null;
 
     public EyeTrackingReceiver(int port) : base(port)
     {

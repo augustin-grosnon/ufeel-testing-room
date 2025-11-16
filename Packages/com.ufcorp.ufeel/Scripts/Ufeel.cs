@@ -156,11 +156,11 @@ namespace UFeel
             Debug.Log("Eye Tracking detection stopped.");
         }
 
-        public EyeTrackingData GetCurrentDirections()
+        public EyeTrackingData? GetCurrentDirections()
         {
             if (!_eyeTrackingIsRunning) return null;
 
-            EyeTrackingData currentEyeTracking = _eyeTrackingReceiver.CurrentEyeTrackingData;
+            EyeTrackingData? currentEyeTracking = _eyeTrackingReceiver.CurrentEyeTrackingData;
             return currentEyeTracking;
         }
 
@@ -168,7 +168,7 @@ namespace UFeel
         {
             if (!_eyeTrackingIsRunning) return null;
 
-            EyeTrackingData currentEyeTracking = _eyeTrackingReceiver.CurrentEyeTrackingData;
+            EyeTrackingData? currentEyeTracking = _eyeTrackingReceiver.CurrentEyeTrackingData;
             return currentEyeTracking?.GetEyeTrackingType();
         }
 

@@ -3,6 +3,10 @@ using UFeel;
 using System.Threading.Tasks;
 using System.Collections;
 
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
+
 public class LauncherScript : MonoBehaviour
 {
     IEnumerator WaitUntilNotAnger(UfeelAPI instance, System.Action onFinished)
@@ -45,25 +49,25 @@ public class LauncherScript : MonoBehaviour
         Debug.Log("Hello UFEEL User");
         await Task.Delay(5000);
 
-        // instance.StartEmotionDetection();
-        // instance.Status();
+        instance.StartEmotionDetection();
+        instance.Status();
 
-        // await Task.Delay(5000);
+        await Task.Delay(5000);
 
-        // Debug.Log("Here is the current emotion " + instance.GetCurrentEmotions());
-        // Debug.Log("Here is the dominant emotion " + instance.GetDominantEmotion());
+        Debug.Log("Here is the current emotion " + instance.GetCurrentEmotions());
+        Debug.Log("Here is the dominant emotion " + instance.GetDominantEmotion());
 
-        // StartCoroutine(WaitUntilNotAnger(instance, async () =>
-        // {
-        //     instance.StopEmotionDetection();
-        //     instance.Status();
+        StartCoroutine(WaitUntilNotAnger(instance, async () =>
+        {
+            instance.StopEmotionDetection();
+            instance.Status();
             instance.StartEyeTrackingDetection();
             instance.Status();
 
             await Task.Delay(5000);
 
             Debug.Log("Here is the current eye data " + instance.GetCurrentDirections());
-            Debug.Log("Here is the dominant emotion " + instance.GetDominantDirection());
+            Debug.Log("Here is the dominant direction " + instance.GetDominantDirection());
 
             StartCoroutine(WaitUntilUpRight(instance, () =>
             {
@@ -71,8 +75,13 @@ public class LauncherScript : MonoBehaviour
                 instance.StopAPI();
                 instance.Status();
                 Debug.Log("Testing UFEEL Script");
+                #if UNITY_EDITOR
+                    EditorApplication.isPlaying = false;
+                #else
+                    Application.Quit();
+                #endif
             }));
-        // }));
+        }));
     }
 
     void Update()

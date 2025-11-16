@@ -69,7 +69,7 @@ class EyeTracker(ClientBase):
         if not self.process_enable:
             return
         if self.json_ratios is None:
-            self.read_ratios_from_file("./PythonServers/eye_tracker_values.json")
+            self.read_ratios_from_file("./PythonServer/eye_tracker_values.json")
 
         results = self.face_mesh.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
         if not results.multi_face_landmarks:
