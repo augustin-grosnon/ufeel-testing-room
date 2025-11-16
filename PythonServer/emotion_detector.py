@@ -85,7 +85,7 @@ class EmotionDetector(ClientBase):
     def toggle_emotion_detection(self, state):
         self.process_enable = state
         status = "enabled" if state else "disabled"
-        logging.info(f"Emotion detection {status}")
+        logging.info(f"Emotion detection {status} {state}")
 
     def detect_emotion(self, img):
         tensor = self.transform(img).unsqueeze(0).to(self.device)

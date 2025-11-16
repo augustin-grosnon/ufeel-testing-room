@@ -8,7 +8,7 @@ using System.Threading;
 public class Message
 {
     public string type;
-    public object value;
+    public string value;
 }
 
 public abstract class ClientBase
@@ -41,7 +41,19 @@ public abstract class ClientBase
     {
         try
         {
-            _client = _tcpListener!.AcceptTcpClient();
+            _tcpListener.Server.ReceiveTimeout = 100;
+            _tcpListener.Server.SendTimeout = 100;
+            while (_running)
+            {
+                if (_tcpListener.Pending())
+                {
+                    _client = _tcpListener.AcceptTcpClient();
+                    break;
+                }
+                Thread.Sleep(10);
+            }
+            if (!_running)
+                return;
             Debug.Log("Client connected.");
             _stream = _client.GetStream();
 
@@ -57,7 +69,7 @@ public abstract class ClientBase
                 }
 
                 int bytesRead = _stream.Read(buffer, 0, buffer.Length);
-                if (bytesRead == 0)
+                if (bytesRead <= 0)
                 {
                     Debug.Log("Client disconnected.");
                     break;
@@ -87,6 +99,11 @@ public abstract class ClientBase
                 sb.Append(dataStr);
             }
         }
+        catch (ThreadAbortException)
+        {
+            Debug.Log("Client thread aborted by Unity (PlayMode stop).");
+            Thread.ResetAbort();
+        }
         catch (Exception ex)
         {
             Debug.LogWarning($"Exception in ClientHandler: {ex}");
@@ -97,7 +114,8 @@ public abstract class ClientBase
         }
     }
 
-    public static byte[] CreateData(string type, object value)
+
+    public static byte[] CreateData(string type, string value)
     {
         var message = new Message
         {
@@ -119,7 +137,7 @@ public abstract class ClientBase
                 _stream.Write(dataWithNewline, 0, dataWithNewline.Length);
                 _stream.Flush();
 
-                // Debug.Log($"Sent to client: {Encoding.UTF8.GetString(data).Trim()}");
+                Debug.Log($"Sent to client: {Encoding.UTF8.GetString(data).Trim()}");
             }
             catch (Exception e)
             {

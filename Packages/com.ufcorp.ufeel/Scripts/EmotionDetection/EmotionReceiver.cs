@@ -4,19 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 
 [System.Serializable]
-public class EmotionData
+public struct EmotionData
 {
-    public float Happiness { get; set; }
-    public float Surprise { get; set; }
-    public float Sadness { get; set; }
-    public float Anger { get; set; }
-    public float Neutral { get; set; }
-    public float Fear { get; set; }
+    public float happiness;
+    public float surprise;
+    public float sadness;
+    public float anger;
+    public float neutral;
+    public float fear;
 
     public override string ToString()
     {
-        return $"Happiness: {Happiness}, Surprise: {Surprise}, Sadness: {Sadness}, " +
-            $"Anger: {Anger}, Neutral: {Neutral}, Fear: {Fear}";
+        return $"Happiness: {happiness}, Surprise: {surprise}, Sadness: {sadness}, " +
+            $"Anger: {anger}, Neutral: {neutral}, Fear: {fear}";
     }
 
     public enum EmotionType
@@ -34,12 +34,12 @@ public class EmotionData
     {
         Dictionary<EmotionType, float> emotions = new()
         {
-            { EmotionType.Happiness, Happiness },
-            { EmotionType.Surprise, Surprise },
-            { EmotionType.Sadness, Sadness },
-            { EmotionType.Anger, Anger },
-            { EmotionType.Neutral, Neutral },
-            { EmotionType.Fear, Fear }
+            { EmotionType.Happiness, happiness },
+            { EmotionType.Surprise, surprise },
+            { EmotionType.Sadness, sadness },
+            { EmotionType.Anger, anger },
+            { EmotionType.Neutral, neutral },
+            { EmotionType.Fear, fear }
         };
 
 
@@ -49,7 +49,7 @@ public class EmotionData
 }
 public class EmotionReceiver : ClientBase
 {
-    public EmotionData CurrentEmotions { get; private set; } = null;
+    public EmotionData? CurrentEmotions { get; private set; } = null;
 
     public EmotionReceiver(int port) : base(port)
     {

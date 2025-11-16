@@ -69,6 +69,7 @@ class ClientBase:
         if command_type in self.handlers:
             try:
                 command_value = msg.get("value")
+                logging.info(f"here is the command {command_value}")
                 self.handlers[command_type](command_value)
             except Exception as e:
                 logging.error(f"Error handling command '{command_type}': {e}")

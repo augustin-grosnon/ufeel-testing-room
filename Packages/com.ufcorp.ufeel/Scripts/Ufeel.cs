@@ -19,7 +19,15 @@ namespace UFeel
             {
                 if (_instance == null)
                 {
-                    _instance = new();
+                     _instance = FindAnyObjectByType<UfeelAPI>();
+
+                    if (_instance == null)
+                    {
+                        GameObject obj = new("UfeelAPI");
+                        _instance = obj.AddComponent<UfeelAPI>();
+
+                        DontDestroyOnLoad(obj);
+                    }
                 }
                 return _instance;
             }
@@ -54,11 +62,9 @@ namespace UFeel
 
         private static void ToggleEmotionDetection(bool status)
         {
-            byte[] bytes = ClientBase.CreateData("emotion_detection", status);
-
+            byte[] bytes = ClientBase.CreateData("emotion_detection", status.ToString().ToLower());
             _emotionReceiver?.SendData(bytes);
         }
-
 
         public void StartEmotionDetection()
         {
@@ -74,20 +80,19 @@ namespace UFeel
             Debug.Log("Emotion detection stopped.");
         }
 
-        public EmotionData GetCurrentEmotions()
+        public EmotionData? GetCurrentEmotions()
         {
             if (!_emotionIsRunning) return null;
 
-            EmotionData currentEmotions = _emotionReceiver.CurrentEmotions;
+            EmotionData? currentEmotions = _emotionReceiver.CurrentEmotions;
             return currentEmotions;
         }
-
 
         public EmotionData.EmotionType? GetDominantEmotion()
         {
             if (!_emotionIsRunning) return null;
 
-            EmotionData currentEmotions = _emotionReceiver.CurrentEmotions;
+            EmotionData? currentEmotions = _emotionReceiver.CurrentEmotions;
             return currentEmotions?.GetDominantEmotion();
         }
 
@@ -95,7 +100,8 @@ namespace UFeel
         {
             if (action == null) return;
 
-            if (emotion == GetDominantEmotion())
+            EmotionData.EmotionType? currentEmotion = GetDominantEmotion();
+            if (emotion == currentEmotion)
                 action.Invoke();
         }
 
@@ -131,7 +137,7 @@ namespace UFeel
 
         private static void ToggleEyeTrackingDetection(bool status)
         {
-            byte[] bytes = ClientBase.CreateData("eye_detection", status);
+            byte[] bytes = ClientBase.CreateData("eye_detection", status.ToString().ToLower());
 
             _eyeTrackingReceiver?.SendData(bytes);
         }
@@ -172,6 +178,12 @@ namespace UFeel
 
             if (direction == GetDominantDirection())
                 action.Invoke();
+        }
+
+        private void OnDisable()
+        {
+            StopAPI();
+            Debug.Log("Game stopped — OnDisable called!");
         }
 
         public void StopAPI()
