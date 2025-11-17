@@ -16,6 +16,11 @@ public class FirstPersonController : MonoBehaviour
     private float verticalVelocity;
     private CharacterController controller;
 
+
+    [Header("Jump Settings")]
+    public float jumpForce = 5f; 
+    private bool isGrounded;
+
     void Start()
     {
         controller = gameObject.AddComponent<CharacterController>();
@@ -78,4 +83,29 @@ public class FirstPersonController : MonoBehaviour
         cameraRoot.localRotation = Quaternion.Euler(pitch, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);
     }
+
+    void HandleJump()
+    {
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            verticalVelocity = jumpForce;
+        }
+
+        verticalVelocity += gravity * Time.deltaTime;
+
+        controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
+    }
+    
+    public void ExecuteJump(float forceMultiplier = 1f)
+    {
+        if (isGrounded)
+        {
+            verticalVelocity = jumpForce * forceMultiplier;
+            Debug.Log("External jump executed!");
+        }
+    }
+
+
+    // ajouter des methodes ici pour pouvir agir depuis l'exterieur (ex: ExecuteJump(force))
+
 }
