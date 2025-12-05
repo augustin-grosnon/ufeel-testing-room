@@ -13,7 +13,7 @@ import logging
 from client_base import ClientBase
 
 logging.basicConfig(
-    filename="emotion_receiver.log",
+    filename="client_base.log",
     filemode="a",  # Append mode
     format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.DEBUG  # Use DEBUG level to log everything

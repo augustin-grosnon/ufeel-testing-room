@@ -12,6 +12,8 @@ namespace UFeel
         private static bool _emotionIsRunning = false;
         private static EyeTrackingReceiver _eyeTrackingReceiver = new(4000);
         private static bool _eyeTrackingIsRunning = false;
+        private static SpeechToTextReceiver _speechReceiver = new(3900);
+        private static bool _speechIsRunning = false;
 
         public static UfeelAPI Instance
         {
@@ -38,6 +40,7 @@ namespace UFeel
             Debug.Log("-------------------------------------");
             Debug.Log("Currently the emotion receiver is: " + (_emotionIsRunning ? "running" : "shut down"));
             Debug.Log("Currently the eye tracking receiver is: " + (_eyeTrackingIsRunning ? "running" : "shut down"));
+            Debug.Log("Currently the speech to text receiver is: " + (_speechIsRunning ? "running" : "shut down"));
             Debug.Log("-------------------------------------");
         }
 
@@ -180,6 +183,49 @@ namespace UFeel
                 action.Invoke();
         }
 
+        private static void ToggleSpeechDetection(bool status)
+        {
+            byte[] bytes = ClientBase.CreateData("speech_detection", status.ToString().ToLower());
+            _speechReceiver?.SendData(bytes);
+        }
+
+        public void StartSpeechDetection()
+        {
+            ToggleSpeechDetection(true);
+            _speechIsRunning = true;
+            Debug.Log("Speech detection started.");
+        }
+
+        public void StopSpeechDetection()
+        {
+            ToggleSpeechDetection(false);
+            _speechIsRunning = false;
+            Debug.Log("Speech detection stopped.");
+        }
+
+        // TODO: is it uf enough ?
+        public string GetCurrentSpeech()
+        {
+            if (!_speechIsRunning) return null;
+
+            SpeechData? currentSpeechData = _speechReceiver.CurrentSpeechData;
+            return currentSpeechData?.text;
+        }
+
+        public void TriggerActionIfSpeech(string text, System.Action action)
+        {
+            if (action == null) return;
+
+            SpeechData? currentSpeechData = _speechReceiver.CurrentSpeechData;
+            if (currentSpeechData == null) return;
+
+            string targetToLower = text.ToLower();
+            string currentToLower = currentSpeechData?.text.ToLower();
+            Debug.Log("Current word is " + currentToLower);
+            if (targetToLower.Contains(currentToLower))
+                action.Invoke();
+        }
+
         private void OnDisable()
         {
             StopAPI();
@@ -190,6 +236,7 @@ namespace UFeel
         {
             ToggleEmotionDetection(false);
             ToggleEyeTrackingDetection(false);
+            ToggleSpeechDetection(false);
 
             PythonServerController.Instance.StopServer();
         }

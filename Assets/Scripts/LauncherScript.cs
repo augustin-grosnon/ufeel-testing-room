@@ -43,6 +43,35 @@ public class LauncherScript : MonoBehaviour
         onFinished?.Invoke();
     }
 
+    IEnumerator WaitUntilWords(UfeelAPI instance, System.Action onFinished)
+    {
+        bool looping = true;
+
+        Debug.Log("Waiting until word is Camion!");
+        while (looping)
+        {
+            instance.TriggerActionIfSpeech("Camion", () =>
+            {
+                looping = false;
+            });
+            yield return new WaitForSeconds(0.5f);
+        }
+        Debug.Log("He said the word!");
+        onFinished?.Invoke();
+    }
+
+    void StopUnity(UfeelAPI instance)
+    {
+        instance.StopAPI();
+        instance.Status();
+        Debug.Log("Testing UFEEL Script");
+        #if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+        #else
+            Application.Quit();
+        #endif
+    }
+
     async void Start()
     {
         UfeelAPI instance = UfeelAPI.Instance;
@@ -72,14 +101,15 @@ public class LauncherScript : MonoBehaviour
             StartCoroutine(WaitUntilUpRight(instance, () =>
             {
                 instance.StopEyeTrackingDetection();
-                instance.StopAPI();
+
+                instance.StartSpeechDetection();
                 instance.Status();
-                Debug.Log("Testing UFEEL Script");
-                #if UNITY_EDITOR
-                    EditorApplication.isPlaying = false;
-                #else
-                    Application.Quit();
-                #endif
+
+                StartCoroutine(WaitUntilWords(instance, async () =>
+                {
+                    Debug.Log("Here is the current speech " + instance.GetCurrentSpeech());
+                    StopUnity(instance);
+                }));
             }));
         }));
     }
