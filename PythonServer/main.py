@@ -12,8 +12,6 @@ from data_processor import DataProcessor
 def main():
     dp = DataProcessor(calibration="--calibration" in argv, show_window=True)
     dp.process()
-    # mp = MicProcessor()
-    # mp.process()
 
 if __name__ == '__main__':
     try:

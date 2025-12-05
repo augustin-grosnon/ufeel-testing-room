@@ -7,6 +7,7 @@ import cv2
 from emotion_detector import EmotionDetector
 from eye_tracker import EyeTracker
 from speech_to_text import SpeechToText
+from heart_rate_sensor import HeartRateSensor
 
 class DataProcessor:
     def __init__(self, calibration, show_window=True, capture_id=0):
@@ -16,6 +17,8 @@ class DataProcessor:
         self.emotion_detector = EmotionDetector()
         self.eye_tracker = EyeTracker()
         self.speech_to_text = SpeechToText()
+        self.heart_rate_sensor = HeartRateSensor()
+
         self.counter = 0
         self.freq = 5
         self.scale_factor = 1.3
@@ -31,6 +34,8 @@ class DataProcessor:
             self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
             self.eye_tracker.process(frame, self.calibration, show_window=self.show_window)
             self.speech_to_text.process(frame)
+            self.heart_rate_sensor.process(frame)
+
             if self.show_window:
                 resized_frame = cv2.resize(
                     frame,
@@ -49,3 +54,4 @@ class DataProcessor:
         self.emotion_detector.close()
         self.eye_tracker.close()
         self.speech_to_text.close()
+        self.heart_rate_sensor.close()

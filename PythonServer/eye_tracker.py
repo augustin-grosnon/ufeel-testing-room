@@ -112,9 +112,10 @@ class EyeTracker(ClientBase):
                 cv2.circle(frame, right_pupil, 3, (0, 255, 0), -1)
                 cv2.circle(frame, left_pupil, 3, (0, 255, 0), -1)
                 display_text = ", ".join([k for k, v in eye_directions.items() if v])
-                cv2.putText(frame, display_text, (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
-                cv2.putText(frame, f"Horiz: {avg_gaze_ratio:.3f}  Vert: {avg_vertical_ratio:.3f}", (50, 50),
+                cv2.putText(frame, display_text, (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,255,0), 2)
+                cv2.putText(frame, f"Horiz: {avg_gaze_ratio:.3f}  Vert: {avg_vertical_ratio:.3f}", (10, 30),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
     def close(self):
         self.face_mesh.close()
+        self.close()

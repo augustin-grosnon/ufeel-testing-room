@@ -1,4 +1,7 @@
-mediapipe
 opencv-python
+torch==2.1.2
+torchaudio==2.1.2
+torchvision==0.16.2
+mediapipe
 vosk
-sounddevice
+numpy==1.26.3

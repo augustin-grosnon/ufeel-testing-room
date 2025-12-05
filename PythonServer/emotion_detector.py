@@ -143,3 +143,4 @@ class EmotionDetector(ClientBase):
 
     def close(self):
         self.face_detection.close()
+        self.close()
