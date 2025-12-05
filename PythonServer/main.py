@@ -7,14 +7,13 @@ def suppress_stderr():
     # os.dup2(devnull_fd, 2)
 suppress_stderr()
 
-from mic_processor import MicProcessor
-# from video_processor import VideoProcessor
+from data_processor import DataProcessor
 
 def main():
-    # vp = VideoProcessor(calibration="--calibration" in argv, show_window=True)
-    # vp.process()
-    mp = MicProcessor()
-    mp.process()
+    dp = DataProcessor(calibration="--calibration" in argv, show_window=True)
+    dp.process()
+    # mp = MicProcessor()
+    # mp.process()
 
 if __name__ == '__main__':
     try:

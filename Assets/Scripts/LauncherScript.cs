@@ -65,11 +65,11 @@ public class LauncherScript : MonoBehaviour
         instance.StopAPI();
         instance.Status();
         Debug.Log("Testing UFEEL Script");
-        #if UNITY_EDITOR
-            EditorApplication.isPlaying = false;
-        #else
-            Application.Quit();
-        #endif
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     async void Start()

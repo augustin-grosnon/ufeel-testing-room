@@ -46,14 +46,13 @@
 # # try Vosk (~50–200 Mo), Whisper (more accurate but lourd, 150 Mo à 3 Go)
 
 
-
-
-import socket
+import cv2
 import json
 import sounddevice as sd
 from vosk import Model, KaldiRecognizer
 from client_base import ClientBase
 import logging
+import threading
 
 logging.basicConfig(
     filename="client_base.log",
@@ -72,24 +71,71 @@ class SpeechToText(ClientBase):
         self.model = Model("PythonServer/models/vosk-model-small-fr-0.22") # French model but need to add other languages
         self.recognizer = KaldiRecognizer(self.model, 16000)
 
-        self.stream = None
         self.process_enable = False
+        self.current_text = "None"
+        self.thread = None
 
     def toggle_speech_detection(self, state):
         self.process_enable = state
         status = "enabled" if state else "disabled"
         logging.info(f"Speech detection {status} {state}")
 
-
-    def process(self):
-        if not self.process_enable:
+    def _start_thread(self):
+        if self.thread is not None:
             return
-        logging.info("Microphone listening...")
+        self.thread = threading.Thread(target=self._run_audio_loop, daemon=True)
+        self.thread.start()
 
-        with sd.RawInputStream(samplerate=16000, blocksize=8000, dtype="int16", channels=1, callback=self._callback):
-            print("Say something!")
-            while True:
-                sd.sleep(50)
+    def _stop_thread(self):
+        if self.thread is not None:
+            self.thread.join(timeout=1)
+        self.thread = None
+
+    def draw_centered_text_bottom(self, frame, text, max_width_ratio=0.8, line_height=40):
+        h, w, _ = frame.shape
+        max_width = int(w * max_width_ratio)
+
+        words = text.split()
+        lines = []
+        current_line = ""
+
+        for word in words:
+            test_line = current_line + (" " if current_line else "") + word
+            text_size = cv2.getTextSize(test_line, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)[0]
+
+            if text_size[0] <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+
+        if current_line:
+            lines.append(current_line)
+
+        total_height = len(lines) * line_height
+        y_start = h - total_height - 20
+
+        for i, line in enumerate(lines):
+            text_size = cv2.getTextSize(line, cv2.FONT_HERSHEY_SIMPLEX, 0.8, 2)[0]
+            x = (w - text_size[0]) // 2
+            y = y_start + i * line_height
+            cv2.putText(frame, line, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
+
+    def process(self, frame):
+        if self.process_enable:
+            self._start_thread()
+            self.draw_centered_text_bottom(frame, self.current_text)
+        else:
+            self._stop_thread()
+
+    def _run_audio_loop(self):
+        try:
+            with sd.RawInputStream(samplerate=16000, blocksize=8000, dtype="int16", channels=1, callback=self._callback):
+                while True:
+                    sd.sleep(5)
+        except Exception as e:
+            print("Audio thread error:", e)
+
 
     def _callback(self, indata, frames, time, status):
         if self.recognizer.AcceptWaveform(bytes(indata)):
@@ -98,10 +144,8 @@ class SpeechToText(ClientBase):
 
             if text:
                 print("Text:", text)
+                self.current_text = text
                 self.send({"text": text})
-
-    def close(self):
-        self.sock.close()
 
 
 #pip install vosk sounddevice

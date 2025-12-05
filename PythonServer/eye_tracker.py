@@ -1,9 +1,7 @@
 import cv2
-import socket
 import json
 import numpy as np
 import mediapipe as mp
-import threading
 from enum import Enum
 
 import logging

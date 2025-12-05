@@ -30,8 +30,6 @@ public class PythonServerController
     {
         _scriptPath = scriptPath;
         _serverName = serverName;
-
-        // Application.quitting += OnApplicationQuit;
     }
 
     public bool IsServerRunning => _pythonProcess != null && !_pythonProcess.HasExited;

@@ -4,9 +4,6 @@ import torch.nn.functional as F
 import torchvision.transforms as transforms
 from PIL import Image
 import cv2
-import socket
-import json
-import threading
 import os
 import mediapipe as mp
 import logging

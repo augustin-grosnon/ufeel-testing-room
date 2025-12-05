@@ -6,14 +6,16 @@ print(sys.path)
 import cv2
 from emotion_detector import EmotionDetector
 from eye_tracker import EyeTracker
+from speech_to_text import SpeechToText
 
-class VideoProcessor:
+class DataProcessor:
     def __init__(self, calibration, show_window=True, capture_id=0):
         self.show_window = show_window
         self.cap = cv2.VideoCapture(capture_id)
         # if not calibration:
         self.emotion_detector = EmotionDetector()
         self.eye_tracker = EyeTracker()
+        self.speech_to_text = SpeechToText()
         self.counter = 0
         self.freq = 5
         self.scale_factor = 1.3
@@ -28,6 +30,7 @@ class VideoProcessor:
             #if not self.calibration:
             self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
             self.eye_tracker.process(frame, self.calibration, show_window=self.show_window)
+            self.speech_to_text.process(frame)
             if self.show_window:
                 resized_frame = cv2.resize(
                     frame,
@@ -45,3 +48,4 @@ class VideoProcessor:
             cv2.destroyAllWindows()
         self.emotion_detector.close()
         self.eye_tracker.close()
+        self.speech_to_text.close()

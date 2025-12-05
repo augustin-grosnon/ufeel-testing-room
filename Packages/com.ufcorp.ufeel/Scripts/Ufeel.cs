@@ -44,25 +44,6 @@ namespace UFeel
             Debug.Log("-------------------------------------");
         }
 
-        // private static void toggleCamera(ClientBase receiver, bool status)
-        // {
-        //     var json = $"{{\"camera\": {status.ToString().ToLower()}}}";
-        //     byte[] bytes = System.Text.Encoding.UTF8.GetBytes(json);
-        //     receiver.SendData(bytes);
-        // }
-
-
-        // // --- Emotion Detection Methods ---
-        // public static void enableCameraEmotion()
-        // {
-        //     toggleCamera(_emotionReceiver, true);
-        // }
-
-        // public static void disableCameraEmotion()
-        // {
-        //     toggleCamera(_emotionReceiver, false);
-        // }
-
         private static void ToggleEmotionDetection(bool status)
         {
             byte[] bytes = ClientBase.CreateData("emotion_detection", status.ToString().ToLower());
@@ -221,7 +202,6 @@ namespace UFeel
 
             string targetToLower = text.ToLower();
             string currentToLower = currentSpeechData?.text.ToLower();
-            Debug.Log("Current word is " + currentToLower);
             if (targetToLower.Contains(currentToLower))
                 action.Invoke();
         }
