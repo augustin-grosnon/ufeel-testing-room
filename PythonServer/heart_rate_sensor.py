@@ -58,3 +58,4 @@ class HeartRateSensor(ClientBase):
 
         heart_rate = self.hr_gen.get()
         self.draw_heart_rate_frame(frame, heart_rate)
+        self.send({"rate": heart_rate});

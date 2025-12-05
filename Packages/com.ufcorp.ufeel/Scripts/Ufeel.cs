@@ -14,6 +14,9 @@ namespace UFeel
         private static bool _eyeTrackingIsRunning = false;
         private static SpeechToTextReceiver _speechReceiver = new(3900);
         private static bool _speechIsRunning = false;
+        private static HeartRateSensorReceiver _heartRateReceiver = new(3800);
+        private static bool _heartRateIsRunning = false;
+
 
         public static UfeelAPI Instance
         {
@@ -41,6 +44,7 @@ namespace UFeel
             Debug.Log("Currently the emotion receiver is: " + (_emotionIsRunning ? "running" : "shut down"));
             Debug.Log("Currently the eye tracking receiver is: " + (_eyeTrackingIsRunning ? "running" : "shut down"));
             Debug.Log("Currently the speech to text receiver is: " + (_speechIsRunning ? "running" : "shut down"));
+            Debug.Log("Currently the heart rate receiver is: " + (_heartRateIsRunning ? "running" : "shut down"));
             Debug.Log("-------------------------------------");
         }
 
@@ -135,7 +139,7 @@ namespace UFeel
 
         public void StopEyeTrackingDetection()
         {
-            ToggleEyeTrackingDetection(true);
+            ToggleEyeTrackingDetection(false);
             _eyeTrackingIsRunning = false;
             Debug.Log("Eye Tracking detection stopped.");
         }
@@ -206,6 +210,55 @@ namespace UFeel
                 action.Invoke();
         }
 
+        private static void ToggleHeartRateDetection(bool status)
+        {
+            byte[] bytes = ClientBase.CreateData("heart_rate_detection", status.ToString().ToLower());
+            _heartRateReceiver?.SendData(bytes);
+        }
+
+        public void StartHeartRateDetection()
+        {
+            ToggleHeartRateDetection(true);
+            _heartRateIsRunning = true;
+            Debug.Log("Heart Rate detection started.");
+            Debug.Log("toi là");
+        }
+
+        public void StopHeartRateDetection()
+        {
+            ToggleHeartRateDetection(false);
+            _heartRateIsRunning = false;
+            Debug.Log("Heart Rate detection stopped.");
+        }
+
+        public int? GetCurrentHeartRate()
+        {
+            if (!_heartRateIsRunning) return 0;
+
+            HeartRateData? currentHeartRateData = _heartRateReceiver.CurrentHeartRateData;
+            return currentHeartRateData?.rate;
+        }
+
+        public void TriggerActionIfHeartRate(int rate, System.Action action, int tolerance = 0)
+        {
+            if (action == null) return;
+
+            HeartRateData? currentHeartRateData = _heartRateReceiver.CurrentHeartRateData;
+
+            if (!currentHeartRateData.HasValue)
+                return;
+
+            int current = currentHeartRateData.Value.rate;
+
+            int min = rate - tolerance;
+            int max = rate + tolerance;
+
+            if (current >= min && current <= max)
+            {
+                action.Invoke();
+            }
+        }
+
         private void OnDisable()
         {
             StopAPI();
@@ -217,6 +270,7 @@ namespace UFeel
             ToggleEmotionDetection(false);
             ToggleEyeTrackingDetection(false);
             ToggleSpeechDetection(false);
+            ToggleHeartRateDetection(false);
 
             PythonServerController.Instance.StopServer();
         }

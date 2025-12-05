@@ -60,6 +60,23 @@ public class LauncherScript : MonoBehaviour
         onFinished?.Invoke();
     }
 
+    IEnumerator WaitUntilHeartRate(UfeelAPI instance, System.Action onFinished)
+    {
+        bool looping = true;
+
+        Debug.Log("Waiting until heart rate is 80!");
+        while (looping)
+        {
+            instance.TriggerActionIfHeartRate(80, () =>
+            {
+                looping = false;
+            }, 5);
+            yield return new WaitForSeconds(0.5f);
+        }
+        Debug.Log("He is really calm (80 heart rate)!");
+        onFinished?.Invoke();
+    }
+
     void StopUnity(UfeelAPI instance)
     {
         instance.StopAPI();
@@ -108,7 +125,16 @@ public class LauncherScript : MonoBehaviour
                 StartCoroutine(WaitUntilWords(instance, async () =>
                 {
                     Debug.Log("Here is the current speech " + instance.GetCurrentSpeech());
-                    StopUnity(instance);
+                    instance.StopSpeechDetection();
+                    instance.StartHeartRateDetection();
+                    instance.Status();
+
+                    await Task.Delay(5000);
+
+                    StartCoroutine(WaitUntilHeartRate(instance, () =>
+                    {
+                        StopUnity(instance);
+                    }));
                 }));
             }));
         }));
