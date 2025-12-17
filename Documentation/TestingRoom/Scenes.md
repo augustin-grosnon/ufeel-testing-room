@@ -21,3 +21,17 @@
 - **Logic**: Emotion recognition controls access through doors.
 - **Important Scripts**:
   - `EmotionGameManager`
+
+## Speech To Text Scene (TestingRoom_SpeechToText)
+
+- **Purpose**: Voice‑based interactions allowing the player to open/close a door and switch on/off room lighting.
+- **Input**: Spoken commands processed by speech‑to‑text ("open door", "close door", "lights on", "lights off").
+- **Important Scripts**:
+  - `SpeechManager`
+  - `VoiceDoorController`
+
+## Biometrics Sensors (TestingRoom_HeartBeat)
+- **Purpose**: Displays player’s real-time heart rate in Unity as a demonstration of biometric sensor integration.
+- **Input**: Heartbeat data streamed from an external biometric sensor.
+- **Important Scripts**:
+  - `HeartbeatSingleton`
