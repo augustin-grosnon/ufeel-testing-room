@@ -1,17 +1,20 @@
 using UnityEngine;
 using System.Text;
 
-[System.Serializable]
-public struct HeartRateData
+namespace UFeel
 {
-    public int rate;
+    [System.Serializable]
+    public struct SpeechData
+    {
+        public string text;
+    }
 }
 
-public class HeartRateSensorReceiver : ClientBase
+internal class SpeechToTextReceiver : ClientBase
 {
-    public HeartRateData? CurrentHeartRateData { get; private set; } = null;
+    public UFeel.SpeechData? CurrentSpeechData { get; private set; } = null;
 
-    public HeartRateSensorReceiver(int port) : base(port)
+    public SpeechToTextReceiver(int port) : base(port)
     {
         PythonServerController.Instance.EnsureServerRunning();
     }
@@ -21,7 +24,7 @@ public class HeartRateSensorReceiver : ClientBase
         string json = Encoding.ASCII.GetString(data);
         try
         {
-            CurrentHeartRateData = JsonUtility.FromJson<HeartRateData>(json);
+            CurrentSpeechData = JsonUtility.FromJson<UFeel.SpeechData>(json);
         }
         catch (System.Exception e)
         {

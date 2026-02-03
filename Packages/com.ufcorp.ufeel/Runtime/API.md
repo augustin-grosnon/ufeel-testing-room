@@ -1,18 +1,18 @@
-# 📘 UfeelAPI Documentation
+# 📘 UFeelAPI Documentation
 
 ## Overview
 
-`UfeelAPI` is a **singleton Unity MonoBehaviour class** designed to integrate **emotion detection** and **eye tracking** systems into a Unity game. It interfaces with two underlying data receivers: `EmotionReceiver` and `EyeTrackingReceiver`, and allows enabling/disabling tracking, retrieving current data, and triggering actions based on dominant states.
+`UFeelAPI` is a **singleton Unity MonoBehaviour class** designed to integrate **emotion detection** and **eye tracking** systems into a Unity game. It interfaces with two underlying data receivers: `EmotionReceiver` and `EyeTrackingReceiver`, and allows enabling/disabling tracking, retrieving current data, and triggering actions based on dominant states.
 
 ---
 
 ## 🔧 Singleton Access
 
 ```csharp
-public static UfeelAPI Instance
+public static UFeelAPI Instance
 ```
 
-Access the global instance of `UfeelAPI`.
+Access the global instance of `UFeelAPI`.
 
 ---
 
@@ -164,22 +164,22 @@ Stops all tracking systems (emotion and eye tracking) and shuts down the Python 
 ```csharp
 void Start()
 {
-    UfeelAPI.Instance.StartEmotionDetection();
+    UFeelAPI.Instance.StartEmotionDetection();
 
-    if (UfeelAPI.Instance.GetDominantEmotion() == EmotionData.EmotionType.Happy)
+    if (UFeelAPI.Instance.GetDominantEmotion() == EmotionData.EmotionType.Happy)
     {
         Debug.Log("Player is happy!");
     }
 
-    UfeelAPI.Instance.StopEmotionDetection();
+    UFeelAPI.Instance.StopEmotionDetection();
 
-    UfeelAPI.Instance.StartEyeTrackingDetection();
+    UFeelAPI.Instance.StartEyeTrackingDetection();
 
-    UfeelAPI.Instance.TriggerActionIfDirection(
+    UFeelAPI.Instance.TriggerActionIfDirection(
         EyeTrackingData.EyeTrackingType.Left,
         () => Debug.Log("Player is looking left.")
     );
 
-    UfeelAPI.Instance.stopAPI();
+    UFeelAPI.Instance.stopAPI();
 }
 ```

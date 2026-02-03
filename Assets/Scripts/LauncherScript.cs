@@ -9,7 +9,7 @@ using UnityEditor;
 
 public class LauncherScript : MonoBehaviour
 {
-    void StopUnity(UfeelAPI instance)
+    void StopUnity(UFeelAPI instance)
     {
         instance.StopAPI();
         instance.Status();
@@ -23,7 +23,7 @@ public class LauncherScript : MonoBehaviour
 
     async void Start()
     {
-        UfeelAPI instance = UfeelAPI.Instance;
+        UFeelAPI instance = UFeelAPI.Instance;
         Debug.Log("Hello UFEEL User");
         await Task.Delay(5000);
 
@@ -55,7 +55,7 @@ public class LauncherScript : MonoBehaviour
 
                 // TMP
                 instance.StartEmotionDetection();
-                UfeelAPI.RuleHandle rd = instance.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
+                UFeelAPI.RuleHandle rd = instance.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
                 {
                     await Task.Delay(1000);
                     Debug.Log("Emotion Continuellement");

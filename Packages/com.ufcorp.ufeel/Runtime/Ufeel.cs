@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace UFeel
 {
-    public class UfeelAPI : MonoBehaviour
+    public class UFeelAPI : MonoBehaviour
     {
         public class Rule
         {
@@ -32,7 +32,7 @@ namespace UFeel
             }
         }
 
-        private static UfeelAPI _instance;
+        private static UFeelAPI _instance;
         private static EmotionReceiver _emotionReceiver = new(4100);
         private static bool _emotionIsRunning = false;
         private static EyeTrackingReceiver _eyeTrackingReceiver = new(4000);
@@ -46,18 +46,18 @@ namespace UFeel
         private readonly List<Rule> _rulesToAdd = new();
         private readonly HashSet<int> _rulesToRemove = new();
 
-        public static UfeelAPI Instance
+        public static UFeelAPI Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                     _instance = FindAnyObjectByType<UfeelAPI>();
+                     _instance = FindAnyObjectByType<UFeelAPI>();
 
                     if (_instance == null)
                     {
-                        GameObject obj = new("UfeelAPI");
-                        _instance = obj.AddComponent<UfeelAPI>();
+                        GameObject obj = new("UFeelAPI");
+                        _instance = obj.AddComponent<UFeelAPI>();
 
                         DontDestroyOnLoad(obj);
                     }
