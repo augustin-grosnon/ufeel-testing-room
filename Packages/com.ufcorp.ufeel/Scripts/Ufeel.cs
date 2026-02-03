@@ -1,12 +1,37 @@
 using UnityEngine;
-using System.Collections;
-using System.Text;
-
+using System;
+using System.Collections.Generic;
 
 namespace UFeel
 {
     public class UfeelAPI : MonoBehaviour
     {
+        public class Rule
+        {
+            public Func<bool> Condition;
+            public Action Action;
+            public bool IsUnique;
+            public int Id;
+
+            public Rule(int id, Func<bool> condition, Action action, bool isUnique)
+            {
+                Id = id;
+                Condition = condition;
+                Action = action;
+                IsUnique = isUnique;
+            }
+        }
+
+        public struct RuleHandle
+        {
+            internal int Id;
+
+            internal RuleHandle(int id)
+            {
+                Id = id;
+            }
+        }
+
         private static UfeelAPI _instance;
         private static EmotionReceiver _emotionReceiver = new(4100);
         private static bool _emotionIsRunning = false;
@@ -16,7 +41,10 @@ namespace UFeel
         private static bool _speechIsRunning = false;
         private static HeartRateSensorReceiver _heartRateReceiver = new(3800);
         private static bool _heartRateIsRunning = false;
-
+        private int _nextRuleId = 0;
+        private readonly List<Rule> _rules = new();
+        private readonly List<Rule> _rulesToAdd = new();
+        private readonly HashSet<int> _rulesToRemove = new();
 
         public static UfeelAPI Instance
         {
@@ -37,6 +65,58 @@ namespace UFeel
                 return _instance;
             }
         }
+
+        private void Update()
+        {
+            foreach (var rule in _rules)
+            {
+                if (!rule.Condition())
+                    continue;
+
+                rule.Action?.Invoke();
+
+                if (rule.IsUnique)
+                    _rulesToRemove.Add(rule.Id);
+            }
+
+            if (_rulesToRemove.Count > 0)
+            {
+                for (int i = _rules.Count - 1; i >= 0; i--)
+                {
+                    if (_rulesToRemove.Remove(_rules[i].Id))
+                    {
+                        _rules.RemoveAt(i);
+                    }
+                }
+                _rulesToRemove.Clear();
+            }
+
+            if (_rulesToAdd.Count > 0)
+            {
+                _rules.AddRange(_rulesToAdd);
+                _rulesToAdd.Clear();
+            }
+        }
+
+
+        private RuleHandle AddRule(Func<bool> condition, Action action, bool isUnique = false)
+        {
+            var rule = new Rule(
+                id: _nextRuleId++,
+                condition: condition,
+                action: action,
+                isUnique: isUnique
+            );
+
+            _rulesToAdd.Add(rule);
+            return new RuleHandle(rule.Id);
+        }
+
+        public void RemoveRule(RuleHandle handle)
+        {
+            _rulesToRemove.Add(handle.Id);
+        }
+
 
         public void Status()
         {
@@ -84,44 +164,27 @@ namespace UFeel
             return currentEmotions?.GetDominantEmotion();
         }
 
-        public void TriggerActionIfEmotion(EmotionData.EmotionType emotion, System.Action action)
+        public RuleHandle TriggerActionOnEmotion(EmotionData.EmotionType emotion, Action action, bool isUnique)
         {
-            if (action == null) return;
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
 
-            EmotionData.EmotionType? currentEmotion = GetDominantEmotion();
-            if (emotion == currentEmotion)
-                action.Invoke();
+            return AddRule(
+                condition: () => GetDominantEmotion() == emotion,
+                action: action,
+                isUnique: isUnique
+            );
         }
 
-        // private IEnumerator CheckEmotionRoutine(EmotionData.EmotionType targetEmotion, Action action, float interval)
-        // {
-        //     while (true)
-        //     {
-        //         if (GetDominantEmotion() == targetEmotion)
-        //         {
-        //             Debug.Log($"Dominant emotion is {targetEmotion}, invoking action.");
-        //             action?.Invoke();
-        //         }
+        public RuleHandle TriggerActionOnEmotionOnce(EmotionData.EmotionType emotion, Action action)
+        {
+            return TriggerActionOnEmotion(emotion, action, true);
+        }
 
-        //         yield return new WaitForSeconds(interval);
-        //     }
-        // }
-
-        // public Coroutine TriggerActionWhenDominantEmotionIs(EmotionData.EmotionType emotion, Action action, float checkInterval = 0.5f)
-        // {
-        //     return StartCoroutine(CheckEmotionRoutine(emotion, action, checkInterval));
-        // }
-
-        // --- Eye Tracking Detection Methods ---
-        //  public static void enableCameraEyeTracking()
-        // {
-        //     toggleCamera(_eyeTrackingReceiver, true);
-        // }
-
-        // public static void disableCameraEyeTracking()
-        // {
-        //     toggleCamera(_eyeTrackingReceiver, false);
-        // }
+        public RuleHandle TriggerActionOnEmotionContinuous(EmotionData.EmotionType emotion, Action action)
+        {
+            return TriggerActionOnEmotion(emotion, action, false);
+        }
 
         private static void ToggleEyeTrackingDetection(bool status)
         {
@@ -160,12 +223,26 @@ namespace UFeel
             return currentEyeTracking?.GetEyeTrackingType();
         }
 
-        public void TriggerActionIfDirection(EyeTrackingData.EyeTrackingType direction, System.Action action)
+        public RuleHandle TriggerActionOnDirection(EyeTrackingData.EyeTrackingType direction, Action action, bool isUnique)
         {
-            if (action == null) return;
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
 
-            if (direction == GetDominantDirection())
-                action.Invoke();
+            return AddRule(
+                condition: () => GetDominantDirection() == direction,
+                action: action,
+                isUnique: isUnique
+            );
+        }
+
+        public RuleHandle TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType direction, Action action)
+        {
+            return TriggerActionOnDirection(direction, action, true);
+        }
+
+        public RuleHandle TriggerActionOnDirectionContinuous(EyeTrackingData.EyeTrackingType direction, Action action)
+        {
+            return TriggerActionOnDirection(direction, action, false);
         }
 
         private static void ToggleSpeechDetection(bool status)
@@ -188,7 +265,6 @@ namespace UFeel
             Debug.Log("Speech detection stopped.");
         }
 
-        // TODO: is it uf enough ?
         public string GetCurrentSpeech()
         {
             if (!_speechIsRunning) return null;
@@ -197,17 +273,34 @@ namespace UFeel
             return currentSpeechData?.text;
         }
 
-        public void TriggerActionIfSpeech(string text, System.Action action)
+        public RuleHandle TriggerActionOnSpeech(string text, Action action, bool isUnique)
         {
-            if (action == null) return;
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
 
-            SpeechData? currentSpeechData = _speechReceiver.CurrentSpeechData;
-            if (currentSpeechData == null) return;
+            return AddRule(
+                condition: () =>
+                {
+                    SpeechData? currentSpeechData = _speechReceiver.CurrentSpeechData;
+                    if (currentSpeechData == null) return false;
 
-            string targetToLower = text.ToLower();
-            string currentToLower = currentSpeechData?.text.ToLower();
-            if (targetToLower.Contains(currentToLower))
-                action.Invoke();
+                    string targetToLower = text.ToLower();
+                    string currentToLower = currentSpeechData?.text.ToLower();
+                    return targetToLower.Contains(currentToLower);
+                },
+                action: action,
+                isUnique: isUnique
+            );
+        }
+
+        public RuleHandle TriggerActionOnSpeechOnce(string text, Action action)
+        {
+            return TriggerActionOnSpeech(text, action, true);
+        }
+
+        public RuleHandle TriggerActionOnSpeechContinuous(string text, Action action)
+        {
+            return TriggerActionOnSpeech(text, action, false);
         }
 
         private static void ToggleHeartRateDetection(bool status)
@@ -239,24 +332,39 @@ namespace UFeel
             return currentHeartRateData?.rate;
         }
 
-        public void TriggerActionIfHeartRate(int rate, System.Action action, int tolerance = 0)
+        public RuleHandle TriggerActionOnHeartRate(int rate, Action action, bool isUnique, int tolerance = 0)
         {
-            if (action == null) return;
+            if (action == null)
+                throw new ArgumentNullException(nameof(action));
 
-            HeartRateData? currentHeartRateData = _heartRateReceiver.CurrentHeartRateData;
+            return AddRule(
+                condition: () =>
+                {
+                    HeartRateData? currentHeartRateData = _heartRateReceiver.CurrentHeartRateData;
 
-            if (!currentHeartRateData.HasValue)
-                return;
+                    if (!currentHeartRateData.HasValue)
+                        return false;
 
-            int current = currentHeartRateData.Value.rate;
+                    int current = currentHeartRateData.Value.rate;
 
-            int min = rate - tolerance;
-            int max = rate + tolerance;
+                    int min = rate - tolerance;
+                    int max = rate + tolerance;
 
-            if (current >= min && current <= max)
-            {
-                action.Invoke();
-            }
+                    return current >= min && current <= max;
+                },
+                action: action,
+                isUnique: isUnique
+            );
+        }
+
+        public RuleHandle TriggerActionOnHeartRateOnce(int rate, Action action, int tolerance = 0)
+        {
+            return TriggerActionOnHeartRate(rate, action, true, tolerance);
+        }
+
+        public RuleHandle TriggerActionOnDirectionContinuous(int rate, Action action, int tolerance = 0)
+        {
+            return TriggerActionOnHeartRate(rate, action, false, tolerance);
         }
 
         private void OnDisable()

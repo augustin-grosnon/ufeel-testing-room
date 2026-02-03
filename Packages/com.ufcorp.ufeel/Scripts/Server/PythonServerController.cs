@@ -20,8 +20,13 @@ public class PythonServerController
     }
 
     private Process _pythonProcess = null;
-    // private readonly string _pythonExecutable = "python3";
-    private readonly string _venvPath = "/home/neon/EIP/ufeel-testing-room/venv/bin/python3";
+
+    private readonly string _venvPath =
+#if UNITY_STANDALONE_WIN
+    Application.dataPath + "/../PythonServer/venv/Scripts/python.exe";
+#else
+    Application.dataPath + "/../PythonServer/venv/bin/python3";
+#endif
 
     private readonly string _scriptPath;
     private readonly string _serverName;
@@ -106,11 +111,4 @@ public class PythonServerController
             }
         }
     }
-
-    // private void OnApplicationQuit()
-    // {
-    //     Debug.Log("Application Quit Python Server")
-    //     StopServer();
-    //     Application.quitting -= OnApplicationQuit;
-    // }
 }

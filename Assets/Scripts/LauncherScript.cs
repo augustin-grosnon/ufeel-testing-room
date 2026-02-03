@@ -1,82 +1,14 @@
 using UnityEngine;
 using UFeel;
 using System.Threading.Tasks;
-using System.Collections;
+
 
 #if UNITY_EDITOR
-    using UnityEditor;
+using UnityEditor;
 #endif
 
 public class LauncherScript : MonoBehaviour
 {
-    IEnumerator WaitUntilNotAnger(UfeelAPI instance, System.Action onFinished)
-    {
-        bool looping = true;
-
-        Debug.Log("Waiting until emotion is Anger!");
-        while (looping)
-        {
-            instance.TriggerActionIfEmotion(EmotionData.EmotionType.Anger, () =>
-            {
-                looping = false;
-            });
-            yield return new WaitForSeconds(0.5f);
-        }
-        Debug.Log("Emotion is Anger!");
-        onFinished?.Invoke();
-    }
-
-    IEnumerator WaitUntilUpRight(UfeelAPI instance, System.Action onFinished)
-    {
-        bool looping = true;
-
-        Debug.Log("Waiting until eye is Up Right!");
-        while (looping)
-        {
-            instance.TriggerActionIfDirection(EyeTrackingData.EyeTrackingType.UpRight, () =>
-            {
-                looping = false;
-            });
-            yield return new WaitForSeconds(0.5f);
-        }
-        Debug.Log("Eye is Up Right!");
-        onFinished?.Invoke();
-    }
-
-    IEnumerator WaitUntilWords(UfeelAPI instance, System.Action onFinished)
-    {
-        bool looping = true;
-
-        Debug.Log("Waiting until word is Camion!");
-        while (looping)
-        {
-            instance.TriggerActionIfSpeech("Camion", () =>
-            {
-                looping = false;
-            });
-            yield return new WaitForSeconds(0.5f);
-        }
-        Debug.Log("He said the word!");
-        onFinished?.Invoke();
-    }
-
-    IEnumerator WaitUntilHeartRate(UfeelAPI instance, System.Action onFinished)
-    {
-        bool looping = true;
-
-        Debug.Log("Waiting until heart rate is 80!");
-        while (looping)
-        {
-            instance.TriggerActionIfHeartRate(80, () =>
-            {
-                looping = false;
-            }, 5);
-            yield return new WaitForSeconds(0.5f);
-        }
-        Debug.Log("He is really calm (80 heart rate)!");
-        onFinished?.Invoke();
-    }
-
     void StopUnity(UfeelAPI instance)
     {
         instance.StopAPI();
@@ -103,7 +35,7 @@ public class LauncherScript : MonoBehaviour
         Debug.Log("Here is the current emotion " + instance.GetCurrentEmotions());
         Debug.Log("Here is the dominant emotion " + instance.GetDominantEmotion());
 
-        StartCoroutine(WaitUntilNotAnger(instance, async () =>
+        instance.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, async () =>
         {
             instance.StopEmotionDetection();
             instance.Status();
@@ -115,29 +47,46 @@ public class LauncherScript : MonoBehaviour
             Debug.Log("Here is the current eye data " + instance.GetCurrentDirections());
             Debug.Log("Here is the dominant direction " + instance.GetDominantDirection());
 
-            StartCoroutine(WaitUntilUpRight(instance, () =>
+            instance.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
             {
                 instance.StopEyeTrackingDetection();
 
                 instance.StartSpeechDetection();
+
+                // TMP
+                instance.StartEmotionDetection();
+                UfeelAPI.RuleHandle rd = instance.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
+                {
+                    await Task.Delay(1000);
+                    Debug.Log("Emotion Continuellement");
+                });
+                //
+
                 instance.Status();
 
-                StartCoroutine(WaitUntilWords(instance, async () =>
+                instance.TriggerActionOnSpeechOnce("Camion", async () =>
                 {
                     Debug.Log("Here is the current speech " + instance.GetCurrentSpeech());
+
+                    // TMP
+                    instance.RemoveRule(rd);
+                    instance.StopEmotionDetection();
+                    //
+
                     instance.StopSpeechDetection();
                     instance.StartHeartRateDetection();
                     instance.Status();
 
                     await Task.Delay(5000);
 
-                    StartCoroutine(WaitUntilHeartRate(instance, () =>
+                    instance.TriggerActionOnHeartRateOnce(80, () =>
                     {
                         StopUnity(instance);
-                    }));
-                }));
-            }));
-        }));
+                    });
+                });
+            });
+        });
+
     }
 
     void Update()

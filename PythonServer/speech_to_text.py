@@ -53,6 +53,7 @@ from vosk import Model, KaldiRecognizer
 from client_base import ClientBase
 import logging
 import threading
+import os
 
 logging.basicConfig(
     filename="client_base.log",
@@ -62,13 +63,16 @@ logging.basicConfig(
 )
 
 class SpeechToText(ClientBase):
-    def __init__(self):
+    def __init__(self, model_path=None):
         super().__init__("127.0.0.1", 3900)
         self.handlers = {
             "speech_detection": self.toggle_speech_detection,
         }
 
-        self.model = Model("PythonServer/models/vosk-model-small-fr-0.22") # French model but need to add other languages
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        if model_path is None:
+            model_path = os.path.join(base_dir, 'models', 'vosk-model-small-fr-0.22')
+        self.model = Model(model_path) # French model but need to add other languages
         self.recognizer = KaldiRecognizer(self.model, 16000)
 
         self.process_enable = False
