@@ -53,7 +53,7 @@ public class LauncherScript : MonoBehaviour
 
                 instance.StartSpeechDetection();
 
-                // TMP
+                // Continuous Emotion
                 instance.StartEmotionDetection();
                 UFeelAPI.RuleHandle rd = instance.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
                 {
@@ -68,7 +68,7 @@ public class LauncherScript : MonoBehaviour
                 {
                     Debug.Log("Here is the current speech " + instance.GetCurrentSpeech());
 
-                    // TMP
+                    // Remove Continuous Emotion
                     instance.RemoveRule(rd);
                     instance.StopEmotionDetection();
                     //
@@ -86,7 +86,6 @@ public class LauncherScript : MonoBehaviour
                 });
             });
         });
-
     }
 
     void Update()

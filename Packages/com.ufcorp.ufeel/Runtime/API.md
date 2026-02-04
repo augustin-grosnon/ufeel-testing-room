@@ -1,185 +1,363 @@
-# 📘 UFeelAPI Documentation
+# 📘 UFeelAPI – Unity Gameplay Integration Guide
 
 ## Overview
 
-`UFeelAPI` is a **singleton Unity MonoBehaviour class** designed to integrate **emotion detection** and **eye tracking** systems into a Unity game. It interfaces with two underlying data receivers: `EmotionReceiver` and `EyeTrackingReceiver`, and allows enabling/disabling tracking, retrieving current data, and triggering actions based on dominant states.
+`UFeelAPI` is a **singleton Unity MonoBehaviour** that allows Unity games to react in real time to **player signals** such as:
+
+* 🧠 **Emotions**
+* 👁️ **Eye tracking (gaze direction)**
+* 🎙️ **Speech (keywords / phrases)**
+* ❤️ **Heart rate**
+
+The API is designed to be **event-driven** and **gameplay-oriented**:
+you define *rules* that automatically trigger actions when a condition becomes true.
+
+No polling, no manual state checking every frame — the API handles it for you.
 
 ---
 
-## 🔧 Singleton Access
+## 🚀 Getting Started
+
+### Accessing the API
 
 ```csharp
-public static UFeelAPI Instance
+UFeelAPI api = UFeelAPI.Instance;
 ```
 
-Access the global instance of `UFeelAPI`.
+`UFeelAPI` is a **persistent singleton**:
+
+* Automatically created if not present in the scene
+* Survives scene changes (`DontDestroyOnLoad`)
 
 ---
 
-## 📊 Status
+## 🔁 Core Concept: Rules
+
+A **Rule** is composed of:
+
+* a **condition** (emotion, direction, speech, heart rate…)
+* an **action** (your gameplay code)
+* a **mode**:
+
+  * `Once` → triggered once, then removed
+  * `Continuous` → triggered every frame while the condition is true
+
+Internally, rules are evaluated **every frame in `Update()`**.
+
+### RuleHandle
+
+When you register a rule, you receive a `RuleHandle`:
 
 ```csharp
-public void status()
+RuleHandle handle;
 ```
 
-Prints the current operational status of the emotion and eye tracking systems to the Unity Console.
+This handle allows you to **manually remove** the rule later if needed.
 
 ---
 
 ## 🧠 Emotion Detection
 
-### Start Emotion Detection
+### Start / Stop
 
 ```csharp
-public void StartEmotionDetection()
+api.StartEmotionDetection();
+api.StopEmotionDetection();
 ```
 
-Initializes and starts the emotion detection system.
-
-### Stop Emotion Detection
-
-```csharp
-public void StopEmotionDetection()
-```
-
-Stops the emotion detection system and cleans up resources.
-
-### Get Current Emotions
-
-```csharp
-public EmotionData? GetCurrentEmotions()
-```
-
-Returns the latest emotion data received.
-
-### Get Dominant Emotion
-
-```csharp
-public EmotionData.EmotionType? GetDominantEmotion()
-```
-
-Returns the most dominant emotion detected at the moment.
-
-### Trigger Action by Emotion
-
-```csharp
-public void TriggerActionIfEmotion(EmotionData.EmotionType emotion, Action action)
-```
-
-Invokes the provided `action` **only if** the currently dominant emotion matches the specified one.
-
-### Enable/Disable Camera Feed for Emotion
-
-```csharp
-public static void enableCameraEmotion()
-public static void disableCameraEmotion()
-```
-
-Enables or disables the emotion detection camera stream (stubbed function; implement sending logic if needed).
+Emotion detection **must be started** before accessing data or triggering rules.
 
 ---
 
-## 👁️ Eye Tracking Detection
-
-### Start Eye Tracking
+### Reading Emotion Data
 
 ```csharp
-public void StartEyeTrackingDetection()
+EmotionData? emotions = api.GetCurrentEmotions();
+EmotionData.EmotionType? dominant = api.GetDominantEmotion();
 ```
 
-Initializes and starts the eye tracking system.
-
-### Stop Eye Tracking
-
-```csharp
-public void StopEyeTrackingDetection()
-```
-
-Stops the eye tracking system and cleans up resources.
-
-### Get Current Eye Direction
-
-```csharp
-public EyeTrackingData? GetCurrentDirections()
-```
-
-Returns the latest eye tracking data received.
-
-### Get Dominant Direction
-
-```csharp
-public EyeTrackingData.EyeTrackingType? GetDominantDirection()
-```
-
-Returns the most dominant gaze direction currently detected.
-
-### Trigger Action by Eye Direction
-
-```csharp
-public void TriggerActionIfDirection(EyeTrackingData.EyeTrackingType direction, Action action)
-```
-
-Invokes the provided `action` **only if** the current dominant gaze direction matches the specified one.
-
-### Enable/Disable Camera Feed for Eye Tracking
-
-```csharp
-public static void enableCameraEyeTracking()
-public static void disableCameraEyeTracking()
-```
-
-Enables or disables the eye tracking camera stream (stubbed function; implement sending logic if needed).
+* Returns `null` if the system is not running
+* `GetDominantEmotion()` returns the strongest detected emotion
 
 ---
 
-## 🔌 Global Stop
+### Triggering Gameplay from Emotions
+
+#### Trigger Once
 
 ```csharp
-public void stopAPI()
+api.TriggerActionOnEmotionOnce(
+    EmotionData.EmotionType.Happy,
+    () => Debug.Log("Player is happy!")
+);
 ```
 
-Stops all tracking systems (emotion and eye tracking) and shuts down the Python backend server if used.
-
----
-
-## 🧱 Internal Implementation Notes
-
-* **`toggleCamera` and `toggleEmotionDetection` / `toggleEyeTrackingDetection`** are stubbed for now (do nothing).
-* Actual data is fetched from:
-
-  * `_emotionReceiver._currentEmotions`
-  * `_eyeTrackingReceiver.CurrentEyeTrackingData`
-* Receivers must be running to access live data. Call `StartEmotionDetection()` or `StartEyeTrackingDetection()` first.
-
----
-
-## 🚨 Known Issues
-
-* 🔧 Network communication for toggling features (`SendData`) is stubbed and needs implementation.
-
----
-
-## ✅ Example Usage
+#### Trigger Continuously
 
 ```csharp
-void Start()
+RuleHandle handle = api.TriggerActionOnEmotionContinuous(
+    EmotionData.EmotionType.Angry,
+    () => TakeDamageOverTime()
+);
+```
+
+#### Removing a Rule
+
+```csharp
+api.RemoveRule(handle);
+```
+
+---
+
+## 👁️ Eye Tracking (Gaze Direction)
+
+### Start / Stop
+
+```csharp
+api.StartEyeTrackingDetection();
+api.StopEyeTrackingDetection();
+```
+
+---
+
+### Reading Gaze Direction
+
+```csharp
+EyeTrackingData? data = api.GetCurrentDirections();
+EyeTrackingData.EyeTrackingType? direction = api.GetDominantDirection();
+```
+
+---
+
+### Triggering Gameplay from Gaze
+
+```csharp
+api.TriggerActionOnDirectionOnce(
+    EyeTrackingData.EyeTrackingType.Left,
+    () => OpenLeftDoor()
+);
+```
+
+or continuously:
+
+```csharp
+api.TriggerActionOnDirectionContinuous(
+    EyeTrackingData.EyeTrackingType.Up,
+    () => AimUpwards()
+);
+```
+
+---
+
+## 🎙️ Speech Detection
+
+### Start / Stop
+
+```csharp
+api.StartSpeechDetection();
+api.StopSpeechDetection();
+```
+
+---
+
+### Reading Current Speech
+
+```csharp
+string spokenText = api.GetCurrentSpeech();
+```
+
+Returns `null` if speech detection is not running.
+
+---
+
+### Triggering Actions from Speech
+
+Speech rules trigger when the **detected text is contained inside the target string**
+(case-insensitive).
+
+```csharp
+api.TriggerActionOnSpeechOnce(
+    "open the door",
+    () => OpenDoor()
+);
+```
+
+Continuous mode:
+
+```csharp
+api.TriggerActionOnSpeechContinuous(
+    "attack",
+    () => TriggerCombatMode()
+);
+```
+
+---
+
+## ❤️ Heart Rate Detection
+
+### Start / Stop
+
+```csharp
+api.StartHeartRateDetection();
+api.StopHeartRateDetection();
+```
+
+---
+
+### Reading Heart Rate
+
+```csharp
+int? bpm = api.GetCurrentHeartRate();
+```
+
+---
+
+### Triggering Actions from Heart Rate
+
+You can define a **target BPM** with an optional **tolerance**.
+
+```csharp
+api.TriggerActionOnHeartRateOnce(
+    rate: 120,
+    action: () => EnterStressMode(),
+    tolerance: 10
+);
+```
+
+This triggers if the heart rate is between **110 and 130 BPM**.
+
+Continuous variant:
+
+```csharp
+api.TriggerActionOnDirectionContinuous(
+    rate: 90,
+    action: () => CalmState(),
+    tolerance: 5
+);
+```
+
+---
+
+## 🧹 Removing Rules Manually
+
+Any rule can be removed at runtime:
+
+```csharp
+RuleHandle handle = api.TriggerActionOnEmotionContinuous(...);
+api.RemoveRule(handle);
+```
+
+Useful for:
+
+* state machines
+* temporary gameplay effects
+* cutscenes
+
+---
+
+## 🛑 Stopping Everything
+
+```csharp
+api.StopAPI();
+```
+
+This will:
+
+* stop **all detections**
+* notify the backend systems
+* shut down the Python server
+
+Automatically called when the GameObject is disabled.
+
+---
+
+## 📊 Debugging
+
+```csharp
+api.Status();
+```
+
+Logs the running state of all systems in the Unity Console.
+
+---
+
+## ⚠️ Important Notes & Limitations
+
+* Detection systems **must be started explicitly**
+* Rules are evaluated **every frame**
+* Actions should be **fast** (avoid heavy logic inside rules)
+* Speech matching uses `Contains` (not exact match)
+* Backend communication is assumed to be active
+
+---
+
+## ✅ Typical Usage Pattern
+
+```csharp
+async void Start()
 {
-    UFeelAPI.Instance.StartEmotionDetection();
+    UFeelAPI instance = UFeelAPI.Instance;
+    Debug.Log("Hello UFEEL User");
+    await Task.Delay(5000);
 
-    if (UFeelAPI.Instance.GetDominantEmotion() == EmotionData.EmotionType.Happy)
+    instance.StartEmotionDetection();
+    instance.Status();
+
+    await Task.Delay(5000);
+
+    Debug.Log("Here is the current emotion " + instance.GetCurrentEmotions());
+    Debug.Log("Here is the dominant emotion " + instance.GetDominantEmotion());
+
+    instance.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, async () =>
     {
-        Debug.Log("Player is happy!");
-    }
+        instance.StopEmotionDetection();
+        instance.Status();
+        instance.StartEyeTrackingDetection();
+        instance.Status();
 
-    UFeelAPI.Instance.StopEmotionDetection();
+        await Task.Delay(5000);
 
-    UFeelAPI.Instance.StartEyeTrackingDetection();
+        Debug.Log("Here is the current eye data " + instance.GetCurrentDirections());
+        Debug.Log("Here is the dominant direction " + instance.GetDominantDirection());
 
-    UFeelAPI.Instance.TriggerActionIfDirection(
-        EyeTrackingData.EyeTrackingType.Left,
-        () => Debug.Log("Player is looking left.")
-    );
+        instance.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
+        {
+            instance.StopEyeTrackingDetection();
 
-    UFeelAPI.Instance.stopAPI();
+            instance.StartSpeechDetection();
+
+            // Continuous Emotion
+            instance.StartEmotionDetection();
+            UFeelAPI.RuleHandle rd = instance.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
+            {
+                await Task.Delay(1000);
+                Debug.Log("Emotion Continuellement");
+            });
+            //
+
+            instance.Status();
+
+            instance.TriggerActionOnSpeechOnce("Camion", async () =>
+            {
+                Debug.Log("Here is the current speech " + instance.GetCurrentSpeech());
+
+                // Remove Continuous Emotion
+                instance.RemoveRule(rd);
+                instance.StopEmotionDetection();
+                //
+
+                instance.StopSpeechDetection();
+                instance.StartHeartRateDetection();
+                instance.Status();
+
+                await Task.Delay(5000);
+
+                instance.TriggerActionOnHeartRateOnce(80, () =>
+                {
+                    StopUnity(instance);
+                });
+            });
+        });
+    });
 }
 ```
