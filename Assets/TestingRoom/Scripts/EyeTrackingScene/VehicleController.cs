@@ -1,4 +1,5 @@
 using UnityEngine;
+using UFeel;
 
 [RequireComponent(typeof(Rigidbody))]
 public class VehicleController : MonoBehaviour
@@ -25,10 +26,13 @@ public class VehicleController : MonoBehaviour
 
     void Update()
     {
-        var data = EyeTrackingReceiver.CurrentEyeData;
-        if (data.left && !data.right)
+
+        EyeTrackingData? currentDirections = UFeelAPI.Instance.GetCurrentDirections();
+        if (currentDirections is not EyeTrackingData directions)
+            return;
+        if (directions.left && !directions.right)
             steeringInput = -0.3f;
-        else if (data.right && !data.left)
+        else if (directions.right && !directions.left)
             steeringInput = 0.3f;
         else
             steeringInput = 0f;

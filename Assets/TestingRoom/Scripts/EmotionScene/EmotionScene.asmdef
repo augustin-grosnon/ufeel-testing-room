@@ -2,8 +2,8 @@
     "name": "EmotionSceneDefs",
     "rootNamespace": "",
     "references": [
-        "GUID:a006aee537650c2e0b08db680eeda414",
-        "GUID:7c68d958dcfc118839e766cfeab19e55"
+        "Door",
+        "UFeel.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

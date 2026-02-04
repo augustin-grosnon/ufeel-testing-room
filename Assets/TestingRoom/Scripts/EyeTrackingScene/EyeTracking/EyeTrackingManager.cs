@@ -1,4 +1,5 @@
 using UnityEngine;
+using UFeel;
 
 public sealed class EyeTrackingManager : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public sealed class EyeTrackingManager : MonoBehaviour
 
     void Awake()
     {
-        var _ = EyeTrackingReceiver.Instance;
+        UFeelAPI.Instance.StartEyeTrackingDetection();
 
         if (playerCamera == null)
         {
@@ -87,15 +88,16 @@ public sealed class EyeTrackingManager : MonoBehaviour
 
     Vector3 ComputeTargetPosition()
     {
-        var data = EyeTrackingReceiver.CurrentEyeData;
-
+        EyeTrackingData? currentDirections = UFeelAPI.Instance.GetCurrentDirections();
+        if (currentDirections is not EyeTrackingData directions)
+            return Vector2.zero;
         Vector2 direction = Vector2.zero;
-        if (data.left) direction.x -= 1;
-        if (data.right) direction.x += 1;
-        if (data.up) direction.y += 1;
-        if (data.down) direction.y -= 1;
+        if (directions.left) direction.x -= 1;
+        if (directions.right) direction.x += 1;
+        if (directions.up) direction.y += 1;
+        if (directions.down) direction.y -= 1;
 
-        if (direction != Vector2.zero && !data.center)
+        if (direction != Vector2.zero && !directions.center)
         {
             direction.Normalize();
         }

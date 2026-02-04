@@ -92,6 +92,8 @@ Assets/YughuesFreeGroundMaterials.meta
 Assets/TextMesh Pro
 Assets/TextMesh Pro.meta
 
-*.so
 *.so*
 *.a
+*.blob
+*.log
+venv

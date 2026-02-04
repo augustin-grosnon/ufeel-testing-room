@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UFeel;
+using System.Threading.Tasks;
 
 // TODO: rename to be specific to emotion detection
 public class EmotionGameManager : MonoBehaviour
@@ -56,9 +58,12 @@ public class EmotionGameManager : MonoBehaviour
     private float _devCodeTimeout = 2f;
     private float _devCodeTimer = 0f;
 
-    void Start()
+    async void Start()
     {
-        var _ = EmotionReceiver.Instance;
+
+        await Task.Delay(5000);
+
+        UFeelAPI.Instance.StartEmotionDetection();
 
         SetNextTargetEmotion();
         UpdateScoreText();
@@ -76,7 +81,11 @@ public class EmotionGameManager : MonoBehaviour
 
         HandleDebugSkipInput();
 
-        string detectedEmotion = DetermineDominantEmotion(EmotionReceiver.CurrentEmotions);
+        EmotionData? currentEmotions = UFeelAPI.Instance.GetCurrentEmotions();
+
+        if (currentEmotions is not EmotionData emotions)
+            return;
+        string detectedEmotion = DetermineDominantEmotion(emotions);
 
         if (detectedEmotion == _currentTarget)
         {

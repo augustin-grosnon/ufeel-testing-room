@@ -1,9 +1,9 @@
 {
-    "name": "EyeTrackingScene",
+    "name": "EyeTrackingSceneDefs",
     "rootNamespace": "",
     "references": [
-        "GUID:7c68d958dcfc118839e766cfeab19e55",
-        "GUID:04fe1b12705865403ae79ddccd843f8d"
+        "SceneLoader",
+        "UFeel.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
