@@ -9,6 +9,8 @@ public class SpeechManager : MonoBehaviour
 
     public Light lightBulb;
     public VoiceDoorController doorController;
+    public VoiceWindowController windowController;
+    public AudioSource radioAudio;
 
     void Awake()
     {
@@ -27,6 +29,7 @@ public class SpeechManager : MonoBehaviour
     void LateUpdate()
     {
         CheckVoiceCommand();
+
     }
 
     private string GetCurrentText()
@@ -44,6 +47,29 @@ public class SpeechManager : MonoBehaviour
         }
     }
 
+    private void changeColor(string command)
+    {
+        if (lightBulb.enabled == false)
+            return;
+    
+        if (command.Contains("lumière rouge"))
+        {
+            lightBulb.color = Color.red;
+        }
+        else if (command.Contains("lumière bleue"))
+        {
+            lightBulb.color = Color.blue;
+        }
+        else if (command.Contains("lumière jaune"))
+        {
+            lightBulb.color = Color.yellow;
+        }
+        else if (command.Contains("lumière blanche"))
+        {
+            lightBulb.color = Color.white;
+        }
+    }
+
     private void CheckVoiceCommand()
     {
         string command = GetCurrentText();
@@ -54,6 +80,8 @@ public class SpeechManager : MonoBehaviour
             return;
 
         lastCommand = command;
+
+        changeColor(command);
 
         if (_player == null)
         {
@@ -71,20 +99,14 @@ public class SpeechManager : MonoBehaviour
         {
             Debug.Log("Executing light on command.");
             if (lightBulb != null)
-            {
                 lightBulb.enabled = true;
-                Debug.Log("💡 Lumière allumée !");
-            }
         }
 
         if (command.Contains("éteins la lumière"))
         {
             Debug.Log("Executing light off command.");
             if (lightBulb != null)
-            {
                 lightBulb.enabled = false;
-                Debug.Log("💡 Lumière éteinte !");
-            }
         }
             
         if (command.Contains("ouvre la porte"))
@@ -101,9 +123,30 @@ public class SpeechManager : MonoBehaviour
                 doorController.CloseDoor();
         }
 
-        //SpeechToTextReceiver.CurrentText.text = "";
+        if (command.Contains("ouvre la fenêtre"))
+        {
+            Debug.Log("Executing shutter open command.");
+            if (windowController != null)
+                windowController.OpenWindow();
+        }
+
+        if (command.Contains("ferme la fenêtre"))
+        {
+            Debug.Log("Executing shutter close command.");
+            if (windowController != null)
+                windowController.CloseWindow();
+        }
+
+        if (command.Contains("allume la radio") && !radioAudio.isPlaying)
+        {
+            Debug.Log("Turn on the Radio");
+            radioAudio.Play();
+        }
+
+        if (command.Contains("éteins la radio") && radioAudio.isPlaying)
+        {
+            Debug.Log("Turn off the radio");
+            radioAudio.Stop();
+        }
     }
 }
-
-    // Trouver le player via le tag, et appeler une methode publique sur son script de mouvement
-    // ex: player.TryGetComponent<FirstPersonController>().ExecuteJump(force);
