@@ -15,8 +15,7 @@ namespace UFeel
 
         public override readonly string ToString()
         {
-            return $"Happiness: {happiness}, Surprise: {surprise}, Sadness: {sadness}, " +
-                $"Anger: {anger}, Neutral: {neutral}, Fear: {fear}";
+            return $"Happiness: {happiness}, Surprise: {surprise}, Sadness: {sadness}, Anger: {anger}, Neutral: {neutral}, Fear: {fear}";
         }
 
         public enum EmotionType

@@ -80,7 +80,7 @@ public class EmotionGameManager : MonoBehaviour
 
         HandleDebugSkipInput();
 
-        EmotionData? currentEmotions = UFeelAPI.Instance.GetCurrentEmotions();
+        EmotionData? currentEmotions = UFeelAPI.Instance.GetCurrentEmotionsData();
 
         if (currentEmotions is not EmotionData emotions)
             return;

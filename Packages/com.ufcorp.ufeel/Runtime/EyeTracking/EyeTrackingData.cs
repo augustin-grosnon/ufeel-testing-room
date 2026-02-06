@@ -11,8 +11,7 @@ namespace UFeel
 
         public override readonly string ToString()
         {
-            return $"EyeTrackingData: " +
-                $"Left: {left}, Right: {right}, Up: {up}, Down: {down}, Center: {center}";
+            return $"EyeTrackingData: Left: {left}, Right: {right}, Up: {up}, Down: {down}, Center: {center}";
         }
 
         public enum EyeTrackingType

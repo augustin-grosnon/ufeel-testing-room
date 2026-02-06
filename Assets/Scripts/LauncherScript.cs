@@ -32,7 +32,7 @@ public class LauncherScript : MonoBehaviour
 
         await Task.Delay(5000);
 
-        Debug.Log("Here is the current emotion " + instance.GetCurrentEmotions());
+        Debug.Log("Here is the current emotion " + instance.GetCurrentEmotionsData());
         Debug.Log("Here is the dominant emotion " + instance.GetDominantEmotion());
 
         instance.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, async () =>

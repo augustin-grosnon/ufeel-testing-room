@@ -3,7 +3,7 @@ using System.Text;
 
 internal class SpeechToTextReceiver : ClientBase
 {
-    public UFeel.SpeechToTextData? CurrentSpeechData { get; private set; } = null;
+    public UFeel.SpeechToTextData? CurrentSpeechToTextData { get; private set; } = null;
 
     public SpeechToTextReceiver(int port) : base(port)
     {
@@ -15,7 +15,7 @@ internal class SpeechToTextReceiver : ClientBase
         string json = Encoding.ASCII.GetString(data);
         try
         {
-            CurrentSpeechData = JsonUtility.FromJson<UFeel.SpeechToTextData>(json);
+            CurrentSpeechToTextData = JsonUtility.FromJson<UFeel.SpeechToTextData>(json);
         }
         catch (System.Exception e)
         {
