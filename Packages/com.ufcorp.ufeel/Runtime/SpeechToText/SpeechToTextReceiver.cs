@@ -1,18 +1,9 @@
 using UnityEngine;
 using System.Text;
 
-namespace UFeel
-{
-    [System.Serializable]
-    public struct SpeechData
-    {
-        public string text;
-    }
-}
-
 internal class SpeechToTextReceiver : ClientBase
 {
-    public UFeel.SpeechData? CurrentSpeechData { get; private set; } = null;
+    public UFeel.SpeechToTextData? CurrentSpeechData { get; private set; } = null;
 
     public SpeechToTextReceiver(int port) : base(port)
     {
@@ -24,7 +15,7 @@ internal class SpeechToTextReceiver : ClientBase
         string json = Encoding.ASCII.GetString(data);
         try
         {
-            CurrentSpeechData = JsonUtility.FromJson<UFeel.SpeechData>(json);
+            CurrentSpeechData = JsonUtility.FromJson<UFeel.SpeechToTextData>(json);
         }
         catch (System.Exception e)
         {

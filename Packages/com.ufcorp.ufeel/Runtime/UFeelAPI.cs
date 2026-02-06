@@ -6,42 +6,21 @@ namespace UFeel
 {
     public class UFeelAPI : MonoBehaviour
     {
-        public class Rule
-        {
-            public Func<bool> Condition;
-            public Action Action;
-            public bool IsUnique;
-            public int Id;
-
-            public Rule(int id, Func<bool> condition, Action action, bool isUnique)
-            {
-                Id = id;
-                Condition = condition;
-                Action = action;
-                IsUnique = isUnique;
-            }
-        }
-
-        public struct RuleHandle
-        {
-            internal int Id;
-
-            internal RuleHandle(int id)
-            {
-                Id = id;
-            }
-        }
-
         private static UFeelAPI _instance;
-        private static EmotionReceiver _emotionReceiver = new(4100);
+
+        private readonly static EmotionReceiver _emotionReceiver = new(4100);
         private static bool _emotionIsRunning = false;
-        private static EyeTrackingReceiver _eyeTrackingReceiver = new(4000);
+
+        private readonly static EyeTrackingReceiver _eyeTrackingReceiver = new(4000);
         private static bool _eyeTrackingIsRunning = false;
-        private static SpeechToTextReceiver _speechReceiver = new(3900);
+
+        private readonly static SpeechToTextReceiver _speechReceiver = new(3900);
         private static bool _speechIsRunning = false;
-        private static HeartRateSensorReceiver _heartRateReceiver = new(3800);
+
+        private readonly static HeartRateSensorReceiver _heartRateReceiver = new(3800);
         private static bool _heartRateIsRunning = false;
         private int _nextRuleId = 0;
+
         private readonly List<Rule> _rules = new();
         private readonly List<Rule> _rulesToAdd = new();
         private readonly HashSet<int> _rulesToRemove = new();
@@ -66,6 +45,7 @@ namespace UFeel
             }
         }
 
+// * ------------------------ Rules logic ------------------------ * //
         private void Update()
         {
             foreach (var rule in _rules)
@@ -98,8 +78,7 @@ namespace UFeel
             }
         }
 
-
-        private RuleHandle AddRule(Func<bool> condition, Action action, bool isUnique = false)
+        private RuleKey AddRule(Func<bool> condition, Action action, bool isUnique = false)
         {
             var rule = new Rule(
                 id: _nextRuleId++,
@@ -109,14 +88,13 @@ namespace UFeel
             );
 
             _rulesToAdd.Add(rule);
-            return new RuleHandle(rule.Id);
+            return new RuleKey(rule.Id);
         }
 
-        public void RemoveRule(RuleHandle handle)
+        public void RemoveRule(RuleKey key)
         {
-            _rulesToRemove.Add(handle.Id);
+            _rulesToRemove.Add(key.Id);
         }
-
 
         public void Status()
         {
@@ -128,6 +106,7 @@ namespace UFeel
             Debug.Log("-------------------------------------");
         }
 
+// * ------------------------ EMOTIONS ------------------------ * //
         private static void ToggleEmotionDetection(bool status)
         {
             byte[] bytes = ClientBase.CreateData("emotion_detection", status.ToString().ToLower());
@@ -164,7 +143,7 @@ namespace UFeel
             return currentEmotions?.GetDominantEmotion();
         }
 
-        public RuleHandle TriggerActionOnEmotion(EmotionData.EmotionType emotion, Action action, bool isUnique)
+        public RuleKey TriggerActionOnEmotion(EmotionData.EmotionType emotion, Action action, bool isUnique)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -176,16 +155,17 @@ namespace UFeel
             );
         }
 
-        public RuleHandle TriggerActionOnEmotionOnce(EmotionData.EmotionType emotion, Action action)
+        public RuleKey TriggerActionOnEmotionOnce(EmotionData.EmotionType emotion, Action action)
         {
             return TriggerActionOnEmotion(emotion, action, true);
         }
 
-        public RuleHandle TriggerActionOnEmotionContinuous(EmotionData.EmotionType emotion, Action action)
+        public RuleKey TriggerActionOnEmotionContinuous(EmotionData.EmotionType emotion, Action action)
         {
             return TriggerActionOnEmotion(emotion, action, false);
         }
 
+// * ------------------------ EYE TRACKING ------------------------ * //
         private static void ToggleEyeTrackingDetection(bool status)
         {
             byte[] bytes = ClientBase.CreateData("eye_detection", status.ToString().ToLower());
@@ -223,7 +203,7 @@ namespace UFeel
             return currentEyeTracking?.GetEyeTrackingType();
         }
 
-        public RuleHandle TriggerActionOnDirection(EyeTrackingData.EyeTrackingType direction, Action action, bool isUnique)
+        public RuleKey TriggerActionOnDirection(EyeTrackingData.EyeTrackingType direction, Action action, bool isUnique)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -235,16 +215,17 @@ namespace UFeel
             );
         }
 
-        public RuleHandle TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType direction, Action action)
+        public RuleKey TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType direction, Action action)
         {
             return TriggerActionOnDirection(direction, action, true);
         }
 
-        public RuleHandle TriggerActionOnDirectionContinuous(EyeTrackingData.EyeTrackingType direction, Action action)
+        public RuleKey TriggerActionOnDirectionContinuous(EyeTrackingData.EyeTrackingType direction, Action action)
         {
             return TriggerActionOnDirection(direction, action, false);
         }
 
+// * ------------------------ SPEECH TO TEXT ------------------------ * //
         private static void ToggleSpeechDetection(bool status)
         {
             byte[] bytes = ClientBase.CreateData("speech_detection", status.ToString().ToLower());
@@ -269,11 +250,11 @@ namespace UFeel
         {
             if (!_speechIsRunning) return null;
 
-            SpeechData? currentSpeechData = _speechReceiver.CurrentSpeechData;
+            SpeechToTextData? currentSpeechData = _speechReceiver.CurrentSpeechData;
             return currentSpeechData?.text;
         }
 
-        public RuleHandle TriggerActionOnSpeech(string text, Action action, bool isUnique)
+        public RuleKey TriggerActionOnSpeech(string text, Action action, bool isUnique)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -281,7 +262,7 @@ namespace UFeel
             return AddRule(
                 condition: () =>
                 {
-                    SpeechData? currentSpeechData = _speechReceiver.CurrentSpeechData;
+                    SpeechToTextData? currentSpeechData = _speechReceiver.CurrentSpeechData;
                     if (currentSpeechData == null) return false;
 
                     string targetToLower = text.ToLower();
@@ -293,16 +274,17 @@ namespace UFeel
             );
         }
 
-        public RuleHandle TriggerActionOnSpeechOnce(string text, Action action)
+        public RuleKey TriggerActionOnSpeechOnce(string text, Action action)
         {
             return TriggerActionOnSpeech(text, action, true);
         }
 
-        public RuleHandle TriggerActionOnSpeechContinuous(string text, Action action)
+        public RuleKey TriggerActionOnSpeechContinuous(string text, Action action)
         {
             return TriggerActionOnSpeech(text, action, false);
         }
 
+// * ------------------------ Heart Rate ------------------------ * //
         private static void ToggleHeartRateDetection(bool status)
         {
             byte[] bytes = ClientBase.CreateData("heart_rate_detection", status.ToString().ToLower());
@@ -328,11 +310,11 @@ namespace UFeel
         {
             if (!_heartRateIsRunning) return 0;
 
-            HeartRateData? currentHeartRateData = _heartRateReceiver.CurrentHeartRateData;
-            return currentHeartRateData?.rate;
+            HeartRateSensorData? currentHeartRateSensorData = _heartRateReceiver.CurrentHeartRateSensorData;
+            return currentHeartRateSensorData?.rate;
         }
 
-        public RuleHandle TriggerActionOnHeartRate(int rate, Action action, bool isUnique, int tolerance = 0)
+        public RuleKey TriggerActionOnHeartRate(int rate, Action action, bool isUnique, int tolerance = 0)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -340,12 +322,12 @@ namespace UFeel
             return AddRule(
                 condition: () =>
                 {
-                    HeartRateData? currentHeartRateData = _heartRateReceiver.CurrentHeartRateData;
+                    HeartRateSensorData? currentHeartRateSensorData = _heartRateReceiver.CurrentHeartRateSensorData;
 
-                    if (!currentHeartRateData.HasValue)
+                    if (!currentHeartRateSensorData.HasValue)
                         return false;
 
-                    int current = currentHeartRateData.Value.rate;
+                    int current = currentHeartRateSensorData.Value.rate;
 
                     int min = rate - tolerance;
                     int max = rate + tolerance;
@@ -357,16 +339,17 @@ namespace UFeel
             );
         }
 
-        public RuleHandle TriggerActionOnHeartRateOnce(int rate, Action action, int tolerance = 0)
+        public RuleKey TriggerActionOnHeartRateOnce(int rate, Action action, int tolerance = 0)
         {
             return TriggerActionOnHeartRate(rate, action, true, tolerance);
         }
 
-        public RuleHandle TriggerActionOnDirectionContinuous(int rate, Action action, int tolerance = 0)
+        public RuleKey TriggerActionOnDirectionContinuous(int rate, Action action, int tolerance = 0)
         {
             return TriggerActionOnHeartRate(rate, action, false, tolerance);
         }
 
+// * ------------------------ Stop method ------------------------ * //
         private void OnDisable()
         {
             StopAPI();

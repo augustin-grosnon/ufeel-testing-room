@@ -3,7 +3,7 @@
     "rootNamespace": "",
     "references": [
         "Door",
-        "UFeel.Runtime"
+        "UFeel"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

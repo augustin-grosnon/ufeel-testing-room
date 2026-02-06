@@ -44,15 +44,15 @@ A **Rule** is composed of:
 
 Internally, rules are evaluated **every frame in `Update()`**.
 
-### RuleHandle
+### RuleKey
 
-When you register a rule, you receive a `RuleHandle`:
+When you register a rule, you receive a `RuleKey`:
 
 ```csharp
-RuleHandle handle;
+RuleKey key;
 ```
 
-This handle allows you to **manually remove** the rule later if needed.
+This key allows you to **manually remove** the rule later if needed.
 
 ---
 
@@ -95,7 +95,7 @@ api.TriggerActionOnEmotionOnce(
 #### Trigger Continuously
 
 ```csharp
-RuleHandle handle = api.TriggerActionOnEmotionContinuous(
+RuleKey key = api.TriggerActionOnEmotionContinuous(
     EmotionData.EmotionType.Angry,
     () => TakeDamageOverTime()
 );
@@ -104,7 +104,7 @@ RuleHandle handle = api.TriggerActionOnEmotionContinuous(
 #### Removing a Rule
 
 ```csharp
-api.RemoveRule(handle);
+api.RemoveRule(key);
 ```
 
 ---
@@ -243,8 +243,8 @@ api.TriggerActionOnDirectionContinuous(
 Any rule can be removed at runtime:
 
 ```csharp
-RuleHandle handle = api.TriggerActionOnEmotionContinuous(...);
-api.RemoveRule(handle);
+RuleKey key = api.TriggerActionOnEmotionContinuous(...);
+api.RemoveRule(key);
 ```
 
 Useful for:
@@ -328,7 +328,7 @@ async void Start()
 
             // Continuous Emotion
             instance.StartEmotionDetection();
-            UFeelAPI.RuleHandle rd = instance.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
+            UFeelAPI.RuleKey key = instance.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
             {
                 await Task.Delay(1000);
                 Debug.Log("Emotion Continuellement");
@@ -342,7 +342,7 @@ async void Start()
                 Debug.Log("Here is the current speech " + instance.GetCurrentSpeech());
 
                 // Remove Continuous Emotion
-                instance.RemoveRule(rd);
+                instance.RemoveRule(key);
                 instance.StopEmotionDetection();
                 //
 

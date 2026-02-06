@@ -1,18 +1,9 @@
 using UnityEngine;
 using System.Text;
 
-namespace UFeel
-{
-    [System.Serializable]
-    public struct HeartRateData
-    {
-        public int rate;
-    }
-}
-
 public class HeartRateSensorReceiver : ClientBase
 {
-    public UFeel.HeartRateData? CurrentHeartRateData { get; private set; } = null;
+    public UFeel.HeartRateSensorData? CurrentHeartRateSensorData { get; private set; } = null;
 
     public HeartRateSensorReceiver(int port) : base(port)
     {
@@ -24,7 +15,7 @@ public class HeartRateSensorReceiver : ClientBase
         string json = Encoding.ASCII.GetString(data);
         try
         {
-            CurrentHeartRateData = JsonUtility.FromJson<UFeel.HeartRateData>(json);
+            CurrentHeartRateSensorData = JsonUtility.FromJson<UFeel.HeartRateSensorData>(json);
         }
         catch (System.Exception e)
         {

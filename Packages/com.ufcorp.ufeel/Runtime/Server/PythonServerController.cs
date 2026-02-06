@@ -51,7 +51,7 @@ public class PythonServerController
     {
         try
         {
-            ProcessStartInfo psi = new ProcessStartInfo()
+            ProcessStartInfo psi = new()
             {
                 FileName = _venvPath,
                 Arguments = _scriptPath,

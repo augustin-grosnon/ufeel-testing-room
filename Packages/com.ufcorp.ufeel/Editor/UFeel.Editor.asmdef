@@ -1,5 +1,5 @@
 {
   "name": "UFeel.Editor",
-  "references": ["UFeel.Runtime"],
+  "references": ["UFeel"],
   "includePlatforms": ["Editor"]
 }

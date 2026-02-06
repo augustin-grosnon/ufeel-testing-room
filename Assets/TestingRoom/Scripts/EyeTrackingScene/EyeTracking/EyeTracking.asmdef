@@ -3,7 +3,7 @@
     "rootNamespace": "",
     "references": [
         "EyeTrackingSceneDefs",
-        "UFeel.Runtime"
+        "UFeel"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
