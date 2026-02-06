@@ -13,7 +13,7 @@ public class Message
 
 public abstract class ClientBase
 {
-    public int Port;
+    protected int _port;
     protected TcpListener _tcpListener;
     protected Thread _clientThread;
     protected TcpClient _client;
@@ -21,20 +21,20 @@ public abstract class ClientBase
     protected volatile bool _running = true;
     protected ClientBase(int port)
     {
-        Port = port;
+        _port = port;
         Setup();
         Application.quitting += OnApplicationQuit;
     }
 
     protected virtual void Setup()
     {
-        _tcpListener = new TcpListener(IPAddress.Any, Port);
+        _tcpListener = new TcpListener(IPAddress.Any, _port);
         _tcpListener.Start();
 
         _clientThread = new Thread(ClientHandler) { IsBackground = true };
         _clientThread.Start();
 
-        Debug.Log($"Server started on port {Port}, waiting for client connection...");
+        Debug.Log($"Server started on port {_port}, waiting for client connection...");
     }
 
     private void ClientHandler()

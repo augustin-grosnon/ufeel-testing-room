@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace UFeel
 {
@@ -14,13 +15,13 @@ namespace UFeel
         private readonly static EyeTrackingReceiver _eyeTrackingReceiver = new(4000);
         private static bool _eyeTrackingIsRunning = false;
 
-        private readonly static SpeechToTextReceiver _speechReceiver = new(3900);
-        private static bool _speechIsRunning = false;
+        private readonly static SpeechToTextReceiver _speechToTextReceiver = new(3900);
+        private static bool _speechToTextIsRunning = false;
 
-        private readonly static HeartRateSensorReceiver _heartRateReceiver = new(3800);
-        private static bool _heartRateIsRunning = false;
+        private readonly static HeartRateSensorReceiver _heartRateSensorReceiver = new(3800);
+        private static bool _heartRateSensorIsRunning = false;
+
         private int _nextRuleId = 0;
-
         private readonly List<Rule> _rules = new();
         private readonly List<Rule> _rulesToAdd = new();
         private readonly HashSet<int> _rulesToRemove = new();
@@ -101,8 +102,8 @@ namespace UFeel
             Debug.Log("-------------------------------------");
             Debug.Log("Currently the emotion receiver is: " + (_emotionIsRunning ? "running" : "shut down"));
             Debug.Log("Currently the eye tracking receiver is: " + (_eyeTrackingIsRunning ? "running" : "shut down"));
-            Debug.Log("Currently the speech to text receiver is: " + (_speechIsRunning ? "running" : "shut down"));
-            Debug.Log("Currently the heart rate receiver is: " + (_heartRateIsRunning ? "running" : "shut down"));
+            Debug.Log("Currently the speech to text receiver is: " + (_speechToTextIsRunning ? "running" : "shut down"));
+            Debug.Log("Currently the heart rate receiver is: " + (_heartRateSensorIsRunning ? "running" : "shut down"));
             Debug.Log("-------------------------------------");
         }
 
@@ -169,7 +170,6 @@ namespace UFeel
         private static void ToggleEyeTrackingDetection(bool status)
         {
             byte[] bytes = ClientBase.CreateData("eye_detection", status.ToString().ToLower());
-
             _eyeTrackingReceiver?.SendData(bytes);
         }
 
@@ -229,28 +229,28 @@ namespace UFeel
         private static void ToggleSpeechDetection(bool status)
         {
             byte[] bytes = ClientBase.CreateData("speech_detection", status.ToString().ToLower());
-            _speechReceiver?.SendData(bytes);
+            _speechToTextReceiver?.SendData(bytes);
         }
 
         public void StartSpeechDetection()
         {
             ToggleSpeechDetection(true);
-            _speechIsRunning = true;
+            _speechToTextIsRunning = true;
             Debug.Log("Speech detection started.");
         }
 
         public void StopSpeechDetection()
         {
             ToggleSpeechDetection(false);
-            _speechIsRunning = false;
+            _speechToTextIsRunning = false;
             Debug.Log("Speech detection stopped.");
         }
 
         public string GetCurrentSpeech()
         {
-            if (!_speechIsRunning) return null;
+            if (!_speechToTextIsRunning) return null;
 
-            SpeechToTextData? currentSpeechData = _speechReceiver.CurrentSpeechData;
+            SpeechToTextData? currentSpeechData = _speechToTextReceiver.CurrentSpeechData;
             return currentSpeechData?.text;
         }
 
@@ -262,7 +262,7 @@ namespace UFeel
             return AddRule(
                 condition: () =>
                 {
-                    SpeechToTextData? currentSpeechData = _speechReceiver.CurrentSpeechData;
+                    SpeechToTextData? currentSpeechData = _speechToTextReceiver.CurrentSpeechData;
                     if (currentSpeechData == null) return false;
 
                     string targetToLower = text.ToLower();
@@ -288,29 +288,28 @@ namespace UFeel
         private static void ToggleHeartRateDetection(bool status)
         {
             byte[] bytes = ClientBase.CreateData("heart_rate_detection", status.ToString().ToLower());
-            _heartRateReceiver?.SendData(bytes);
+            _heartRateSensorReceiver?.SendData(bytes);
         }
 
         public void StartHeartRateDetection()
         {
             ToggleHeartRateDetection(true);
-            _heartRateIsRunning = true;
+            _heartRateSensorIsRunning = true;
             Debug.Log("Heart Rate detection started.");
-            Debug.Log("toi là");
         }
 
         public void StopHeartRateDetection()
         {
             ToggleHeartRateDetection(false);
-            _heartRateIsRunning = false;
+            _heartRateSensorIsRunning = false;
             Debug.Log("Heart Rate detection stopped.");
         }
 
         public int? GetCurrentHeartRate()
         {
-            if (!_heartRateIsRunning) return 0;
+            if (!_heartRateSensorIsRunning) return 0;
 
-            HeartRateSensorData? currentHeartRateSensorData = _heartRateReceiver.CurrentHeartRateSensorData;
+            HeartRateSensorData? currentHeartRateSensorData = _heartRateSensorReceiver.CurrentHeartRateSensorData;
             return currentHeartRateSensorData?.rate;
         }
 
@@ -322,7 +321,7 @@ namespace UFeel
             return AddRule(
                 condition: () =>
                 {
-                    HeartRateSensorData? currentHeartRateSensorData = _heartRateReceiver.CurrentHeartRateSensorData;
+                    HeartRateSensorData? currentHeartRateSensorData = _heartRateSensorReceiver.CurrentHeartRateSensorData;
 
                     if (!currentHeartRateSensorData.HasValue)
                         return false;

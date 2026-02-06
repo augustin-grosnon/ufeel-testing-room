@@ -60,7 +60,6 @@ public class EmotionGameManager : MonoBehaviour
 
     async void Start()
     {
-
         await Task.Delay(5000);
 
         UFeelAPI.Instance.StartEmotionDetection();
