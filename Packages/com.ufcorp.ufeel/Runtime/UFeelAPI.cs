@@ -45,35 +45,6 @@ namespace UFeel
             DontDestroyOnLoad(obj);
         }
 
-// * ------------------------ Debug ------------------------ * //
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-        internal const bool DEBUG_MODE = true;
-#else
-        internal const bool DEBUG_MODE = false;
-#endif
-        void OnGUI()
-        {
-            if (!DEBUG_MODE)
-                return;
-
-            float x = 10;
-            float y = 10;
-            float width = 700;
-            float height = 120;
-
-            GUI.Box(new Rect(x, y, width, height), "UFeel Debug HUD");
-
-            var emotionsText = "Emotions: " + (_emotionReceiver.CurrentEmotionsData?.ToString() ?? "Non identifié");
-            var eyeTrackingText = "Eye Tracking: " + (_eyeTrackingReceiver.CurrentEyeTrackingData?.ToString() ?? "Non identifié");
-            var speechToText = "Speech To Text: " + (_speechToTextReceiver.CurrentSpeechToTextData?.text ?? "Non identifié");
-            var heartRateSensorText = "Heart Rate Sensor: " + (_heartRateSensorReceiver.CurrentHeartRateSensorData?.rate.ToString() ?? "Non identifié");
-
-            GUI.Label(new Rect(x + 10, y + 25, width - 20, 20), emotionsText);
-            GUI.Label(new Rect(x + 10, y + 45, width - 20, 20), eyeTrackingText);
-            GUI.Label(new Rect(x + 10, y + 65, width - 20, 20), speechToText);
-            GUI.Label(new Rect(x + 10, y + 85, width - 20, 20), heartRateSensorText);
-        }
-
 // * ------------------------ Rules logic ------------------------ * //
         private void Update()
         {
@@ -105,6 +76,20 @@ namespace UFeel
                 _rules.AddRange(_rulesToAdd);
                 _rulesToAdd.Clear();
             }
+
+            RefreshGUI();
+        }
+
+        private static void RefreshGUI()
+        {
+            if (!UFeelDebugHUD.DEBUG_MODE)
+                return;
+
+            UFeelDebugHUD.Set("Emotions", () => _emotionReceiver.CurrentEmotionsData?.ToString());
+            UFeelDebugHUD.Set("Eye Tracking", () => _eyeTrackingReceiver.CurrentEyeTrackingData?.ToString());
+            UFeelDebugHUD.Set("Speech To Text", () => _speechToTextReceiver.CurrentSpeechToTextData?.text);
+            UFeelDebugHUD.Set("Heart Rate Sensor", () => _heartRateSensorReceiver.CurrentHeartRateSensorData?.rate.ToString());
+            UFeelDebugHUD.Set("CINQS", () => "COUCOU JE SUIS MOI EN TRÈS LONG");
         }
 
         private static RuleKey AddRule(Func<bool> condition, Action action, bool isUnique = false)
