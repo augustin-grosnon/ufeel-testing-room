@@ -1,0 +1,5 @@
+{
+  "name": "UFeel.Editor",
+  "references": ["UFeel"],
+  "includePlatforms": ["Editor"]
+}

@@ -95,3 +95,8 @@ Assets/TextMesh Pro.meta
 *.so
 *.so*
 *.a
+*.blob
+*.log
+venv
+
+packages-lock.json
