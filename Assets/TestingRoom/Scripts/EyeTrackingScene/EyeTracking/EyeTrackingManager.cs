@@ -23,7 +23,7 @@ public sealed class EyeTrackingManager : MonoBehaviour
 
     void Awake()
     {
-        UFeelAPI.Instance.StartEyeTrackingDetection();
+        UFeelAPI.StartEyeTrackingDetection();
 
         if (playerCamera == null)
         {
@@ -88,7 +88,7 @@ public sealed class EyeTrackingManager : MonoBehaviour
 
     Vector3 ComputeTargetPosition()
     {
-        EyeTrackingData? currentDirections = UFeelAPI.Instance.GetCurrentDirections();
+        EyeTrackingData? currentDirections = UFeelAPI.GetCurrentDirections();
         if (currentDirections is not EyeTrackingData directions)
             return Vector2.zero;
         Vector2 direction = Vector2.zero;

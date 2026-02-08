@@ -27,7 +27,7 @@ public class VehicleController : MonoBehaviour
     void Update()
     {
 
-        EyeTrackingData? currentDirections = UFeelAPI.Instance.GetCurrentDirections();
+        EyeTrackingData? currentDirections = UFeelAPI.GetCurrentDirections();
         if (currentDirections is not EyeTrackingData directions)
             return;
         if (directions.left && !directions.right)

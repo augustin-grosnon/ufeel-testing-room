@@ -20,13 +20,9 @@ No polling, no manual state checking every frame — the API handles it for you.
 
 ### Accessing the API
 
-```csharp
-UFeelAPI api = UFeelAPI.Instance;
-```
+All the method of the Class `UFeelAPI` are static:
 
-`UFeelAPI` is a **persistent singleton**:
-
-* Automatically created if not present in the scene
+* Useful variable are automatically created if not present in the scene
 * Survives scene changes (`DontDestroyOnLoad`)
 
 ---
@@ -61,8 +57,8 @@ This key allows you to **manually remove** the rule later if needed.
 ### Start / Stop
 
 ```csharp
-api.StartEmotionDetection();
-api.StopEmotionDetection();
+UFeelAPI.StartEmotionDetection();
+UFeelAPI.StopEmotionDetection();
 ```
 
 Emotion detection **must be started** before accessing data or triggering rules.
@@ -72,8 +68,8 @@ Emotion detection **must be started** before accessing data or triggering rules.
 ### Reading Emotion Data
 
 ```csharp
-EmotionData? emotions = api.GetCurrentEmotionsData();
-EmotionData.EmotionType? dominant = api.GetDominantEmotion();
+EmotionData? emotions = UFeelAPI.GetCurrentEmotionsData();
+EmotionData.EmotionType? dominant = UFeelAPI.GetDominantEmotion();
 ```
 
 * Returns `null` if the system is not running
@@ -86,7 +82,7 @@ EmotionData.EmotionType? dominant = api.GetDominantEmotion();
 #### Trigger Once
 
 ```csharp
-api.TriggerActionOnEmotionOnce(
+UFeelAPI.TriggerActionOnEmotionOnce(
     EmotionData.EmotionType.Happy,
     () => Debug.Log("Player is happy!")
 );
@@ -95,7 +91,7 @@ api.TriggerActionOnEmotionOnce(
 #### Trigger Continuously
 
 ```csharp
-RuleKey key = api.TriggerActionOnEmotionContinuous(
+RuleKey key = UFeelAPI.TriggerActionOnEmotionContinuous(
     EmotionData.EmotionType.Angry,
     () => TakeDamageOverTime()
 );
@@ -104,7 +100,7 @@ RuleKey key = api.TriggerActionOnEmotionContinuous(
 #### Removing a Rule
 
 ```csharp
-api.RemoveRule(key);
+UFeelAPI.RemoveRule(key);
 ```
 
 ---
@@ -114,8 +110,8 @@ api.RemoveRule(key);
 ### Start / Stop
 
 ```csharp
-api.StartEyeTrackingDetection();
-api.StopEyeTrackingDetection();
+UFeelAPI.StartEyeTrackingDetection();
+UFeelAPI.StopEyeTrackingDetection();
 ```
 
 ---
@@ -123,8 +119,8 @@ api.StopEyeTrackingDetection();
 ### Reading Gaze Direction
 
 ```csharp
-EyeTrackingData? data = api.GetCurrentDirections();
-EyeTrackingData.EyeTrackingType? direction = api.GetDominantDirection();
+EyeTrackingData? data = UFeelAPI.GetCurrentDirections();
+EyeTrackingData.EyeTrackingType? direction = UFeelAPI.GetDominantDirection();
 ```
 
 ---
@@ -132,7 +128,7 @@ EyeTrackingData.EyeTrackingType? direction = api.GetDominantDirection();
 ### Triggering Gameplay from Gaze
 
 ```csharp
-api.TriggerActionOnDirectionOnce(
+UFeelAPI.TriggerActionOnDirectionOnce(
     EyeTrackingData.EyeTrackingType.Left,
     () => OpenLeftDoor()
 );
@@ -141,7 +137,7 @@ api.TriggerActionOnDirectionOnce(
 or continuously:
 
 ```csharp
-api.TriggerActionOnDirectionContinuous(
+UFeelAPI.TriggerActionOnDirectionContinuous(
     EyeTrackingData.EyeTrackingType.Up,
     () => AimUpwards()
 );
@@ -154,8 +150,8 @@ api.TriggerActionOnDirectionContinuous(
 ### Start / Stop
 
 ```csharp
-api.StartSpeechDetection();
-api.StopSpeechDetection();
+UFeelAPI.StartSpeechDetection();
+UFeelAPI.StopSpeechDetection();
 ```
 
 ---
@@ -163,7 +159,7 @@ api.StopSpeechDetection();
 ### Reading Current Speech
 
 ```csharp
-string spokenText = api.GetCurrentSpeech();
+string spokenText = UFeelAPI.GetCurrentSpeech();
 ```
 
 Returns `null` if speech detection is not running.
@@ -176,7 +172,7 @@ Speech rules trigger when the **detected text is contained inside the target str
 (case-insensitive).
 
 ```csharp
-api.TriggerActionOnSpeechOnce(
+UFeelAPI.TriggerActionOnSpeechOnce(
     "open the door",
     () => OpenDoor()
 );
@@ -185,7 +181,7 @@ api.TriggerActionOnSpeechOnce(
 Continuous mode:
 
 ```csharp
-api.TriggerActionOnSpeechContinuous(
+UFeelAPI.TriggerActionOnSpeechContinuous(
     "attack",
     () => TriggerCombatMode()
 );
@@ -198,8 +194,8 @@ api.TriggerActionOnSpeechContinuous(
 ### Start / Stop
 
 ```csharp
-api.StartHeartRateDetection();
-api.StopHeartRateDetection();
+UFeelAPI.StartHeartRateDetection();
+UFeelAPI.StopHeartRateDetection();
 ```
 
 ---
@@ -207,7 +203,7 @@ api.StopHeartRateDetection();
 ### Reading Heart Rate
 
 ```csharp
-int? bpm = api.GetCurrentHeartRate();
+int? bpm = UFeelAPI.GetCurrentHeartRate();
 ```
 
 ---
@@ -217,7 +213,7 @@ int? bpm = api.GetCurrentHeartRate();
 You can define a **target BPM** with an optional **tolerance**.
 
 ```csharp
-api.TriggerActionOnHeartRateOnce(
+UFeelAPI.TriggerActionOnHeartRateOnce(
     rate: 120,
     action: () => EnterStressMode(),
     tolerance: 10
@@ -229,7 +225,7 @@ This triggers if the heart rate is between **110 and 130 BPM**.
 Continuous variant:
 
 ```csharp
-api.TriggerActionOnDirectionContinuous(
+UFeelAPI.TriggerActionOnDirectionContinuous(
     rate: 90,
     action: () => CalmState(),
     tolerance: 5
@@ -243,8 +239,8 @@ api.TriggerActionOnDirectionContinuous(
 Any rule can be removed at runtime:
 
 ```csharp
-RuleKey key = api.TriggerActionOnEmotionContinuous(...);
-api.RemoveRule(key);
+RuleKey key = UFeelAPI.TriggerActionOnEmotionContinuous(...);
+UFeelAPI.RemoveRule(key);
 ```
 
 Useful for:
@@ -258,7 +254,7 @@ Useful for:
 ## 🛑 Stopping Everything
 
 ```csharp
-api.StopAPI();
+UFeelAPI.StopAPI();
 ```
 
 This will:
@@ -274,7 +270,7 @@ Automatically called when the GameObject is disabled.
 ## 📊 Debugging
 
 ```csharp
-api.Status();
+UFeelAPI.Status();
 ```
 
 Logs the running state of all systems in the Unity Console.
@@ -296,65 +292,57 @@ Logs the running state of all systems in the Unity Console.
 ```csharp
 async void Start()
 {
-    UFeelAPI instance = UFeelAPI.Instance;
-    Debug.Log("Hello UFEEL User");
-    await Task.Delay(5000);
+    await UFeelAPI.StartAPI();
 
-    instance.StartEmotionDetection();
-    instance.Status();
+    UFeelAPI.StartEmotionDetection();
+    UFeelAPI.Status();
 
-    await Task.Delay(5000);
+    Debug.Log("Here is the current emotion " + UFeelAPI.GetCurrentEmotionsData());
+    Debug.Log("Here is the dominant emotion " + UFeelAPI.GetDominantEmotion());
 
-    Debug.Log("Here is the current emotion " + instance.GetCurrentEmotionsData());
-    Debug.Log("Here is the dominant emotion " + instance.GetDominantEmotion());
-
-    instance.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, async () =>
+    UFeelAPI.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, async () =>
     {
-        instance.StopEmotionDetection();
-        instance.Status();
-        instance.StartEyeTrackingDetection();
-        instance.Status();
+        UFeelAPI.StopEmotionDetection();
+        UFeelAPI.Status();
+        UFeelAPI.StartEyeTrackingDetection();
+        UFeelAPI.Status();
 
-        await Task.Delay(5000);
+        Debug.Log("Here is the current eye data " + UFeelAPI.GetCurrentDirections());
+        Debug.Log("Here is the dominant direction " + UFeelAPI.GetDominantDirection());
 
-        Debug.Log("Here is the current eye data " + instance.GetCurrentDirections());
-        Debug.Log("Here is the dominant direction " + instance.GetDominantDirection());
-
-        instance.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
+        UFeelAPI.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
         {
-            instance.StopEyeTrackingDetection();
+            UFeelAPI.StopEyeTrackingDetection();
 
-            instance.StartSpeechDetection();
+            UFeelAPI.StartSpeechDetection();
 
             // Continuous Emotion
-            instance.StartEmotionDetection();
-            UFeelAPI.RuleKey key = instance.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
+            UFeelAPI.StartEmotionDetection();
+            RuleKey key = UFeelAPI.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
             {
                 await Task.Delay(1000);
                 Debug.Log("Emotion Continuellement");
             });
             //
 
-            instance.Status();
+            UFeelAPI.Status();
 
-            instance.TriggerActionOnSpeechOnce("Camion", async () =>
+            UFeelAPI.TriggerActionOnSpeechOnce("Camion", async () =>
             {
-                Debug.Log("Here is the current speech " + instance.GetCurrentSpeech());
+                Debug.Log("Here is the current speech " + UFeelAPI.GetCurrentSpeech());
 
                 // Remove Continuous Emotion
-                instance.RemoveRule(key);
-                instance.StopEmotionDetection();
+                UFeelAPI.RemoveRule(key);
+                UFeelAPI.StopEmotionDetection();
                 //
 
-                instance.StopSpeechDetection();
-                instance.StartHeartRateDetection();
-                instance.Status();
+                UFeelAPI.StopSpeechDetection();
+                UFeelAPI.StartHeartRateDetection();
+                UFeelAPI.Status();
 
-                await Task.Delay(5000);
-
-                instance.TriggerActionOnHeartRateOnce(80, () =>
+                UFeelAPI.TriggerActionOnHeartRateOnce(80, () =>
                 {
-                    StopUnity(instance);
+                    UFeelAPI.StopAPI();
                 });
             });
         });

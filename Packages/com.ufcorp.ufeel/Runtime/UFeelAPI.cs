@@ -1,9 +1,11 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace UFeel
-{    public class UFeelAPI : MonoBehaviour
+{
+    public class UFeelAPI : MonoBehaviour
     {
         private static UFeelAPI _instance;
 
@@ -19,29 +21,28 @@ namespace UFeel
         private readonly static HeartRateSensorReceiver _heartRateSensorReceiver = new(3800);
         private static bool _heartRateSensorIsRunning = false;
 
-        private int _nextRuleId = 0;
-        private readonly List<Rule> _rules = new();
-        private readonly List<Rule> _rulesToAdd = new();
-        private readonly HashSet<int> _rulesToRemove = new();
+        private static int _nextRuleId = 0;
+        private readonly static List<Rule> _rules = new();
+        private readonly static List<Rule> _rulesToAdd = new();
+        private readonly static HashSet<int> _rulesToRemove = new();
 
-        public static UFeelAPI Instance
+        // TODO: Remove this when removing the server
+        public static async Task StartAPI()
         {
-            get
-            {
-                if (_instance == null)
-                {
-                     _instance = FindAnyObjectByType<UFeelAPI>();
+            if (_instance != null)
+                return;
 
-                    if (_instance == null)
-                    {
-                        GameObject obj = new("UFeelAPI");
-                        _instance = obj.AddComponent<UFeelAPI>();
+            _instance = FindAnyObjectByType<UFeelAPI>();
 
-                        DontDestroyOnLoad(obj);
-                    }
-                }
-                return _instance;
-            }
+            if (_instance != null)
+                return;
+
+            GameObject obj = new("UFeelAPI");
+            _instance = obj.AddComponent<UFeelAPI>();
+
+            await Task.Delay(5000);
+            Debug.Log("Hello UFEEL User ");
+            DontDestroyOnLoad(obj);
         }
 
 // * ------------------------ Debug ------------------------ * //
@@ -106,7 +107,7 @@ namespace UFeel
             }
         }
 
-        private RuleKey AddRule(Func<bool> condition, Action action, bool isUnique = false)
+        private static RuleKey AddRule(Func<bool> condition, Action action, bool isUnique = false)
         {
             var rule = new Rule(
                 id: _nextRuleId++,
@@ -119,12 +120,12 @@ namespace UFeel
             return new RuleKey(rule.Id);
         }
 
-        public void RemoveRule(RuleKey key)
+        public static void RemoveRule(RuleKey key)
         {
             _rulesToRemove.Add(key.Id);
         }
 
-        public void Status()
+        public static void Status()
         {
             Debug.Log("-------------------------------------");
             Debug.Log("Currently the emotion receiver is: " + (_emotionIsRunning ? "running" : "shut down"));
@@ -141,21 +142,21 @@ namespace UFeel
             _emotionReceiver?.SendData(bytes);
         }
 
-        public void StartEmotionDetection()
+        public static void StartEmotionDetection()
         {
             ToggleEmotionDetection(true);
             _emotionIsRunning = true;
             Debug.Log("Emotion detection started.");
         }
 
-        public void StopEmotionDetection()
+        public static void StopEmotionDetection()
         {
             ToggleEmotionDetection(false);
             _emotionIsRunning = false;
             Debug.Log("Emotion detection stopped.");
         }
 
-        public EmotionData? GetCurrentEmotionsData()
+        public static EmotionData? GetCurrentEmotionsData()
         {
             if (!_emotionIsRunning) return null;
 
@@ -163,7 +164,7 @@ namespace UFeel
             return currentEmotions;
         }
 
-        public EmotionData.EmotionType? GetDominantEmotion()
+        public static EmotionData.EmotionType? GetDominantEmotion()
         {
             if (!_emotionIsRunning) return null;
 
@@ -171,7 +172,7 @@ namespace UFeel
             return currentEmotions?.GetDominantEmotion();
         }
 
-        public RuleKey TriggerActionOnEmotion(EmotionData.EmotionType emotion, Action action, bool isUnique)
+        public static RuleKey TriggerActionOnEmotion(EmotionData.EmotionType emotion, Action action, bool isUnique)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -183,12 +184,12 @@ namespace UFeel
             );
         }
 
-        public RuleKey TriggerActionOnEmotionOnce(EmotionData.EmotionType emotion, Action action)
+        public static RuleKey TriggerActionOnEmotionOnce(EmotionData.EmotionType emotion, Action action)
         {
             return TriggerActionOnEmotion(emotion, action, true);
         }
 
-        public RuleKey TriggerActionOnEmotionContinuous(EmotionData.EmotionType emotion, Action action)
+        public static RuleKey TriggerActionOnEmotionContinuous(EmotionData.EmotionType emotion, Action action)
         {
             return TriggerActionOnEmotion(emotion, action, false);
         }
@@ -200,21 +201,21 @@ namespace UFeel
             _eyeTrackingReceiver?.SendData(bytes);
         }
 
-        public void StartEyeTrackingDetection()
+        public static void StartEyeTrackingDetection()
         {
             ToggleEyeTrackingDetection(true);
             _eyeTrackingIsRunning = true;
             Debug.Log("Eye Tracking detection started.");
         }
 
-        public void StopEyeTrackingDetection()
+        public static void StopEyeTrackingDetection()
         {
             ToggleEyeTrackingDetection(false);
             _eyeTrackingIsRunning = false;
             Debug.Log("Eye Tracking detection stopped.");
         }
 
-        public EyeTrackingData? GetCurrentDirections()
+        public static EyeTrackingData? GetCurrentDirections()
         {
             if (!_eyeTrackingIsRunning) return null;
 
@@ -222,7 +223,7 @@ namespace UFeel
             return currentEyeTracking;
         }
 
-        public EyeTrackingData.EyeTrackingType? GetDominantDirection()
+        public static EyeTrackingData.EyeTrackingType? GetDominantDirection()
         {
             if (!_eyeTrackingIsRunning) return null;
 
@@ -230,7 +231,7 @@ namespace UFeel
             return currentEyeTracking?.GetEyeTrackingType();
         }
 
-        public RuleKey TriggerActionOnDirection(EyeTrackingData.EyeTrackingType direction, Action action, bool isUnique)
+        public static RuleKey TriggerActionOnDirection(EyeTrackingData.EyeTrackingType direction, Action action, bool isUnique)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -242,12 +243,12 @@ namespace UFeel
             );
         }
 
-        public RuleKey TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType direction, Action action)
+        public static RuleKey TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType direction, Action action)
         {
             return TriggerActionOnDirection(direction, action, true);
         }
 
-        public RuleKey TriggerActionOnDirectionContinuous(EyeTrackingData.EyeTrackingType direction, Action action)
+        public static RuleKey TriggerActionOnDirectionContinuous(EyeTrackingData.EyeTrackingType direction, Action action)
         {
             return TriggerActionOnDirection(direction, action, false);
         }
@@ -259,21 +260,21 @@ namespace UFeel
             _speechToTextReceiver?.SendData(bytes);
         }
 
-        public void StartSpeechDetection()
+        public static void StartSpeechDetection()
         {
             ToggleSpeechDetection(true);
             _speechToTextIsRunning = true;
             Debug.Log("Speech detection started.");
         }
 
-        public void StopSpeechDetection()
+        public static void StopSpeechDetection()
         {
             ToggleSpeechDetection(false);
             _speechToTextIsRunning = false;
             Debug.Log("Speech detection stopped.");
         }
 
-        public string GetCurrentSpeech()
+        public static string GetCurrentSpeech()
         {
             if (!_speechToTextIsRunning) return null;
 
@@ -281,7 +282,7 @@ namespace UFeel
             return currentSpeechData?.text;
         }
 
-        public RuleKey TriggerActionOnSpeech(string text, Action action, bool isUnique)
+        public static RuleKey TriggerActionOnSpeech(string text, Action action, bool isUnique)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -301,12 +302,12 @@ namespace UFeel
             );
         }
 
-        public RuleKey TriggerActionOnSpeechOnce(string text, Action action)
+        public static RuleKey TriggerActionOnSpeechOnce(string text, Action action)
         {
             return TriggerActionOnSpeech(text, action, true);
         }
 
-        public RuleKey TriggerActionOnSpeechContinuous(string text, Action action)
+        public static RuleKey TriggerActionOnSpeechContinuous(string text, Action action)
         {
             return TriggerActionOnSpeech(text, action, false);
         }
@@ -318,21 +319,21 @@ namespace UFeel
             _heartRateSensorReceiver?.SendData(bytes);
         }
 
-        public void StartHeartRateDetection()
+        public static void StartHeartRateDetection()
         {
             ToggleHeartRateDetection(true);
             _heartRateSensorIsRunning = true;
             Debug.Log("Heart Rate detection started.");
         }
 
-        public void StopHeartRateDetection()
+        public static void StopHeartRateDetection()
         {
             ToggleHeartRateDetection(false);
             _heartRateSensorIsRunning = false;
             Debug.Log("Heart Rate detection stopped.");
         }
 
-        public int? GetCurrentHeartRate()
+        public static int? GetCurrentHeartRate()
         {
             if (!_heartRateSensorIsRunning) return 0;
 
@@ -340,7 +341,7 @@ namespace UFeel
             return currentHeartRateSensorData?.rate;
         }
 
-        public RuleKey TriggerActionOnHeartRate(int rate, Action action, bool isUnique, int tolerance = 0)
+        public static RuleKey TriggerActionOnHeartRate(int rate, Action action, bool isUnique, int tolerance = 0)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
@@ -365,12 +366,12 @@ namespace UFeel
             );
         }
 
-        public RuleKey TriggerActionOnHeartRateOnce(int rate, Action action, int tolerance = 0)
+        public static RuleKey TriggerActionOnHeartRateOnce(int rate, Action action, int tolerance = 0)
         {
             return TriggerActionOnHeartRate(rate, action, true, tolerance);
         }
 
-        public RuleKey TriggerActionOnDirectionContinuous(int rate, Action action, int tolerance = 0)
+        public static RuleKey TriggerActionOnDirectionContinuous(int rate, Action action, int tolerance = 0)
         {
             return TriggerActionOnHeartRate(rate, action, false, tolerance);
         }
@@ -382,7 +383,7 @@ namespace UFeel
             Debug.Log("Game stopped — OnDisable called!");
         }
 
-        public void StopAPI()
+        public static void StopAPI()
         {
             ToggleEmotionDetection(false);
             ToggleEyeTrackingDetection(false);

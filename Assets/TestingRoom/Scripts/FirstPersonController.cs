@@ -1,4 +1,6 @@
 using UnityEngine;
+using UFeel;
+using System.Threading.Tasks;
 
 public class FirstPersonController : MonoBehaviour
 {
@@ -16,11 +18,13 @@ public class FirstPersonController : MonoBehaviour
     private float verticalVelocity;
     private CharacterController controller;
 
-    void Start()
+    async void Start()
     {
         controller = gameObject.AddComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        await UFeelAPI.StartAPI();
     }
 
     void Update()

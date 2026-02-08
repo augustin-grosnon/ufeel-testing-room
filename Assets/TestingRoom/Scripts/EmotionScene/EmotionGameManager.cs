@@ -58,11 +58,9 @@ public class EmotionGameManager : MonoBehaviour
     private float _devCodeTimeout = 2f;
     private float _devCodeTimer = 0f;
 
-    async void Start()
+    void Start()
     {
-        await Task.Delay(5000);
-
-        UFeelAPI.Instance.StartEmotionDetection();
+        UFeelAPI.StartEmotionDetection();
 
         SetNextTargetEmotion();
         UpdateScoreText();
@@ -80,7 +78,7 @@ public class EmotionGameManager : MonoBehaviour
 
         HandleDebugSkipInput();
 
-        EmotionData? currentEmotions = UFeelAPI.Instance.GetCurrentEmotionsData();
+        EmotionData? currentEmotions = UFeelAPI.GetCurrentEmotionsData();
 
         if (currentEmotions is not EmotionData emotions)
             return;

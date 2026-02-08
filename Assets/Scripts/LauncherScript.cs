@@ -9,10 +9,10 @@ using UnityEditor;
 
 public class LauncherScript : MonoBehaviour
 {
-    void StopUnity(UFeelAPI instance)
+    void StopUnity()
     {
-        instance.StopAPI();
-        instance.Status();
+        UFeelAPI.StopAPI();
+        UFeelAPI.Status();
         Debug.Log("Testing UFEEL Script");
 #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
@@ -23,65 +23,57 @@ public class LauncherScript : MonoBehaviour
 
     async void Start()
     {
-        UFeelAPI instance = UFeelAPI.Instance;
-        Debug.Log("Hello UFEEL User");
-        await Task.Delay(5000);
+        await UFeelAPI.StartAPI();
 
-        instance.StartEmotionDetection();
-        instance.Status();
+        UFeelAPI.StartEmotionDetection();
+        UFeelAPI.Status();
 
-        await Task.Delay(5000);
+        Debug.Log("Here is the current emotion " + UFeelAPI.GetCurrentEmotionsData());
+        Debug.Log("Here is the dominant emotion " + UFeelAPI.GetDominantEmotion());
 
-        Debug.Log("Here is the current emotion " + instance.GetCurrentEmotionsData());
-        Debug.Log("Here is the dominant emotion " + instance.GetDominantEmotion());
-
-        instance.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, async () =>
+        UFeelAPI.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, () =>
         {
-            instance.StopEmotionDetection();
-            instance.Status();
-            instance.StartEyeTrackingDetection();
-            instance.Status();
+            UFeelAPI.StopEmotionDetection();
+            UFeelAPI.Status();
+            UFeelAPI.StartEyeTrackingDetection();
+            UFeelAPI.Status();
 
-            await Task.Delay(5000);
+            Debug.Log("Here is the current eye data " + UFeelAPI.GetCurrentDirections());
+            Debug.Log("Here is the dominant direction " + UFeelAPI.GetDominantDirection());
 
-            Debug.Log("Here is the current eye data " + instance.GetCurrentDirections());
-            Debug.Log("Here is the dominant direction " + instance.GetDominantDirection());
-
-            instance.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
+            UFeelAPI.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
             {
-                instance.StopEyeTrackingDetection();
+                UFeelAPI.StopEyeTrackingDetection();
 
-                instance.StartSpeechDetection();
+                UFeelAPI.StartSpeechDetection();
 
                 // Continuous Emotion
-                instance.StartEmotionDetection();
-                RuleKey key = instance.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
+                UFeelAPI.StartEmotionDetection();
+                RuleKey key = UFeelAPI.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
                 {
                     await Task.Delay(1000);
                     Debug.Log("Emotion Continuellement");
                 });
                 //
 
-                instance.Status();
+                UFeelAPI.Status();
 
-                instance.TriggerActionOnSpeechOnce("Camion", async () =>
+                UFeelAPI.TriggerActionOnSpeechOnce("Camion", () =>
                 {
-                    Debug.Log("Here is the current speech " + instance.GetCurrentSpeech());
+                    Debug.Log("Here is the current speech " + UFeelAPI.GetCurrentSpeech());
 
                     // Remove Continuous Emotion
-                    instance.RemoveRule(key);
-                    instance.StopEmotionDetection();
+                    UFeelAPI.RemoveRule(key);
+                    UFeelAPI.StopEmotionDetection();
                     //
 
-                    instance.StopSpeechDetection();
-                    instance.StartHeartRateDetection();
-                    instance.Status();
+                    UFeelAPI.StopSpeechDetection();
+                    UFeelAPI.StartHeartRateDetection();
+                    UFeelAPI.Status();
 
-                    await Task.Delay(5000);
-
-                    instance.TriggerActionOnHeartRateOnce(80, () =>
+                    UFeelAPI.TriggerActionOnHeartRateOnce(80, () =>
                     {
-                        StopUnity(instance);
+                        StopUnity();
                     });
                 });
             });
