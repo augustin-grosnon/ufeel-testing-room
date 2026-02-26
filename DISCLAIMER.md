@@ -1,4 +1,4 @@
-# Disclaimer on Hardware Dependency and Data Quality
+# Disclaimer
 
 ## Scope
 
@@ -7,71 +7,96 @@ This project provides software tools and libraries for advanced input systems, i
 * Eye tracking
 * Emotion recognition
 * Voice and audio-based input
-* Physiological signal processing (e.g. heart rate)
+* Physiological signal processing (e.g., heart rate)
 
-The accuracy, reliability, and consistency of these systems are **directly dependent on external hardware and environmental conditions**.
+This list is not exhaustive.
+
+System performance depends on external hardware, software configuration, and environmental conditions.
 
 ## Hardware Dependency
 
-The tools provided by this project rely on input data captured by third-party hardware devices. These include, but are not limited to:
+All input data is captured using third-party hardware. This includes, but is not limited to:
 
 * Microphones
 * Cameras
-* Heart rate sensors and other biometric hardware
+* Heart rate sensors and other biometric devices
 
-The project does **not** control the design, quality, calibration, or performance of such hardware.
+This list is not exhaustive.
+
+The project does not design, manufacture, calibrate, or control such hardware. Hardware quality, configuration, and environment directly affect system behavior.
 
 As a result:
 
-* Different devices may produce significantly different results
-* Low-quality or improperly configured hardware may degrade accuracy
-* Hardware limitations may introduce noise, latency, or bias into input data
+* Different devices may produce materially different results
+* Low-quality, misconfigured, or poorly calibrated hardware may reduce accuracy
+* Environmental factors may introduce noise, latency, distortion, or bias
 
-## Examples of Hardware Impact
+These effects are inherent to the hardware and environment and do not constitute software defects.
+
+## Examples of Hardware and Environmental Impact
 
 Non-exhaustive examples include:
 
-* **Voice recognition** accuracy being affected by microphone quality, background noise, and sampling rate
-* **Eye tracking** accuracy being affected by camera resolution, frame rate, lighting conditions, and camera placement
-* **Emotion recognition** being affected by camera quality, facial visibility, occlusions, and cultural or individual variation
-* **Heart rate and physiological signals** being affected by sensor precision, skin contact, motion artifacts, and device calibration
+* Voice recognition accuracy affected by microphone quality, background noise, compression, and sampling rate
+* Eye tracking accuracy affected by camera resolution, frame rate, lighting, positioning, and user physiology
+* Emotion recognition affected by image quality, occlusions, lighting, facial visibility, and individual or cultural variation
+* Physiological signal processing affected by sensor precision, skin contact, motion artifacts, and calibration
 
-These effects are inherent to the hardware and environment and are not software defects.
+This list is not exhaustive.
 
-## No Guaranteed Accuracy
+## No Guarantee of Accuracy or Fitness
 
-The project does **not** guarantee:
+The project provides no guarantee of:
 
-* Correct detection
-* Real-time accuracy
-* Consistent results across devices
-* Suitability for medical, psychological, or diagnostic purposes
+* Detection correctness
+* Real-time performance
+* Consistency across devices
+* Freedom from bias or error
+* Suitability for medical, psychological, diagnostic, legal, or regulatory purposes
 
-All outputs produced by the system should be treated as **approximate signals**, not authoritative measurements.
+All outputs must be treated as approximate signals and probabilistic estimates, not authoritative measurements.
+
+## Prohibited and High-Risk Use
+
+This project must not be used in:
+
+* Life-threatening or safety-critical systems
+* Military or weapons-related applications
+* Medical diagnosis, treatment, or monitoring
+* Emergency response systems
+* Systems where failure could cause physical harm, significant financial loss, or legal consequences
+
+This list is not exhaustive.
+
+If you are unsure whether a use case falls into these categories, contact the project maintainers before proceeding.
 
 ## Responsibility of Integrators and Users
 
-Developers and researchers integrating this project are responsible for:
+Anyone integrating or deploying this project is responsible for:
 
-* Selecting appropriate hardware for their use case
-* Testing and validating behavior on target devices
-* Informing end users of potential inaccuracies
-* Implementing fallbacks or safeguards where incorrect input may cause issues
+* Selecting appropriate hardware
+* Validating performance on target devices
+* Assessing risks associated with incorrect or degraded input
+* Implementing safeguards, fallbacks, and human oversight where appropriate
+* Informing end users about limitations and potential inaccuracies
+
+This project does not assume responsibility for consequences arising from improper deployment, misuse, or reliance on system outputs.
 
 ## Intended Use
 
-These tools are intended for:
+The project is intended for:
 
 * Research
 * Prototyping
 * Experimental interaction systems
-* Non-critical gameplay or software features
+* Non-critical software features
 
-They are **not intended** for safety-critical, medical, or diagnostic applications.
+This list is not exhaustive.
 
-## Summary
+If you are unsure whether your intended use is appropriate, contact the project maintainers.
 
-Hardware quality, configuration, and environment play a decisive role in the behavior of the systems provided by this project.
-Variations in results are expected and unavoidable.
+## Acknowledgment of Limitations
 
-Users of this project must account for these limitations during development and deployment.
+Variability in results is expected. Performance depends on hardware quality, environmental conditions, and implementation decisions made by integrators.
+
+By using this project, you acknowledge these limitations and accept responsibility for evaluating suitability within your specific context.
