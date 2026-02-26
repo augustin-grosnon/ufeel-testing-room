@@ -24,6 +24,29 @@ A Unity project demonstrating the [UFeel](Packages/com.ufcorp.ufeel) input packa
 
 A webcam is required for most features.
 
+## Build Modes
+
+This project is intended to support two build profiles:
+
+* **Development** – enables debug tools, extended logging, and testing utilities.
+* **Production** – excludes development-only code and debug systems.
+
+Separation will be handled using Unity Build Profiles and a `DEV` scripting define symbol.
+
+Code wrapped in:
+
+```csharp
+#if DEV
+// development-only code
+#endif
+```
+
+will only be compiled in Development builds.
+
+This setup is currently only planned and may be automated in a future update.
+TODO: implement in the project
+TODO: update this README
+
 ## License
 
 Apache License 2.0 - see [LICENSE](LICENSE).
