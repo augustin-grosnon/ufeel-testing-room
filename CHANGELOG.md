@@ -1,8 +1,8 @@
 # Changelog
 
-All notable changes to this project are documented in this file.
+> [<- Back to README](README.md)
 
-The format follows semantic grouping (Added, Changed, Fixed, Merged, Documentation) depending on what was done during the month.
+Grouped by month using: Added, Changed, Fixed, Merged, Documentation.
 
 ## [2026-02]
 

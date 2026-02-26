@@ -1,24 +1,26 @@
-# Testing Room for the UFeel Unity Package
+# Testing Room
 
-## Overview
+> [<- Back to README](../../README.md)
 
-This Unity project showcases all the features of the UFeel Unity Package. You can test several interaction features, containing but not exclusively **eye tracking** and **emotion detection**.
+Unity project showcasing the [UFeel](../../Packages/com.ufcorp.ufeel) biometric input package.
 
-### Main Features
+## Features
 
-- Gaze-controlled vehicle navigation.
-- Emotion-based door unlocking.
-- Modular architecture with additive scene loading.
-- Clean code architecture so you can see by yourself examples of everything available in the UFeel Unity Package.
+- Gaze-controlled vehicle navigation
+- Emotion-based door unlocking
+- Modular architecture with additive scene loading
 
-### Technologies
+## Technologies
 
 - Unity 6000.1.3f1
-- UFeel - emotion detection and eye tracking via webcam (more specifications available in the UFeel documentation)
-- C# with Unity Physics and Input Systems
+- UFeel (emotion detection, eye tracking, speech, heart rate via webcam)
+- C# - Unity Physics and Input System
 
-## To Do
+## Documentation
 
-- Add a proper README at the root
-- Rename this file to have only one README in the project
-- Make the root README link towards all the other markdown files
+| Document | Description |
+|---|---|
+| [Setup Instructions](SetupInstructions.md) | How to run the project |
+| [Scene Reference](Scenes.md) | Scene-by-scene breakdown |
+| [Testing & Debugging](TestingTips.md) | Testing and debugging guide |
+| [API Reference](../../Packages/com.ufcorp.ufeel/Runtime/API.md) | UFeel Unity API |

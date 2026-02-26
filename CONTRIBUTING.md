@@ -1,9 +1,10 @@
 # Contributing Guidelines
 
+> [<- Back to README](README.md)
+
 ## Overview
 
-Thank you for your interest in contributing to this project.
-This project is an open-source library and set of plugins focused on advanced input systems for games and software, including eye tracking and emotion-related inputs. It also includes sample projects for the game engines using the corresponding plugins.
+This project is an open-source library and set of plugins for advanced input systems in games and software (eye tracking, emotion-based inputs, etc.), including sample projects for supported game engines.
 
 All contributions are subject to the terms described below.
 
@@ -89,4 +90,4 @@ Uncoordinated major changes are likely to be rejected.
 
 ## Final Notes
 
-This is a technical project. Contributions are evaluated on correctness, clarity, and maintainability.
+Contributions are evaluated on correctness, clarity, and maintainability.

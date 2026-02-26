@@ -1,23 +1,22 @@
-# Scene Architecture
+# Scene Reference
+
+> [<- Testing Room](README.md)
 
 ## Base Scene (TestingRoom)
 
-- **Purpose**: Acts as a hub for transitions.
-- **Key Elements**:
-  - Carousel for selecting interaction scenes.
-  - Doors using `DoorController`.
-- **Lighting**: None (disabled for stylistic purposes).
+- **Role**: Hub for scene transitions.
+- Carousel for selecting scenes, doors using `DoorController`.
+- Lighting disabled intentionally.
 
 ## Eye Tracking Scene (TestingRoom_EyeTracking)
 
-- **Purpose**: Player drives a vehicle using gaze direction.
-- **Input**: Eye direction (up/down for speed - coming soon, left/right for steering).
-- **Important Scripts**:
-  - `VehicleController`
+- **Role**: Player steers a vehicle using gaze direction.
+- Left/right gaze -> steering; up/down speed control (coming soon).
+- Key script: `VehicleController`
 
 ## Emotion Scene (TestingRoom_EmotionDetection)
 
-- **Purpose**: Gaze and emotion detection through facial expressions.
-- **Logic**: Emotion recognition controls access through doors.
-- **Important Scripts**:
-  - `EmotionGameManager`
+- **Role**: Emotion recognition controls door access.
+- Key script: `EmotionGameManager`
+
+**See also:** [Setup Instructions](SetupInstructions.md) - [Testing & Debugging](TestingTips.md)

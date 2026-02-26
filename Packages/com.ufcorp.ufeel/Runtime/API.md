@@ -1,44 +1,28 @@
-# 📘 UFeelAPI – Unity Gameplay Integration Guide
+# UFeelAPI – Unity API Reference
 
-## Overview
+> [<- Back to README](../../../../README.md)
 
-`UFeelAPI` is a **singleton Unity MonoBehaviour** that allows Unity games to react in real time to **player signals** such as:
+`UFeelAPI` is a static singleton MonoBehaviour for reacting to player biometric signals in real time:
 
-* 🧠 **Emotions**
-* 👁️ **Eye tracking (gaze direction)**
-* 🎙️ **Speech (keywords / phrases)**
-* ❤️ **Heart rate**
+* Emotions
+* Eye tracking (gaze direction)
+* Speech (keywords / phrases)
+* Heart rate
 
-The API is designed to be **event-driven** and **gameplay-oriented**:
-you define *rules* that automatically trigger actions when a condition becomes true.
+Define *rules* - condition + action pairs - that fire automatically rather than polling each frame.
 
-No polling, no manual state checking every frame — the API handles it for you.
+## Getting Started
 
----
+All methods are static. Required objects are created automatically if absent from the scene and persist across scene loads (`DontDestroyOnLoad`).
 
-## 🚀 Getting Started
+## Core Concept: Rules
 
-### Accessing the API
+A rule has a **condition**, an **action**, and a **mode**:
 
-All the method of the Class `UFeelAPI` are static:
+* `Once` - triggered once, then removed
+* `Continuous` - triggered every frame while the condition holds
 
-* Useful variable are automatically created if not present in the scene
-* Survives scene changes (`DontDestroyOnLoad`)
-
----
-
-## 🔁 Core Concept: Rules
-
-A **Rule** is composed of:
-
-* a **condition** (emotion, direction, speech, heart rate…)
-* an **action** (your gameplay code)
-* a **mode**:
-
-  * `Once` → triggered once, then removed
-  * `Continuous` → triggered every frame while the condition is true
-
-Internally, rules are evaluated **every frame in `Update()`**.
+Rules are evaluated every `Update()`.
 
 ### RuleKey
 
@@ -50,9 +34,7 @@ RuleKey key;
 
 This key allows you to **manually remove** the rule later if needed.
 
----
-
-## 🧠 Emotion Detection
+## Emotion Detection
 
 ### Start / Stop
 
@@ -61,9 +43,7 @@ UFeelAPI.StartEmotionDetection();
 UFeelAPI.StopEmotionDetection();
 ```
 
-Emotion detection **must be started** before accessing data or triggering rules.
-
----
+Emotion detection must be started before reading data or registering rules.
 
 ### Reading Emotion Data
 
@@ -72,12 +52,9 @@ EmotionData? emotions = UFeelAPI.GetCurrentEmotionsData();
 EmotionData.EmotionType? dominant = UFeelAPI.GetDominantEmotion();
 ```
 
-* Returns `null` if the system is not running
-* `GetDominantEmotion()` returns the strongest detected emotion
+Returns `null` if the system is not running. `GetDominantEmotion()` returns the highest-confidence emotion.
 
----
-
-### Triggering Gameplay from Emotions
+### Triggering Rules from Emotions
 
 #### Trigger Once
 
@@ -103,9 +80,7 @@ RuleKey key = UFeelAPI.TriggerActionOnEmotionContinuous(
 UFeelAPI.RemoveRule(key);
 ```
 
----
-
-## 👁️ Eye Tracking (Gaze Direction)
+## Eye Tracking
 
 ### Start / Stop
 
@@ -114,16 +89,12 @@ UFeelAPI.StartEyeTrackingDetection();
 UFeelAPI.StopEyeTrackingDetection();
 ```
 
----
-
 ### Reading Gaze Direction
 
 ```csharp
 EyeTrackingData? data = UFeelAPI.GetCurrentDirections();
 EyeTrackingData.EyeTrackingType? direction = UFeelAPI.GetDominantDirection();
 ```
-
----
 
 ### Triggering Gameplay from Gaze
 
@@ -143,9 +114,7 @@ UFeelAPI.TriggerActionOnDirectionContinuous(
 );
 ```
 
----
-
-## 🎙️ Speech Detection
+## Speech Detection
 
 ### Start / Stop
 
@@ -153,8 +122,6 @@ UFeelAPI.TriggerActionOnDirectionContinuous(
 UFeelAPI.StartSpeechDetection();
 UFeelAPI.StopSpeechDetection();
 ```
-
----
 
 ### Reading Current Speech
 
@@ -164,12 +131,9 @@ string spokenText = UFeelAPI.GetCurrentSpeech();
 
 Returns `null` if speech detection is not running.
 
----
+### Triggering Rules from Speech
 
-### Triggering Actions from Speech
-
-Speech rules trigger when the **detected text is contained inside the target string**
-(case-insensitive).
+Triggers when the detected text **contains** the target string (case-insensitive).
 
 ```csharp
 UFeelAPI.TriggerActionOnSpeechOnce(
@@ -187,9 +151,7 @@ UFeelAPI.TriggerActionOnSpeechContinuous(
 );
 ```
 
----
-
-## ❤️ Heart Rate Detection
+## Heart Rate Detection
 
 ### Start / Stop
 
@@ -198,19 +160,15 @@ UFeelAPI.StartHeartRateDetection();
 UFeelAPI.StopHeartRateDetection();
 ```
 
----
-
 ### Reading Heart Rate
 
 ```csharp
 int? bpm = UFeelAPI.GetCurrentHeartRate();
 ```
 
----
+### Triggering Rules from Heart Rate
 
-### Triggering Actions from Heart Rate
-
-You can define a **target BPM** with an optional **tolerance**.
+Define a target BPM with an optional tolerance (±).
 
 ```csharp
 UFeelAPI.TriggerActionOnHeartRateOnce(
@@ -220,7 +178,7 @@ UFeelAPI.TriggerActionOnHeartRateOnce(
 );
 ```
 
-This triggers if the heart rate is between **110 and 130 BPM**.
+Triggers if BPM is within ±tolerance of the target (here: 110–130).
 
 Continuous variant:
 
@@ -232,42 +190,22 @@ UFeelAPI.TriggerActionOnDirectionContinuous(
 );
 ```
 
----
-
-## 🧹 Removing Rules Manually
-
-Any rule can be removed at runtime:
+## Removing Rules
 
 ```csharp
 RuleKey key = UFeelAPI.TriggerActionOnEmotionContinuous(...);
 UFeelAPI.RemoveRule(key);
 ```
 
-Useful for:
-
-* state machines
-* temporary gameplay effects
-* cutscenes
-
----
-
-## 🛑 Stopping Everything
+## Stopping the API
 
 ```csharp
 UFeelAPI.StopAPI();
 ```
 
-This will:
+Stops all detectors and shuts down the Python server. Called automatically when the `UFeelAPI` GameObject is disabled.
 
-* stop **all detections**
-* notify the backend systems
-* shut down the Python server
-
-Automatically called when the GameObject is disabled.
-
----
-
-## 📊 Debugging
+## Debugging
 
 ```csharp
 UFeelAPI.Status();
@@ -275,19 +213,14 @@ UFeelAPI.Status();
 
 Logs the running state of all systems in the Unity Console.
 
----
+## Limitations
 
-## ⚠️ Important Notes & Limitations
+* Each detector must be started explicitly.
+* Rule actions run every frame - keep them fast.
+* Speech matching uses `Contains`, not exact match.
+* The Python server must be running for data to arrive.
 
-* Detection systems **must be started explicitly**
-* Rules are evaluated **every frame**
-* Actions should be **fast** (avoid heavy logic inside rules)
-* Speech matching uses `Contains` (not exact match)
-* Backend communication is assumed to be active
-
----
-
-## ✅ Typical Usage Pattern
+## Typical Usage Pattern
 
 ```csharp
 async void Start()
@@ -349,3 +282,5 @@ async void Start()
     });
 }
 ```
+
+**See also:** [<- README](../../../../README.md) - [Architecture](../../../../ARCHITECTURE.md) - [Testing & Debugging](../../../../Documentation/TestingRoom/TestingTips.md)

@@ -1,14 +1,13 @@
-# Testing & Debugging Tips
+# Testing & Debugging
 
-This guide outlines how to test and debug the **UFeel emotion detection package** across the main scenes in our demo project. These instructions are intended for developers evaluating how to integrate UFeel into their own Unity workflows.
+> [<- Testing Room](README.md)
+
+Instructions for testing and debugging the UFeel package across the main Testing Room scenes.
 
 ## General Requirements
 
-Before testing, make sure the following are in place:
-
-- A **working webcam** with permissions granted (should be automatic but camera access might be asked at start).
-- UFeel’s detection tools are correctly referenced in the emotion detection scene.
-- No other software is blocking or monopolizing the webcam (e.g., Zoom, Teams).
+- A working webcam with permissions granted (may be requested on first launch).
+- No other application monopolizing the webcam (e.g., Zoom, Teams).
 
 ## Emotion Detection Scene
 
@@ -68,4 +67,6 @@ Before testing, make sure the following are in place:
 - Vary your facial expression intensity to check threshold tuning.
 - Test with multiple people to evaluate detection robustness.
 
-For integration help or feature requests, please refer to our UFeel GitHub Repo (coming soon) or contact the dev team.
+For integration help or feature requests, open an issue on the repository.
+
+**See also:** [Scene Reference](Scenes.md) - [Setup Instructions](SetupInstructions.md) - [API Reference](../../Packages/com.ufcorp.ufeel/Runtime/API.md)

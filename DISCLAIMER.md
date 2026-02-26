@@ -1,5 +1,7 @@
 # Disclaimer
 
+> [← Back to README](README.md)
+
 ## Scope
 
 This project provides software tools and libraries for advanced input systems, including but not limited to:
@@ -68,7 +70,7 @@ This project must not be used in:
 
 This list is not exhaustive.
 
-If you are unsure whether a use case falls into these categories, contact the project maintainers before proceeding.
+If uncertain, contact the project maintainers before proceeding.
 
 ## Responsibility of Integrators and Users
 
@@ -93,7 +95,7 @@ The project is intended for:
 
 This list is not exhaustive.
 
-If you are unsure whether your intended use is appropriate, contact the project maintainers.
+If uncertain about your intended use, contact the project maintainers.
 
 ## Acknowledgment of Limitations
 

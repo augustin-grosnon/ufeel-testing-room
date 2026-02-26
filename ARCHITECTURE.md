@@ -1,6 +1,8 @@
 # Architecture
 
-UFeel Testing Room is a Unity project that demonstrates the **UFeel** biometric package. Unity spawns a Python server that processes webcam/sensor data and streams results back via TCP.
+> [<- Back to README](README.md)
+
+UFeel Testing Room is a Unity project demonstrating the **UFeel** biometric package. Unity spawns a Python server that processes webcam/sensor data and streams results back via TCP.
 
 ## Overview
 
@@ -44,13 +46,13 @@ graph TD
 | `UFeelAPI` | Singleton entry point. Starts/stops detectors, exposes data getters, manages rules. |
 | `ClientBase` | Abstract TCP listener. Each receiver extends it to decode JSON messages on a dedicated thread. |
 | `PythonServerController` | Spawns/kills the Python process from Unity's lifecycle. |
-| `Rules Engine` | Condition→Action pairs evaluated every `Update()`. Supports one-shot and continuous rules. |
+| `Rules Engine` | Condition->Action pairs evaluated every `Update()`. Supports one-shot and continuous rules. |
 
 ### Python Server (`PythonServer/`)
 
 | Module | Role |
 |---|---|
-| `DataProcessor` | Main loop — reads webcam frames, dispatches to each detector. |
+| `DataProcessor` | Main loop - reads webcam frames, dispatches to each detector. |
 | `EmotionDetector` | MediaPipe-based facial emotion detection. |
 | `EyeTracker` | Gaze direction estimation. |
 | `SpeechToText` | Microphone transcription. |
@@ -74,5 +76,7 @@ sequenceDiagram
     Game->>UFeelAPI: StartEmotionDetection()
     UFeelAPI->>Receiver: begin listening :4100
     Python-->>Receiver: JSON over TCP (continuous)
-    UFeelAPI->>Game: rules fire → callbacks
+    UFeelAPI->>Game: rules fire -> callbacks
 ```
+
+**See also:** [API Reference](Packages/com.ufcorp.ufeel/Runtime/API.md) - [Setup Instructions](Documentation/TestingRoom/SetupInstructions.md)

@@ -1,5 +1,7 @@
 # Setup Instructions
 
+> [<- Testing Room](README.md)
+
 ## Requirements
 
 - Unity 6+
@@ -11,8 +13,10 @@
 2. Open the project in Unity Hub.
 3. Import the required packages:
    - UFeel
-4. Open the `TestingRoom` scene and press Play to begin.
+4. Open the `TestingRoom` scene and press Play.
 
-## Hardware Setup
+## Notes
 
-- Grant webcam access for emotion detection (should be automatic but access right might be asked on startup).
+- Webcam access is required. Permissions may be requested on first launch.
+
+**See also:** [Scene Reference](Scenes.md) - [Testing & Debugging](TestingTips.md)

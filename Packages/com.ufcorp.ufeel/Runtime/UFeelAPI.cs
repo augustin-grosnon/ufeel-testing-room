@@ -365,7 +365,7 @@ namespace UFeel
         private void OnDisable()
         {
             StopAPI();
-            Debug.Log("Game stopped — OnDisable called!");
+            Debug.Log("Game stopped - OnDisable called!");
         }
 
         public static void StopAPI()
