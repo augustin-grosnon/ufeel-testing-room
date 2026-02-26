@@ -1,6 +1,6 @@
 # UFeelAPI – Unity API Reference
 
-> [<- Back to README](../../../../README.md)
+> [<- Back to README](../../../README.md)
 
 `UFeelAPI` is a static singleton MonoBehaviour for reacting to player biometric signals in real time:
 
@@ -283,4 +283,4 @@ async void Start()
 }
 ```
 
-**See also:** [<- README](../../../../README.md) - [Architecture](../../../../ARCHITECTURE.md) - [Testing & Debugging](../../../../Documentation/TestingRoom/TestingTips.md)
+**See also:** [<- README](../../../README.md) - [Architecture](../../../ARCHITECTURE.md) - [Testing & Debugging](../../../Documentation/TestingRoom/TestingTips.md)
