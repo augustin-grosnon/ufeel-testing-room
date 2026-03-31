@@ -19,7 +19,7 @@ public class HeartRateSensorReceiver : ClientBase
         }
         catch (System.Exception e)
         {
-            Debug.Log("Error parsing speechToText JSON: " + e.Message);
+            Debug.Log("Error parsing heartRate JSON: " + e.Message);
         }
     }
 }
