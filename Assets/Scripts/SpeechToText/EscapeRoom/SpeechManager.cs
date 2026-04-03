@@ -207,6 +207,27 @@ public class SpeechManager : MonoBehaviour
             
         });
     }
+    private void blueLightStep()
+    {
+        StartHintTimer("Dites: \n\"lumière violette\"");
+
+        UFeelAPI.TriggerActionOnSpeechOnce("lumière violette", () =>
+        {
+            if (hintCoroutine != null)
+                StopCoroutine(hintCoroutine); 
+
+            Debug.Log("Executing light blue command.");
+            if (blueLight != null && roomLight != null && dummyLight != null && bookHintText != null) {
+                roomLight.enabled = false;
+                dummyLight.enabled = false;
+                blueLight.enabled = true;
+                windowHintText.SetActive(false);
+                StartCoroutine(FadeInText(bookHintText, 3f));
+            }
+
+            TvStep();
+        });
+    }
     
 
     IEnumerator TvOn(float duration)
