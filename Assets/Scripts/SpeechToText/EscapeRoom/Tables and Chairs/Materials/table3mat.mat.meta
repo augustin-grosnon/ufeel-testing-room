@@ -1,7 +1,8 @@
 fileFormatVersion: 2
-guid: 61277608e1a257c41949e3fe463498c2
-PrefabImporter:
+guid: 98346bcebad198c44b2eb05438f763a7
+NativeFormatImporter:
   externalObjects: {}
+  mainObjectFileID: 2100000
   userData: 
   assetBundleName: 
   assetBundleVariant: 
@@ -10,5 +11,5 @@ AssetOrigin:
   productId: 199726
   packageName: 3D Game Asset - Table & Chair Sets
   packageVersion: 1.0.0
-  assetPath: Assets/Tables and Chairs/Prefabs/Table5.prefab
+  assetPath: Assets/Tables and Chairs/Materials/table3mat.mat
   uploadId: 498826
