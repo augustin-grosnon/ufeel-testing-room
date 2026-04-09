@@ -80,12 +80,11 @@ public class GameManager : MonoBehaviour
 	    while (true)
 	    {
 		    int bpm = getBPM();
-		    Debug.Log("BPM = " + bpm.ToString());
             
 		    if (bpm == 0)
 			    yield break;
 		    
-		    bs.beatTempo = bpm / 60f;
+		    bs.beatTempo = bpm / 30f; // 60f / 2
 		    
 		    yield return new WaitForSeconds(1f);
 	    }

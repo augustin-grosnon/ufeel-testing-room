@@ -4,8 +4,8 @@ public class NoteObject : MonoBehaviour
 {
 	public KeyCode keyToPress;
     private bool canBePressed = false;
-	private float[] orientations = {180f, 90f, -90f, 0f};
-	private KeyCode[] keys = {KeyCode.LeftArrow, KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.RightArrow};
+    private float[] orientations = {180f, -90f, 90f, 0f};
+	private KeyCode[] keys = {KeyCode.RightArrow, KeyCode.DownArrow, KeyCode.UpArrow, KeyCode.LeftArrow};
 
     void Start()
     {}
