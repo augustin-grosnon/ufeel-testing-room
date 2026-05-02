@@ -49,6 +49,11 @@ public class SpeechManager : MonoBehaviour
 
     async void Start()
     {
+        UFeelDebugHUD.UseDefaultDebugHUD = false;
+        UFeelDebugHUD.Clear();
+        UFeelDebugHUD.Set("Current Speech", () =>  UFeelAPI.GetCurrentSpeech());
+
+
         await UFeelAPI.StartAPI();
         await Task.Delay(10000);
 
@@ -60,9 +65,6 @@ public class SpeechManager : MonoBehaviour
         {
             _player = playerObject.GetComponent<FirstPersonController>();
         }
-
-        // UFeelDebugHUD.Clear();   // deactivate debug in API
-        // UFeelDebugHUD.Set("Current Speech", () =>  UFeelAPI.GetCurrentSpeech());
         
         LightStep();
     }
@@ -297,5 +299,10 @@ public class SpeechManager : MonoBehaviour
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
         #endif
+    }
+
+    void OnDestroy()
+    {
+        UFeelDebugHUD.UseDefaultDebugHUD = true;
     }
 }

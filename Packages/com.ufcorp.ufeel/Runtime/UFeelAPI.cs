@@ -82,7 +82,7 @@ namespace UFeel
 
         private static void RefreshGUI()
         {
-            if (!UFeelDebugHUD.DEBUG_MODE)
+            if (!UFeelDebugHUD.DEBUG_MODE || !UFeelDebugHUD.UseDefaultDebugHUD)
                 return;
 
             UFeelDebugHUD.Set("Emotions", () => _emotionReceiver.CurrentEmotionsData?.ToString());

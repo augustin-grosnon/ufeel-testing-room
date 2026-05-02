@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class UFeelDebugHUD : MonoBehaviour
 {
+    public static bool UseDefaultDebugHUD = true;
     private static UFeelDebugHUD _instance;
 
     internal static float MaxWidth = 1000;
