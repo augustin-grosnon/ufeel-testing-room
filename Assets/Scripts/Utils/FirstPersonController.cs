@@ -23,8 +23,6 @@ public class FirstPersonController : MonoBehaviour
         controller = gameObject.AddComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-        await UFeelAPI.StartAPI();
     }
 
     void Update()
