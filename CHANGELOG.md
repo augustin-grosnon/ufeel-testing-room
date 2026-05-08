@@ -2,181 +2,147 @@
 
 > [<- Back to README](README.md)
 
-Grouped by month using: Added, Changed, Fixed, Merged, Documentation.
+## [2026-05]
+
+### Added
+
+- Debug HUD toggle (`UseDefaultDebugHUD`) and Escape Room-specific HUD customization.
+
+### Fixed
+
+- Speech manager now starts the API reliably, general cleanup.
+
+## [2026-04]
+
+### Added
+
+- Static analysis baseline via `.editorconfig` and `Directory.Build.props`.
+- Heartbeat rhythm game content for Testing Room (scenes/assets/models) and in-room guidance elements.
+
+### Fixed
+
+- Removed unused Heartbeat room assets and tuned gameplay values.
+
+## [2026-03]
+
+### Added
+
+- Heart rate Horror Room POC (scene, effects scripts, audio assets).
+- Escape Room scene.
 
 ## [2026-02]
 
 ### Added
 
-* New carousel system with reordered file structure
-* `UFeelDebugHUG` debug class
-* Debug mode for visual information
-* Updated README for API
-* Expanded and clarified `DISCLAIMER.md`, including prohibited use cases and non-responsibility clauses
-* `CHANGELOG.md` updated based on the commits
+- Reworked carousel system with a cleaned-up file/scene structure.
+- Debug stack: `UFeelDebugHUD` and visual debug mode for API/receivers.
+- Project documentation: API README, internal documentation links, and `ARCHITECTURE.md`.
+- Expanded `DISCLAIMER.md` with additional prohibited use cases and non-responsibility clauses.
 
 ### Changed
 
-* Refactored `UFeelAPI` into static class
-* Updated trigger behavior and Python server
-* Merged API Unity into Testing Room
-* Improved door selection GUI width
+- Refactored `UFeelAPI` to static usage.
+- Updated trigger behavior and Python server integration.
+- Improved door selection UI sizing.
 
 ### Fixed
 
-* Naming consistency for UFeel and asmdef files
-* Unique file handling per data type
-* Removed outdated code
-* Fixed carousel doors behavior
-* Fixed Testing Room scene doors
-* Graphic settings adjustments
+- Naming consistency for UFeel and asmdef/asmref files.
+- Unique file handling per data type.
+- Removed outdated code and corrected graphics settings details.
+- Fixed carousel door behavior and Testing Room door setup.
 
 ### Merged
 
-* Testing Room into `main` branch
+- Merged `api-unity` into Testing Room.
+- Merged Testing Room into `main`.
 
 ## [2026-01]
 
 ### Added
 
-* Apache 2.0 license
-* `CONTRIBUTING` details
-* `DISCLAIMER.md`
-* Documentation restructuring
+- Apache 2.0 license.
+- `CONTRIBUTING.md`.
+- `DISCLAIMER.md`.
+- Documentation move/restructure for Testing Room.
 
 ## [2025-12]
 
 ### Added
 
-* Speech-to-text detection in API
-* Frame text rendering for debugging
-* Heart rate sensor integration
-* Heart rate receiver in Unity API
-
-### Fixed
-
-* Emotion detection in Unity
-* Eye tracking integration in Unity
+- Speech-to-text detection integrated into API (Python + Unity receiver).
+- Heart rate sensor (Python) and Unity API receiver.
+- Frame text rendering for debugging.
 
 ## [2025-10 – 2025-11]
 
 ### Added
 
-* Doors for speech recognition and heartbeat
-* Heartbeat and speech recognition scenes in Testing Room
-* Base version without detection
+- Doors and Testing Room scenes for speech recognition and heartbeat.
+- Base version without detection.
 
 ### Changed
 
-* Upgraded Unity to stable LTS version
-* Restored flashlight support
+- Upgraded Unity to stable LTS version and restored flashlight support.
+
+### Fixed
+
+- Emotion detection and eye tracking behavior in Unity scenes.
 
 ## [2025-07]
 
 ### Changed
 
-* Model activation logic improvements
-* Documentation comments regarding multi-model frame handling
-
-### Fixed
-
-* Asynchronous Python process handling
+- Model activation logic improvements and notes on multi-model frame handling.
 
 ## [2025-06]
 
 ### Added
 
-* Base API
-* API documentation
-* TCP support and new `ClientBase` class
-* Enable/disable Python process from C# server
-* Integrated emotion detection into Testing Room
-* Eye tracking finish line
-* Eye tracking scene improvements (sphere movement, distance handling, vehicle control)
-* Textured terrain for eye tracking scene
-* Disable room after entering new scene
+- Base API and initial API documentation.
+- TCP transport and `ClientBase` foundation.
+- Enable/disable Python detectors from C#.
+- Integrated emotion detection into Testing Room.
+- Eye tracking template improvements (sphere movement, distance handling, vehicle control, finish line).
+- Textured terrain for eye tracking scene.
 
 ### Changed
 
-* Door behavior improvements (lowering logic, rotation handling)
-* Scene loading synchronization before door opening
+- Door behavior improvements (lowering/rotation) and scene-loading synchronization before door opening.
+- Disable room after entering a new scene.
+
+### Fixed
+
+- Asynchronous Python process handling.
 
 ## [2025-05]
 
 ### Added
 
-* Testing Room base lighting and improvements
-* Base carousel system
-* Door prefab and automated door placement script
-* Moving and lowering doors
-* Door selection panel
-* Chain extension system
-* Scene swapping
-* Door opening before scene swap
-* Carousel builder with special doors
-* Door selection by name
-* Base corridor with additive scene loading
-* Additive scene loading on door trigger
+- Testing Room base lighting and scene improvements.
+- Carousel system, door prefabs, automated door placement tooling, and door selection panel.
+- Chain extension system, scene swapping, and door open-before-swap flow.
+- Base corridor with additive scene loading, additive load on door trigger.
 
 ### Changed
 
-* Directory restructuring
-* Improved door prefab and setup workflow
-* Larger door trigger
-* Scene alignment adjustments
-* Front wall split for transition logic
-* Door positioning and wall placement
-* Open wall during scene transition
+- Directory restructuring and door setup workflow improvements.
+- Larger door trigger and scene alignment adjustments.
+- Front-wall split/open logic for transitions, door positioning against walls.
 
 ## [2025-03]
 
 ### Added
 
-* Initial project setup
-* Unity project configuration
-* Assembly definition and auto-reference script
-* Base POC with canvas and cube
-* Base scenes for Emotion Detection and Eye Tracking
-* Emotion detection server and Unity integration
-* Eye tracking server with automatic startup
-* Generic receiver and server controller
-* Singleton-based management for emotion and eye tracking
-* Working base emotion game (happy, surprised, angry)
-* Demo game scene with player
-* Emotion-based door logic
-* Score display
-* Debug skip logic
-* Emotion color handling
-* Mediapipe face detection integration
-* Smooth teleportation
-* New eye tracker integration
-* Multiple server handling with auto movement via eye tracking
+- Initial Unity project setup and configuration.
+- Emotion detection and eye tracking scenes, servers, and Unity integration.
+- Generic receiver/server-controller layer and singleton-based management.
+- Demo game with emotion-driven door logic, scoring, and debug controls.
 
 ### Changed
 
-* Dependency updates (Barracuda, Unity version)
-* Requirements updates
-* Code cleanup and controller documentation
-* Larger video processor window
-* Demo scene refinements
+- Dependency/requirements updates and demo scene refinements.
 
 ### Fixed
 
-* Removed unused Unity controllers
-* Eye tracker usability improvements
-* Removed unnecessary GitHub Actions job
-* Disabled mirroring GitHub Actions on main repository
-
-## [Project Initialization – 2025-03-06]
-
-### Added
-
-* Initial commit
-* Embedded package
-* Linked `ufeel` package
-* Base cube scene setup
-
-### Changed
-
-* `.vscode` added to `.gitignore`
-* Initial dependency configuration
+- Disabled/adjusted mirroring GitHub Actions and improved eye-tracker stability.
