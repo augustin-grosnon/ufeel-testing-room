@@ -4,6 +4,7 @@ print(sys.executable)
 print(sys.path)
 
 import cv2
+import time
 from emotion_detector import EmotionDetector
 from eye_tracker import EyeTracker
 from speech_to_text import SpeechToText
@@ -24,8 +25,12 @@ class DataProcessor:
         self.scale_factor = 1.3
         self.calibration = calibration
 
+        self.target_hz = 30
+        self.frame_time = 1.0 / self.target_hz
+
     def process(self):
         while self.cap.isOpened():
+            start_time = time.perf_counter()
             ret, frame = self.cap.read()
             if not ret:
                 break
@@ -48,6 +53,13 @@ class DataProcessor:
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
             self.counter = (self.counter + 1) % self.freq
+
+            elapsed = time.perf_counter() - start_time
+            sleep_time = self.frame_time - elapsed
+
+            if sleep_time > 0:
+                time.sleep(sleep_time)
+
         self.cap.release()
         if self.show_window:
             cv2.destroyAllWindows()
