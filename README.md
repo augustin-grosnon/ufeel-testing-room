@@ -1,5 +1,15 @@
 # UFeel Testing Room
 
+[![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/TxYTDXMJkM)](https://discord.gg/TxYTDXMJkM)
+
+[![Discord](https://img.shields.io/discord/1461581735631523900.svg)](https://discord.gg/TxYTDXMJkM)
+[![Apache 2.0 License](https://img.shields.io/badge/apache-2.0-license)](https://opensource.org/licenses/)
+![Unity](https://img.shields.io/badge/Unity-%23000000.svg?logo=unity&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)
+
+![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=csharp&logoColor=white)![Espressif](https://img.shields.io/badge/espressif-E7352C.svg?style=for-the-badge&logo=espressif&logoColor=white)
+
 A Unity project demonstrating the [UFeel](Packages/com.ufcorp.ufeel) input package - emotion detection, eye tracking, speech recognition, and heart rate sensing as Unity gameplay inputs.
 
 ## Documentation
