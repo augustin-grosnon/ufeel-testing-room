@@ -2,6 +2,12 @@
 
 > [<- Back to README](README.md)
 
+## [2026-06]
+
+### Added
+
+- Animals's memory game.
+
 ## [2026-05]
 
 ### Added
