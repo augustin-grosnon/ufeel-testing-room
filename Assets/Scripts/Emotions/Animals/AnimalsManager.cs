@@ -1,0 +1,267 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UFeel;
+using TMPro;
+using System.Threading.Tasks;
+
+public enum AnimalType
+{
+    Cat,
+    Tiger,
+    Deer,
+    Penguin,
+    Spider
+};
+
+
+public class AnimalsManager : MonoBehaviour
+{
+    [Header("Scene References")]
+    public Transform spawnPoint;
+    public GameObject[] animalPrefabs;
+    public TextMeshProUGUI instructionText;
+    public TextMeshProUGUI timerText;
+    public TextMeshProUGUI scoreText;
+
+
+
+    [Header("Game Settings")]
+    private int currentLevel = 1;
+    private float timer;
+    private int score = 0;
+    private bool isLevelActive = false;
+    
+    private List<AnimalType> animalsList = new List<AnimalType>();
+    private GameObject currentAnimalGO;
+    Dictionary<AnimalType, EmotionData.EmotionType> animalEmotions =
+        new Dictionary<AnimalType, EmotionData.EmotionType>()
+    {
+        { AnimalType.Cat, EmotionData.EmotionType.Happiness },
+        { AnimalType.Tiger, EmotionData.EmotionType.Anger },
+        { AnimalType.Deer, EmotionData.EmotionType.Surprise },
+        { AnimalType.Penguin, EmotionData.EmotionType.Sadness },
+        { AnimalType.Spider, EmotionData.EmotionType.Fear }
+    };
+
+    async void Start()
+    {
+        // UFeelDebugHUD.UseDefaultDebugHUD = false; // decoment when merge with main
+        // UFeelDebugHUD.Clear();
+        // UFeelDebugHUD.Set("Current Emotion", () => {
+        //     var data = UFeelAPI.GetDominantEmotion();
+        //     return data.HasValue ? data.Value.ToString() : "Unknown"; 
+        // });
+
+        await UFeelAPI.StartAPI();
+        await Task.Delay(10000);
+        
+        UFeelAPI.StartEmotionDetection();
+        UFeelAPI.Status();
+
+        StartCoroutine(GameLoop());
+    }
+    
+
+    private IEnumerator GameLoop()
+    {
+        while (currentLevel <= 5)
+        {
+            yield return StartCoroutine(InitLevel(currentLevel));
+            yield return StartCoroutine(PlayLevel(currentLevel));
+            
+            if (timer <= 0 && animalsList.Count > 0)
+            {
+                instructionText.text = "GAME OVER...";
+                yield return new WaitForSeconds(5f);
+                Application.Quit();
+                #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+                #endif
+                yield break;
+            }
+
+            currentLevel++;
+        }
+
+        instructionText.text = "CONGRATULATIONS! YOU ARE A MASTER OF EMOTIONS!";
+
+        yield return new WaitForSeconds(5f);
+        Application.Quit();
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+    }
+
+    private IEnumerator InitLevel(int level)
+    {
+        isLevelActive = false;
+        string newAnimalInfo = "";
+
+        switch (level)
+        {
+            case 1: newAnimalInfo = "Cat -> Happiness"; break;
+            case 2: newAnimalInfo = "Tiger -> Anger"; break;
+            case 3: newAnimalInfo = "Deer -> Surprise"; break;
+            case 4: newAnimalInfo = "Penguin -> Sadness"; break;
+            case 5: newAnimalInfo = "Spider -> Fear"; break;
+        }
+
+        // instructionText.text = $"LEVEL {level}\n\n{newAnimalInfo}\nGet ready...";
+        instructionText.text = $"LEVEL {level}\n\n{newAnimalInfo}";
+        yield return new WaitForSeconds(5f);
+        
+        timer = GetLevelTime(level);
+        animalsList = GenerateAnimals(level);
+        isLevelActive = true;
+    }
+
+    private IEnumerator PlayLevel(int level)
+    {
+        instructionText.text = "";
+        SpawnAnimal();
+
+        while (isLevelActive && timer > 0)
+        {
+            timer -= Time.deltaTime;
+            timerText.text = $"Time: 0:{Mathf.CeilToInt(timer)}";
+            if (animalsList.Count == 0 && currentAnimalGO == null)
+            {
+                isLevelActive = false;
+                instructionText.text = "LEVEL COMPLETED !";
+                yield return new WaitForSeconds(2f);
+            }
+            yield return null;
+        }
+    }
+
+    List<AnimalType> GenerateAnimals(int level)
+    {
+        List<AnimalType> pool = new List<AnimalType>() { AnimalType.Cat };
+        if (level >= 2) pool.Add(AnimalType.Tiger);
+        if (level >= 3) pool.Add(AnimalType.Deer);
+        if (level >= 4) pool.Add(AnimalType.Penguin);
+        if (level >= 5) pool.Add(AnimalType.Spider);
+
+        List<AnimalType> result = new List<AnimalType>();
+        int totalTarget = GetAnimalNumber(level);
+        int minPerAnimal = 2;
+
+        // adding at least 2 of each type in the pool
+        foreach (AnimalType type in pool)
+        {
+            for (int i = 0; i < minPerAnimal; i++)
+                if (result.Count < totalTarget)
+                    result.Add(type);
+        }
+
+        while (result.Count < totalTarget) { result.Add(pool[Random.Range(0, pool.Count)]);}
+
+        Shuffle(result);
+        return result;
+    }
+
+    // Fisher-Yates shuffle algorithm to randomize the order of animals in the list
+    private void Shuffle<T>(List<T> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            T temp = list[i];
+            int randomIndex = Random.Range(i, list.Count);
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
+        }
+    }
+
+    void SpawnAnimal()
+    {
+        if (animalsList.Count == 0)
+        {
+            Debug.Log("LEVEL COMPLETE");
+            isLevelActive = true;
+            return;
+        }
+
+        AnimalType animal = animalsList[0];
+
+        currentAnimalGO = Instantiate(animalPrefabs[(int)animal], spawnPoint.position, Quaternion.identity);
+        Debug.Log($"Emotion: {animalEmotions[animal]} for {animal}");
+
+        CheckEmotion(animal);
+    }
+
+    private void UpdateScore()
+    {
+        score += 1;
+        if (scoreText != null)
+        {
+            scoreText.text = $"Score: {score}";
+        }
+    }
+
+    void CheckEmotion(AnimalType animal)
+    {
+
+        UFeelAPI.TriggerActionOnEmotionOnce(animalEmotions[animal], () =>
+        {
+            if (!isLevelActive) return;
+
+            Debug.Log("CORRECT EMOTION!");
+            UpdateScore();
+
+            Destroy(currentAnimalGO);
+            animalsList.RemoveAt(0);
+
+            StartCoroutine(WaitAndSpawn());
+        });
+    }
+
+    private IEnumerator WaitAndSpawn()
+    {
+        yield return new WaitForSeconds(1.5f);
+        
+        SpawnAnimal();
+    }
+
+    float GetLevelTime(int level)
+    {
+        if (level <= 2) return 30f;
+        if (level <= 4) return 45f;
+        return 60f;
+    }
+
+    int GetAnimalNumber(int level)
+    {
+        switch (level)
+        {
+            case 1: return 3;
+            case 2: return 5;
+            case 3: return 7;
+            case 4: return 9;
+            case 5: return 12;
+        }
+        return 3;
+    }
+
+    void Update()
+    {
+        return;
+    }
+
+    // void OnDestroy()    // decomment when merge with main
+    // {
+    //     UFeelDebugHUD.UseDefaultDebugHUD = true;
+    // }
+}
+
+
+/*
+ TODO:
+ - Add some music for the whole game play or animal sounds for each animal ?
+ - Modifie debug HUB -> Just display the dominant emotion
+ - Modfie the algo of spawning animals so 2 same animals don't spawn one after the other (ex: cat, cat, tiger, deer, tiger, deer, penguin, spider, spider)
+ - Add ranking table at the end
+ - Decrase the score ?
+ - The game need to be more fun / challenging but how ??
+*/
