@@ -8,6 +8,10 @@
 
 - Animals's memory game.
 
+### Fixed
+
+- Escape room can now be access through Hub (fix name issue).
+
 ## [2026-05]
 
 ### Added
