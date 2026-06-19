@@ -1083,7 +1083,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 3fd880165b0e377de83b0083e1d89a1d, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
@@ -4892,7 +4892,6 @@ MonoBehaviour:
   fadeDuration: 5
   hintCanvasGroup: {fileID: 1384810715}
   hintText: {fileID: 1384810716}
-  hintDuration: 5
 --- !u!4 &1740312640
 Transform:
   m_ObjectHideFlags: 0

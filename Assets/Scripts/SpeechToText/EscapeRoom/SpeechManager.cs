@@ -54,7 +54,7 @@ public class SpeechManager : MonoBehaviour
         UFeelDebugHUD.Set("Current Speech", () =>  UFeelAPI.GetCurrentSpeech());
 
 
-        await UFeelAPI.StartAPI();
+        // await UFeelAPI.StartAPI();
         await Task.Delay(10000);
 
         UFeelAPI.StartSpeechDetection();
@@ -66,6 +66,7 @@ public class SpeechManager : MonoBehaviour
             _player = playerObject.GetComponent<FirstPersonController>();
         }
         
+        radioAudio.Play();
         LightStep();
     }
 
