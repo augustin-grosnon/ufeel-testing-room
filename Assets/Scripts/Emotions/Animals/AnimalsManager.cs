@@ -45,6 +45,15 @@ public class AnimalsManager : MonoBehaviour
         { AnimalType.Spider, EmotionData.EmotionType.Fear }
     };
 
+    public Slider emotionProgressBar;
+    private Image barFillImage;
+
+    [Header("Progress Settings")]
+    private float currentProgress = 0f;
+    private const float maxProgressDuration = 4.5f;
+    private bool isTrackingEmotion = false;
+    private AnimalType currentTargetAnimal;
+
     async void Start()
     {
         // UFeelDebugHUD.UseDefaultDebugHUD = false; // decoment when merge with main
@@ -59,6 +68,10 @@ public class AnimalsManager : MonoBehaviour
         
         UFeelAPI.StartEmotionDetection();
         UFeelAPI.Status();
+        if (emotionProgressBar != null)
+        {
+            barFillImage = emotionProgressBar.fillRect.GetComponent<Image>();
+        }
 
         StartCoroutine(GameLoop());
     }
@@ -108,7 +121,6 @@ public class AnimalsManager : MonoBehaviour
             case 5: newAnimalInfo = "Spider -> Fear"; break;
         }
 
-        // instructionText.text = $"LEVEL {level}\n\n{newAnimalInfo}\nGet ready...";
         instructionText.text = $"LEVEL {level}\n\n{newAnimalInfo}";
         yield return new WaitForSeconds(5f);
         
@@ -185,7 +197,9 @@ public class AnimalsManager : MonoBehaviour
 
         AnimalType animal = animalsList[0];
 
-        currentAnimalGO = Instantiate(animalPrefabs[(int)animal], spawnPoint.position, Quaternion.identity);
+        Quaternion rotation180 = Quaternion.Euler(0f, 180f, 0f);
+
+        currentAnimalGO = Instantiate(animalPrefabs[(int)animal], spawnPoint.position, rotation180);
         Debug.Log($"Emotion: {animalEmotions[animal]} for {animal}");
 
         CheckEmotion(animal);
@@ -200,35 +214,44 @@ public class AnimalsManager : MonoBehaviour
         }
     }
 
+    // void CheckEmotion(AnimalType animal)
+    // {
+
+    //     UFeelAPI.TriggerActionOnEmotionOnce(animalEmotions[animal], () =>
+    //     {
+    //         if (!isLevelActive) return;
+
+    //         Debug.Log("CORRECT EMOTION!");
+    //         UpdateScore();
+
+    //         Destroy(currentAnimalGO);
+    //         animalsList.RemoveAt(0);
+
+    //         StartCoroutine(WaitAndSpawn());
+    //     });
+    // }
+
     void CheckEmotion(AnimalType animal)
     {
-
-        UFeelAPI.TriggerActionOnEmotionOnce(animalEmotions[animal], () =>
-        {
-            if (!isLevelActive) return;
-
-            Debug.Log("CORRECT EMOTION!");
-            UpdateScore();
-
-            Destroy(currentAnimalGO);
-            animalsList.RemoveAt(0);
-
-            StartCoroutine(WaitAndSpawn());
-        });
+        currentTargetAnimal = animal;
+        isTrackingEmotion = true;
+        currentProgress = 0f;
+        if (emotionProgressBar != null) emotionProgressBar.value = 0f;
     }
 
     private IEnumerator WaitAndSpawn()
     {
         yield return new WaitForSeconds(1.5f);
-        
         SpawnAnimal();
     }
 
     float GetLevelTime(int level)
     {
-        if (level <= 2) return 30f;
-        if (level <= 4) return 45f;
-        return 60f;
+        if (level == 1) return 30f;
+        if (level == 2) return 40f;
+        if (level == 3) return 50f;
+        if (level == 4) return 60f;
+        return 75f;
     }
 
     int GetAnimalNumber(int level)
@@ -246,7 +269,42 @@ public class AnimalsManager : MonoBehaviour
 
     void Update()
     {
-        return;
+        if (!isLevelActive || !isTrackingEmotion || currentAnimalGO == null) return;
+
+        var dominantEmotion = UFeelAPI.GetDominantEmotion();
+        EmotionData.EmotionType targetEmotion = animalEmotions[currentTargetAnimal];
+
+        if (dominantEmotion.HasValue && dominantEmotion.Value == targetEmotion)
+        {
+            currentProgress += Time.deltaTime / maxProgressDuration;
+            if (barFillImage != null) barFillImage.color = Color.green;
+        }
+        else
+        {
+            currentProgress -= Time.deltaTime / maxProgressDuration;
+            if (barFillImage != null) barFillImage.color = Color.red;
+        }
+
+        currentProgress = Mathf.Clamp01(currentProgress);
+
+        if (emotionProgressBar != null) emotionProgressBar.value = currentProgress;
+        
+        if (currentProgress >= 1f)
+        {
+            isTrackingEmotion = false;
+            OnAnimalSuccess();
+        }
+    }
+
+    private void OnAnimalSuccess()
+    {
+        Debug.Log("CORRECT EMOTION MAINTAINED FOR 5S!");
+        UpdateScore();
+
+        Destroy(currentAnimalGO);
+        animalsList.RemoveAt(0);
+
+        StartCoroutine(WaitAndSpawn());
     }
 
     // void OnDestroy()    // decomment when merge with main
@@ -262,6 +320,4 @@ public class AnimalsManager : MonoBehaviour
  - Modifie debug HUB -> Just display the dominant emotion
  - Modfie the algo of spawning animals so 2 same animals don't spawn one after the other (ex: cat, cat, tiger, deer, tiger, deer, penguin, spider, spider)
  - Add ranking table at the end
- - Decrase the score ?
- - The game need to be more fun / challenging but how ??
 */
