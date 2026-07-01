@@ -49,6 +49,7 @@ public class SpeechManager : MonoBehaviour
     private enum EscapeStep { Light, Radio, Window, BlueLight, TV, Door, Finished }
     private EscapeStep currentStep = EscapeStep.Light;
     private string lastProcessedSpeech = "";
+    private Coroutine radioLoopCoroutine;
 
 
     async void Start()
@@ -76,7 +77,8 @@ public class SpeechManager : MonoBehaviour
         //     _player = playerObject.GetComponent<FirstPersonController>();
         // }
         
-        radioAudio.Play();
+        // radioAudio.Play();
+        radioLoopCoroutine = StartCoroutine(PlayRadioWithDelay());
         LightStep();
     }
 
@@ -102,6 +104,7 @@ public class SpeechManager : MonoBehaviour
     private void ExecuteRadioAction()
     {
         KillHint();
+        if (radioLoopCoroutine != null) { StopCoroutine(radioLoopCoroutine); }
         if (radioAudio != null) radioAudio.Stop();
         if (radioHintText != null) radioHintText.SetActive(false);
         
@@ -171,17 +174,17 @@ public class SpeechManager : MonoBehaviour
         switch (currentStep)
         {
             case EscapeStep.Light:
-                if (IsSpeechMatch(currentSpeech, "allume la lumière", 0..75f)) { ExecuteLightAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "allume la lumière", 0.75f)) { ExecuteLightAction(); matchFound = true; } break;
             case EscapeStep.Radio:
-                if (IsSpeechMatch(currentSpeech, "éteins la radio", 0..75f)) { ExecuteRadioAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "éteins la radio", 0.75f)) { ExecuteRadioAction(); matchFound = true; } break;
             case EscapeStep.Window:
-                if (IsSpeechMatch(currentSpeech, "ferme la fenêtre", 0..75f)) { ExecuteWindowAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "ferme la fenêtre", 0.75f)) { ExecuteWindowAction(); matchFound = true; } break;
             case EscapeStep.BlueLight:
-                if (IsSpeechMatch(currentSpeech, "lumière violette", 0..75f)) { ExecuteBlueLightAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "lumière violette", 0.75f)) { ExecuteBlueLightAction(); matchFound = true; } break;
             case EscapeStep.TV:
-                if (IsSpeechMatch(currentSpeech, "allume l'écran", 0..75f)) { ExecuteTvAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "allume l'écran", 0.75f)) { ExecuteTvAction(); matchFound = true; } break;
             case EscapeStep.Door:
-                if (IsSpeechMatch(currentSpeech, "ouvre la porte", 0..75f)) { ExecuteDoorAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "ouvre la porte", 0.75f)) { ExecuteDoorAction(); matchFound = true; } break;
         }
 
         if (matchFound) { lastProcessedSpeech = currentSpeech; }
@@ -293,13 +296,26 @@ public class SpeechManager : MonoBehaviour
         #endif
     }
 
+    private IEnumerator PlayRadioWithDelay()
+{
+    while (currentStep == EscapeStep.Light || currentStep == EscapeStep.Radio)
+    {
+        if (radioAudio != null)
+        {
+            radioAudio.Play();            
+            yield return new WaitForSeconds(radioAudio.clip.length);
+        }        
+        yield return new WaitForSeconds(5f);
+    }
+}
+
     void OnDestroy()
     {
         UFeelDebugHUD.UseDefaultDebugHUD = true;
     }
 
     // Levenshtein Algo
-    private bool IsSpeechMatch(string currentText, string targetText, float thresholdPercent = 0..75f)
+    private bool IsSpeechMatch(string currentText, string targetText, float thresholdPercent = 0.75f)
     {
         Debug.Log($"Comparing: \"{currentText}\" with \"{targetText}\"");
         if (string.IsNullOrEmpty(currentText) || string.IsNullOrEmpty(targetText)) return false;
