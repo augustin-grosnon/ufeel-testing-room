@@ -6,42 +6,48 @@ namespace UFeel
     [System.Serializable]
     public struct EmotionData
     {
-        public float happiness;
-        public float surprise;
-        public float sadness;
-        public float anger;
+        public float angry;
+        public float contemptuous;
+        public float disgusted;
+        public float fearful;
+        public float happy;
         public float neutral;
-        public float fear;
+        public float sad;
+        public float surprised;
 
         public override readonly string ToString()
         {
-            return $"Happiness: {happiness}, Surprise: {surprise}, Sadness: {sadness}, Anger: {anger}, Neutral: {neutral}, Fear: {fear}";
+            return $"Anger: {angry}, Contempt: {contemptuous}, Disgust: {disgusted}, Fear: {fearful}, Happiness: {happy}, Neutral: {neutral}, Sadness: {sad}, Surprise: {surprised}";
         }
 
         public enum EmotionType
         {
             None,
-            Happiness,
-            Surprise,
-            Sadness,
             Anger,
+            Contempt,
+            Disgust,
+            Fear,
+            Happiness,
             Neutral,
-            Fear
+            Sadness,
+            Surprise,
         }
 
         public readonly EmotionType GetDominantEmotion()
         {
             Dictionary<EmotionType, float> emotions = new()
             {
-                { EmotionType.Happiness, happiness },
-                { EmotionType.Surprise, surprise },
-                { EmotionType.Sadness, sadness },
-                { EmotionType.Anger, anger },
+                { EmotionType.Anger, angry },
+                { EmotionType.Contempt, contemptuous },
+                { EmotionType.Disgust, disgusted },
+                { EmotionType.Fear, fearful },
+                { EmotionType.Happiness, happy },
                 { EmotionType.Neutral, neutral },
-                { EmotionType.Fear, fear }
+                { EmotionType.Sadness, sad },
+                { EmotionType.Surprise, surprised },
             };
 
-            var maxEntry = emotions.OrderByDescending(kv => kv.Value).First();
+            KeyValuePair<EmotionType, float> maxEntry = emotions.OrderByDescending(kv => kv.Value).First();
             return maxEntry.Value > 0f ? maxEntry.Key : EmotionType.None;
         }
     }

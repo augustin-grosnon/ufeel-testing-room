@@ -1,7 +1,5 @@
 import sys
-
-print(sys.executable)
-print(sys.path)
+import os
 
 import cv2
 from emotion_detector import EmotionDetector
@@ -9,12 +7,23 @@ from eye_tracker import EyeTracker
 from speech_to_text import SpeechToText
 from heart_rate_sensor import HeartRateSensor
 
+print(sys.executable)
+print(sys.path)
+
 class DataProcessor:
     def __init__(self, calibration, show_window=True, capture_id=0):
         self.show_window = show_window
         self.cap = cv2.VideoCapture(capture_id)
         # if not calibration:
-        self.emotion_detector = EmotionDetector()
+
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        emotion_model_path = os.path.join(base_dir, 'models', 'emotion_detection','binary_affectnet_resnet34_pretrained.pt')
+        emotion_config_path = os.path.join(base_dir, 'models', 'emotion_detection', 'binary_affectnet_resnet34_pretrained.yaml')
+        self.emotion_detector = EmotionDetector(
+            model_path=emotion_model_path,
+            config_path=emotion_config_path,
+        )
+
         self.eye_tracker = EyeTracker()
         self.speech_to_text = SpeechToText()
         self.heart_rate_sensor = HeartRateSensor()

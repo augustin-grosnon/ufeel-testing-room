@@ -58,6 +58,7 @@ dotnet_diagnostic.SA1114.severity = none
 dotnet_diagnostic.IDE0046.severity = none
 dotnet_diagnostic.SA1310.severity = none
 dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.RCS1181.severity = none
 
 
 # ! Temporarily removed, to add back

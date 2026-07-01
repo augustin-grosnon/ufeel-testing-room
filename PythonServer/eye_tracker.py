@@ -117,5 +117,6 @@ class EyeTracker(ClientBase):
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
     def close(self):
-        self.face_mesh.close()
-        self.close()
+        if self.face_mesh is not None:
+            self.face_mesh.close()
+            self.face_mesh = None

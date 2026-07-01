@@ -1,25 +1,18 @@
-using UnityEngine;
 using System.Diagnostics;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-public class PythonServerController
+public sealed class PythonServerController
 {
     private static PythonServerController _instance;
-    private static readonly string scriptPath = Application.dataPath + "/../PythonServer/main.py";
+    private static readonly string ScriptPath = Application.dataPath + "/../PythonServer/main.py";
 
     public static PythonServerController Instance
     {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = new PythonServerController(scriptPath, "Server");
-            }
-            return _instance;
-        }
+        get => _instance ??= new PythonServerController(ScriptPath, "Server");
     }
 
-    private Process _pythonProcess = null;
+    private Process _pythonProcess;
 
     private readonly string _venvPath =
 #if UNITY_STANDALONE_WIN
@@ -78,7 +71,6 @@ public class PythonServerController
             {
                 if (!string.IsNullOrEmpty(args.Data))
                 {
-
                     Debug.Log($"{_serverName} Python error: {args.Data}");
                 }
             };
@@ -108,7 +100,6 @@ public class PythonServerController
                     _pythonProcess = null;
                 }
                 Debug.Log($"{_serverName} Python server stopped.");
-
             }
             catch (System.Exception e)
             {

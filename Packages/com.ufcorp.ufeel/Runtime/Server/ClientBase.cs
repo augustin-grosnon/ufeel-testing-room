@@ -1,9 +1,9 @@
-using UnityEngine;
 using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using UnityEngine;
 
 public class Message
 {
@@ -26,7 +26,7 @@ public abstract class ClientBase
         Application.quitting += OnApplicationQuit;
     }
 
-    protected virtual void Setup()
+    protected virtual void Setup() // ? should that be virtual?
     {
         _tcpListener = new TcpListener(IPAddress.Any, _port);
         _tcpListener.Start();
@@ -58,7 +58,7 @@ public abstract class ClientBase
             _stream = _client.GetStream();
 
             byte[] buffer = new byte[4096];
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             while (_running && _client.Connected)
             {
@@ -95,8 +95,8 @@ public abstract class ClientBase
                     }
                     dataStr = dataStr.Substring(newlineIndex + 1);
                 }
-                sb.Clear();
-                sb.Append(dataStr);
+                sb.Clear()
+                    .Append(dataStr);
             }
         }
         catch (ThreadAbortException)
@@ -114,10 +114,9 @@ public abstract class ClientBase
         }
     }
 
-
     public static byte[] CreateData(string type, string value)
     {
-        var message = new Message
+        Message message = new()
         {
             type = type,
             value = value

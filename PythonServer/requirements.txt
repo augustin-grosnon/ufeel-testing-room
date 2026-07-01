@@ -5,3 +5,5 @@ torchvision==0.16.2
 mediapipe==0.10.9
 vosk
 numpy==1.26.3
+facenet-pytorch
+pyyaml

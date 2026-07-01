@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using TMPro;
+using UFeel;
 using UnityEngine;
 using UnityEngine.UI;
-using UFeel;
-using TMPro;
-using System.Threading.Tasks;
 
 public enum AnimalType
 {
@@ -13,11 +13,14 @@ public enum AnimalType
     Deer,
     Penguin,
     Spider
-};
-
+}
 
 public class AnimalsManager : MonoBehaviour
 {
+    private static readonly WaitForSeconds _waitForSeconds1_5 = new(1.5f);
+    private static readonly WaitForSeconds _waitForSeconds2 = new(2f);
+    private static readonly WaitForSeconds _waitForSeconds5 = new(5f);
+
     [Header("Scene References")]
     public Transform spawnPoint;
     public GameObject[] animalPrefabs;
@@ -25,18 +28,16 @@ public class AnimalsManager : MonoBehaviour
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI scoreText;
 
-
-
     [Header("Game Settings")]
     private int currentLevel = 1;
     private float timer;
-    private int score = 0;
-    private bool isLevelActive = false;
-    
-    private List<AnimalType> animalsList = new List<AnimalType>();
+    private int score;
+    private bool isLevelActive;
+
+    private List<AnimalType> animalsList = new();
     private GameObject currentAnimalGO;
-    Dictionary<AnimalType, EmotionData.EmotionType> animalEmotions =
-        new Dictionary<AnimalType, EmotionData.EmotionType>()
+    private readonly Dictionary<AnimalType, EmotionData.EmotionType> animalEmotions =
+        new()
     {
         { AnimalType.Cat, EmotionData.EmotionType.Happiness },
         { AnimalType.Tiger, EmotionData.EmotionType.Anger },
@@ -50,22 +51,22 @@ public class AnimalsManager : MonoBehaviour
 
     [Header("Progress Settings")]
     private float currentProgress = 0f;
-    private const float maxProgressDuration = 4.5f;
+    private const float maxProgressDuration = 2.5f;
     private bool isTrackingEmotion = false;
     private AnimalType currentTargetAnimal;
 
-    async void Start()
+    private async void Start()
     {
         // UFeelDebugHUD.UseDefaultDebugHUD = false; // decoment when merge with main
         // UFeelDebugHUD.Clear();
         // UFeelDebugHUD.Set("Current Emotion", () => {
         //     var data = UFeelAPI.GetDominantEmotion();
-        //     return data.HasValue ? data.Value.ToString() : "Unknown"; 
+        //     return data.HasValue ? data.Value.ToString() : "Unknown";
         // });
 
         await UFeelAPI.StartAPI();
         await Task.Delay(10000);
-        
+
         UFeelAPI.StartEmotionDetection();
         UFeelAPI.Status();
         if (emotionProgressBar != null)
@@ -75,7 +76,6 @@ public class AnimalsManager : MonoBehaviour
 
         StartCoroutine(GameLoop());
     }
-    
 
     private IEnumerator GameLoop()
     {
@@ -83,15 +83,15 @@ public class AnimalsManager : MonoBehaviour
         {
             yield return StartCoroutine(InitLevel(currentLevel));
             yield return StartCoroutine(PlayLevel(currentLevel));
-            
+
             if (timer <= 0 && animalsList.Count > 0)
             {
                 instructionText.text = "GAME OVER...";
-                yield return new WaitForSeconds(5f);
+                yield return _waitForSeconds5;
                 Application.Quit();
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 UnityEditor.EditorApplication.isPlaying = false;
-                #endif
+#endif
                 yield break;
             }
 
@@ -100,17 +100,17 @@ public class AnimalsManager : MonoBehaviour
 
         instructionText.text = "CONGRATULATIONS! YOU ARE A MASTER OF EMOTIONS!";
 
-        yield return new WaitForSeconds(5f);
+        yield return _waitForSeconds5;
         Application.Quit();
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+#endif
     }
 
     private IEnumerator InitLevel(int level)
     {
         isLevelActive = false;
-        string newAnimalInfo = "";
+        string newAnimalInfo = string.Empty;
 
         switch (level)
         {
@@ -122,8 +122,8 @@ public class AnimalsManager : MonoBehaviour
         }
 
         instructionText.text = $"LEVEL {level}\n\n{newAnimalInfo}";
-        yield return new WaitForSeconds(5f);
-        
+        yield return _waitForSeconds5;
+
         timer = GetLevelTime(level);
         animalsList = GenerateAnimals(level);
         isLevelActive = true;
@@ -131,7 +131,7 @@ public class AnimalsManager : MonoBehaviour
 
     private IEnumerator PlayLevel(int level)
     {
-        instructionText.text = "";
+        instructionText.text = string.Empty;
         SpawnAnimal();
 
         while (isLevelActive && timer > 0)
@@ -142,40 +142,47 @@ public class AnimalsManager : MonoBehaviour
             {
                 isLevelActive = false;
                 instructionText.text = "LEVEL COMPLETED !";
-                yield return new WaitForSeconds(2f);
+                yield return _waitForSeconds2;
             }
             yield return null;
         }
     }
 
-    List<AnimalType> GenerateAnimals(int level)
+    private static List<AnimalType> GenerateAnimals(int level)
     {
-        List<AnimalType> pool = new List<AnimalType>() { AnimalType.Cat };
+        List<AnimalType> pool = new() { AnimalType.Cat };
         if (level >= 2) pool.Add(AnimalType.Tiger);
         if (level >= 3) pool.Add(AnimalType.Deer);
         if (level >= 4) pool.Add(AnimalType.Penguin);
         if (level >= 5) pool.Add(AnimalType.Spider);
 
-        List<AnimalType> result = new List<AnimalType>();
+        List<AnimalType> result = new();
         int totalTarget = GetAnimalNumber(level);
-        int minPerAnimal = 2;
+        const int minPerAnimal = 2;
 
         // adding at least 2 of each type in the pool
         foreach (AnimalType type in pool)
         {
             for (int i = 0; i < minPerAnimal; i++)
+            {
                 if (result.Count < totalTarget)
+                {
                     result.Add(type);
+                }
+            }
         }
 
-        while (result.Count < totalTarget) { result.Add(pool[Random.Range(0, pool.Count)]);}
+        while (result.Count < totalTarget)
+        {
+            result.Add(pool[Random.Range(0, pool.Count)]);
+        }
 
         Shuffle(result);
         return result;
     }
 
     // Fisher-Yates shuffle algorithm to randomize the order of animals in the list
-    private void Shuffle<T>(List<T> list)
+    private static void Shuffle<T>(List<T> list)
     {
         for (int i = 0; i < list.Count; i++)
         {
@@ -186,7 +193,7 @@ public class AnimalsManager : MonoBehaviour
         }
     }
 
-    void SpawnAnimal()
+    private void SpawnAnimal()
     {
         if (animalsList.Count == 0)
         {
@@ -207,7 +214,7 @@ public class AnimalsManager : MonoBehaviour
 
     private void UpdateScore()
     {
-        score += 1;
+        score++;
         if (scoreText != null)
         {
             scoreText.text = $"Score: {score}";
@@ -231,7 +238,7 @@ public class AnimalsManager : MonoBehaviour
     //     });
     // }
 
-    void CheckEmotion(AnimalType animal)
+    private void CheckEmotion(AnimalType animal)
     {
         currentTargetAnimal = animal;
         isTrackingEmotion = true;
@@ -241,11 +248,11 @@ public class AnimalsManager : MonoBehaviour
 
     private IEnumerator WaitAndSpawn()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return _waitForSeconds1_5;
         SpawnAnimal();
     }
 
-    float GetLevelTime(int level)
+    private static float GetLevelTime(int level)
     {
         if (level == 1) return 30f;
         if (level == 2) return 40f;
@@ -254,24 +261,24 @@ public class AnimalsManager : MonoBehaviour
         return 75f;
     }
 
-    int GetAnimalNumber(int level)
+    private static int GetAnimalNumber(int level)
     {
-        switch (level)
+        return level switch
         {
-            case 1: return 3;
-            case 2: return 5;
-            case 3: return 7;
-            case 4: return 9;
-            case 5: return 12;
-        }
-        return 3;
+            1 => 3,
+            2 => 5,
+            3 => 7,
+            4 => 9,
+            5 => 12,
+            _ => 3,
+        };
     }
 
-    void Update()
+    private void Update()
     {
         if (!isLevelActive || !isTrackingEmotion || currentAnimalGO == null) return;
 
-        var dominantEmotion = UFeelAPI.GetDominantEmotion();
+        EmotionData.EmotionType? dominantEmotion = UFeelAPI.GetDominantEmotion();
         EmotionData.EmotionType targetEmotion = animalEmotions[currentTargetAnimal];
 
         if (dominantEmotion.HasValue && dominantEmotion.Value == targetEmotion)
@@ -281,14 +288,14 @@ public class AnimalsManager : MonoBehaviour
         }
         else
         {
-            currentProgress -= Time.deltaTime / maxProgressDuration;
+            currentProgress -= Time.deltaTime / maxProgressDuration / 3;
             if (barFillImage != null) barFillImage.color = Color.red;
         }
 
         currentProgress = Mathf.Clamp01(currentProgress);
 
         if (emotionProgressBar != null) emotionProgressBar.value = currentProgress;
-        
+
         if (currentProgress >= 1f)
         {
             isTrackingEmotion = false;
@@ -312,7 +319,6 @@ public class AnimalsManager : MonoBehaviour
     //     UFeelDebugHUD.UseDefaultDebugHUD = true;
     // }
 }
-
 
 /*
  TODO:

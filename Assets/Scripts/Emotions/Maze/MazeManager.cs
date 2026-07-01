@@ -7,31 +7,31 @@ using UFeel;
 
 public class MazeManager : MonoBehaviour
 {
+    private static readonly WaitForSeconds _waitForSeconds0_5 = new(0.5f);
+    private static readonly WaitForSeconds _waitForSeconds1_5 = new(1.5f);
+
     private readonly List<string> _targetEmotions = new()
     {
         "happy",
         "surprised",
-        "sad",
-        "angry",
-        // "scared",
+        "neutral",
+        "scared",
     };
 
     private readonly Dictionary<string, float> _emotionThresholds = new()
     {
         { "happy", 0.0f },
         { "surprised", 0.0f },
-        { "sad", 0.0f },
-        { "angry", 0.0f },
-        // { "scared", 0.0f },
+        { "neutral", 0.0f },
+        { "scared", 0.0f },
     };
 
     private readonly Dictionary<string, Color> _emotionColors = new()
     {
         { "happy", Color.yellow },
         { "surprised", Color.magenta },
-        { "sad", Color.blue },
-        { "angry", Color.red },
-        // { "scared", Color.gray },
+        { "neutral", Color.gray },
+        { "scared", Color.blue },
     };
 
     [SerializeField] private Text _instructionText;
@@ -46,17 +46,17 @@ public class MazeManager : MonoBehaviour
     [SerializeField] private Vector3 _spawnAreaSize = new(1f, 10f, 2f);
 
     private string _currentTarget;
-    private float _matchTimer = 0f;
-    private bool _successTriggered = false;
+    private float _matchTimer;
+    private bool _successTriggered;
 
-    private int _score = 0;
+    private int _score;
 
     private readonly KeyCode[] _devCode = { KeyCode.U, KeyCode.F };
-    private int _devCodeProgress = 0;
-    private float _devCodeTimeout = 2f;
-    private float _devCodeTimer = 0f;
+    private int _devCodeProgress;
+    private readonly float _devCodeTimeout = 2f;
+    private float _devCodeTimer;
 
-    void Start()
+    private void Start()
     {
         UFeelAPI.StartEmotionDetection();
 
@@ -69,7 +69,7 @@ public class MazeManager : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Update()
     {
         if (_successTriggered)
             return;
@@ -144,11 +144,11 @@ public class MazeManager : MonoBehaviour
 
     private IEnumerator WaitAfterSuccess()
     {
-        yield return new WaitForSeconds(1.5f);
+        yield return _waitForSeconds1_5;
 
         _doorController.ToggleDoor();
 
-        yield return new WaitForSeconds(0.5f);
+        yield return _waitForSeconds0_5;
 
         if (_player != null)
         {
@@ -194,18 +194,19 @@ public class MazeManager : MonoBehaviour
     {
         Dictionary<string, float> values = new()
         {
-            { "happy", data.happiness },
-            { "surprised", data.surprise },
-            { "sad", data.sadness },
-            { "angry", data.anger },
-            // { "scared", data.fear },
+            { "happy", data.happy },
+            { "surprised", data.surprised },
+            { "neutral", data.neutral },
+            { "scared", data.fearful },
+            // { "sad", data.Sadness },
+            // { "angry", data.Anger },
         };
 
-        var filteredValues = values
+        Dictionary<string, float> filteredValues = values
             .Where(kv => kv.Value >= _emotionThresholds[kv.Key])
             .ToDictionary(kv => kv.Key, kv => kv.Value);
 
-        if (filteredValues.Count == 0) return "";
+        if (filteredValues.Count == 0) return string.Empty;
 
         return filteredValues.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
     }
