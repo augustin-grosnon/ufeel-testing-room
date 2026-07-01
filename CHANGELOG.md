@@ -2,6 +2,15 @@
 
 > [<- Back to README](README.md)
 
+
+## [2026-07]
+
+### Added
+
+- Adding Levenshtein distance in Escape room scene to improve speech recognition tolerance.
+- Adding progress bar in Animals's memory game.
+
+
 ## [2026-06]
 
 ### Added

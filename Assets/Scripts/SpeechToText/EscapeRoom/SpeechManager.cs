@@ -5,7 +5,7 @@ using TMPro;
 using System.Collections;
 using System.Reflection;
 using UnityEngine.UI;
-
+using System.Text.RegularExpressions;
 
 public class SpeechManager : MonoBehaviour
 {
@@ -46,6 +46,10 @@ public class SpeechManager : MonoBehaviour
     private Coroutine hintCoroutine;
     private Coroutine activeShowHintCoroutine;
 
+    private enum EscapeStep { Light, Radio, Window, BlueLight, TV, Door, Finished }
+    private EscapeStep currentStep = EscapeStep.Light;
+    private string lastProcessedSpeech = "";
+
 
     async void Start()
     {
@@ -78,128 +82,109 @@ public class SpeechManager : MonoBehaviour
 
     private void LightStep()
     {   
+        currentStep = EscapeStep.Light;
         StartHintTimer("Dites: \n\"allume la lumière\"");
-
-        UFeelAPI.TriggerActionOnSpeechOnce("allume la lumière", () =>
-        { 
-            KillHint();
-            Debug.Log("Executing light on command.");
-            roomLight.enabled = true;
-            dummyLight.enabled = true;
-            
-            radioHintText.SetActive(true);
-            windowHintTextLeft.SetActive(true);
-            windowHintTextRight.SetActive(true);
-
-            RadioStep();
-        });
     }
 
-    private void RadioStep()
+    private void ExecuteLightAction()
     {
+        KillHint();
+        roomLight.enabled = true;
+        dummyLight.enabled = true;
+        radioHintText.SetActive(true);
+        windowHintTextLeft.SetActive(true);
+        windowHintTextRight.SetActive(true);
+        
+        currentStep = EscapeStep.Radio;
         StartHintTimer("Dites: \n\"éteins la radio\"");
-
-        UFeelAPI.TriggerActionOnSpeechOnce("éteins la radio", () =>
-        { 
-            KillHint();
-
-            Debug.Log("Turn off the Radio");
-            if (radioAudio != null)
-                radioAudio.Stop();
-            if (radioHintText != null)
-                radioHintText.SetActive(false);
-
-            WindowStep();
-        });
     }
 
-    private void WindowStep()
+    private void ExecuteRadioAction()
     {
+        KillHint();
+        if (radioAudio != null) radioAudio.Stop();
+        if (radioHintText != null) radioHintText.SetActive(false);
+        
+        currentStep = EscapeStep.Window;
         StartHintTimer("Dites: \n\"ferme la fenêtre\"");
-
-        UFeelAPI.TriggerActionOnSpeechOnce("ferme la fenêtre", () =>
-        { 
-            KillHint();
-
-            Debug.Log("Executing shutter close command.");
-            radioAudio.Stop();
-            if (windowController != null) {
-                windowController.CloseWindow();
-                StartCoroutine(SlideWindowTexts(1.5f));
-            }
-
-            if (windowHintText != null) {
-                StartCoroutine(FadeInText(windowHintText, 6f));
-                windAudio.Stop();
-            }
-
-            blueLightStep();
-            
-        });
     }
 
-    private void blueLightStep()
+    private void ExecuteWindowAction()
     {
+        KillHint();
+        if (windowController != null) {
+            windowController.CloseWindow();
+            StartCoroutine(SlideWindowTexts(1.5f));
+        }
+        if (windowHintText != null) {
+            StartCoroutine(FadeInText(windowHintText, 6f));
+            windAudio.Stop();
+        }
+        
+        currentStep = EscapeStep.BlueLight;
         StartHintTimer("Dites: \n\"lumière violette\"");
-
-        UFeelAPI.TriggerActionOnSpeechOnce("lumière violette", () =>
-        {
-            KillHint();
-
-            Debug.Log("Executing light blue command.");
-            if (blueLight != null && roomLight != null && dummyLight != null && bookHintText != null) {
-                roomLight.enabled = false;
-                dummyLight.enabled = false;
-                blueLight.enabled = true;
-                windowHintText.SetActive(false);
-                StartCoroutine(FadeInText(bookHintText, 3f));
-            }
-
-            TvStep();
-        });
     }
-    
-    private void TvStep()
+
+    private void ExecuteBlueLightAction()
     {
+        KillHint();
+        if (blueLight != null && roomLight != null && dummyLight != null && bookHintText != null) {
+            roomLight.enabled = false;
+            dummyLight.enabled = false;
+            blueLight.enabled = true;
+            windowHintText.SetActive(false);
+            StartCoroutine(FadeInText(bookHintText, 3f));
+        }
+        
+        currentStep = EscapeStep.TV;
         StartHintTimer("Dites: \n\"allume l'écran\"");
-
-        UFeelAPI.TriggerActionOnSpeechOnce("allume l'écran", () =>
-        {
-            KillHint();
-
-            Debug.Log("Executing tv on command.");
-            blueLight.enabled = false;
-            bookHintText.SetActive(false);
-
-            if (tvRenderer != null && tvBlueMaterial != null)
-                StartCoroutine(TvOn(1.5f));
-            
-            if (tvHintText != null)
-                StartCoroutine(FadeInText(tvHintText, 3f));
-
-            DoorStep();
-        });
     }
-    
-    private void DoorStep()
+
+    private void ExecuteTvAction()
     {
+        KillHint();
+        blueLight.enabled = false;
+        bookHintText.SetActive(false);
+        if (tvRenderer != null && tvBlueMaterial != null) StartCoroutine(TvOn(1.5f));
+        if (tvHintText != null) StartCoroutine(FadeInText(tvHintText, 3f));
+        
+        currentStep = EscapeStep.Door;
         StartHintTimer("Dites: \n\"ouvre la porte\"");
-        UFeelAPI.TriggerActionOnSpeechOnce("ouvre la porte", () =>
-        {
-            KillHint();
-
-            Debug.Log("Executing door open command.");
-            if (doorController != null)
-                doorController.OpenDoor();
-            roomLight.enabled = true;
-
-            StartCoroutine(ShowEndScreen());
-        });
     }
 
-    void Update()
+    private void ExecuteDoorAction()
     {
-        return;
+        KillHint();
+        if (doorController != null) doorController.OpenDoor();
+        roomLight.enabled = true;
+        currentStep = EscapeStep.Finished;
+        StartCoroutine(ShowEndScreen());
+    }
+
+  void Update()
+    {
+        string currentSpeech = UFeelAPI.GetCurrentSpeech();
+
+        if (string.IsNullOrEmpty(currentSpeech) || currentSpeech == lastProcessedSpeech) return;
+        bool matchFound = false;
+
+        switch (currentStep)
+        {
+            case EscapeStep.Light:
+                if (IsSpeechMatch(currentSpeech, "allume la lumière", 0..75f)) { ExecuteLightAction(); matchFound = true; } break;
+            case EscapeStep.Radio:
+                if (IsSpeechMatch(currentSpeech, "éteins la radio", 0..75f)) { ExecuteRadioAction(); matchFound = true; } break;
+            case EscapeStep.Window:
+                if (IsSpeechMatch(currentSpeech, "ferme la fenêtre", 0..75f)) { ExecuteWindowAction(); matchFound = true; } break;
+            case EscapeStep.BlueLight:
+                if (IsSpeechMatch(currentSpeech, "lumière violette", 0..75f)) { ExecuteBlueLightAction(); matchFound = true; } break;
+            case EscapeStep.TV:
+                if (IsSpeechMatch(currentSpeech, "allume l'écran", 0..75f)) { ExecuteTvAction(); matchFound = true; } break;
+            case EscapeStep.Door:
+                if (IsSpeechMatch(currentSpeech, "ouvre la porte", 0..75f)) { ExecuteDoorAction(); matchFound = true; } break;
+        }
+
+        if (matchFound) { lastProcessedSpeech = currentSpeech; }
     }
 
     private void StartHintTimer(string command)
@@ -311,5 +296,55 @@ public class SpeechManager : MonoBehaviour
     void OnDestroy()
     {
         UFeelDebugHUD.UseDefaultDebugHUD = true;
+    }
+
+    // Levenshtein Algo
+    private bool IsSpeechMatch(string currentText, string targetText, float thresholdPercent = 0..75f)
+    {
+        Debug.Log($"Comparing: \"{currentText}\" with \"{targetText}\"");
+        if (string.IsNullOrEmpty(currentText) || string.IsNullOrEmpty(targetText)) return false;
+
+        string cleanSpoken = CleanText(currentText);
+        string cleanTarget = CleanText(targetText);
+
+        Debug.Log($"Cleaned: \"{cleanSpoken}\" with \"{cleanTarget}\"");
+
+        if (cleanSpoken == cleanTarget) return true;
+
+        int n = cleanSpoken.Length;
+        int m = cleanTarget.Length;
+        int[,] d = new int[n + 1, m + 1];
+
+        for (int i = 0; i <= n; d[i, 0] = i++) {}
+        for (int j = 0; j <= m; d[0, j] = j++) {}
+
+        for (int i = 1; i <= n; i++)
+        {
+            for (int j = 1; j <= m; j++)
+            {
+                int cost = (cleanTarget[j - 1] == cleanSpoken[i - 1]) ? 0 : 1;
+                d[i, j] = Mathf.Min(
+                    Mathf.Min(d[i - 1, j] + 1, d[i, j - 1] + 1),
+                    d[i - 1, j - 1] + cost
+                );
+            }
+        }
+
+        int distance = d[n, m];
+        int maxLength = Mathf.Max(n, m);
+        
+        float similarity = 1.0f - ((float)distance / maxLength);
+        Debug.Log($"Similarity: {similarity:F2}");
+        return similarity >= thresholdPercent;
+    }
+
+    private string CleanText(string text)
+    {
+        string t = text.ToLower().Trim();
+
+        t = Regex.Replace(t, @"[.,\/#!$%\^&\*;:{}=\-_`~()?']", " ");
+        t = Regex.Replace(t, @"\b(le|la|les|l|un|une|des|du|de)\b", "");
+        t = Regex.Replace(t, @"\s+", " ").Trim();
+        return t;
     }
 }
