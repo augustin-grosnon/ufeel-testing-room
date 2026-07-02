@@ -1,14 +1,14 @@
-using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 public class CarouselBuilder : EditorWindow
 {
-    GameObject doorHolderPrefab;
-    Transform carouselTop;
-    GameObject wallToDisable;
-    int doorCount = 44;
-    float radius = 19.7f;
+    private GameObject doorHolderPrefab;
+    private Transform carouselTop;
+    private GameObject wallToDisable;
+    private int doorCount = 44;
+    private float radius = 19.7f;
 
     [System.Serializable]
     public class SpecialDoorConfig
@@ -19,19 +19,19 @@ public class CarouselBuilder : EditorWindow
         public Color doorColor = Color.red;
     }
 
-    List<SpecialDoorConfig> specialDoors = new();
+    private readonly List<SpecialDoorConfig> specialDoors = new();
 
     [MenuItem("Tools/Build Carousel")]
-    static void Init()
+    private static void Init()
     {
         CarouselBuilder window = (CarouselBuilder)GetWindow(typeof(CarouselBuilder));
         window.titleContent = new GUIContent("Carousel Builder");
         window.Show();
     }
 
-    Vector2 scrollPos;
+    private Vector2 scrollPos;
 
-    void OnGUI()
+    private void OnGUI()
     {
         GUILayout.Label("Carousel Door Placer", EditorStyles.boldLabel);
 
@@ -47,7 +47,7 @@ public class CarouselBuilder : EditorWindow
         scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Height(200)); // TODO: setup window to take the appropriate size -» currently very small window by default, need to scroll to see anything
         for (int i = 0; i < specialDoors.Count; i++)
         {
-            var config = specialDoors[i];
+            SpecialDoorConfig config = specialDoors[i];
             EditorGUILayout.BeginVertical("box");
             config.doorIndex = EditorGUILayout.IntField("Door Index", config.doorIndex);
             config.doorName = EditorGUILayout.TextField("Door Name", config.doorName);
@@ -64,6 +64,19 @@ public class CarouselBuilder : EditorWindow
             specialDoors.Add(new SpecialDoorConfig());
 
         EditorGUILayout.Space();
+
+        if (GUILayout.Button("Load Special Doors From Scene"))
+        {
+            if (carouselTop == null)
+            {
+                Debug.LogError("Carousel parent is not assigned.");
+                return;
+            }
+
+            LoadSpecialDoorsFromScene();
+        }
+
+        EditorGUILayout.Space();
         if (GUILayout.Button("Build Carousel"))
         {
             if (doorHolderPrefab == null || carouselTop == null)
@@ -75,8 +88,42 @@ public class CarouselBuilder : EditorWindow
             BuildCarousel();
         }
     }
+    private void LoadSpecialDoorsFromScene()
+    {
+        specialDoors.Clear();
 
-    void BuildCarousel()
+        foreach (Transform child in carouselTop)
+        {
+            if (!child.TryGetComponent(out DoorIdentifier identifier))
+                continue;
+
+            if (!child.TryGetComponent(out DoorReferences references))
+                continue;
+
+            bool isSpecial =
+                !string.IsNullOrWhiteSpace(identifier.doorName) ||
+                !string.IsNullOrWhiteSpace(identifier.targetSceneName);
+
+            if (!isSpecial)
+                continue;
+
+            specialDoors.Add(new SpecialDoorConfig
+            {
+                doorIndex = identifier.doorID,
+                doorName = identifier.doorName,
+                targetSceneName = identifier.targetSceneName,
+                doorColor = references.controller.GetDoorColor()
+            });
+        }
+
+        specialDoors.Sort((a, b) => a.doorIndex.CompareTo(b.doorIndex));
+
+        Repaint();
+
+        Debug.Log($"Loaded {specialDoors.Count} special doors.");
+    }
+
+    private void BuildCarousel()
     {
         for (int i = carouselTop.childCount - 1; i >= 0; i--)
         {
@@ -103,13 +150,13 @@ public class CarouselBuilder : EditorWindow
             DoorIdentifier idComp = holder.GetComponent<DoorIdentifier>() ?? holder.AddComponent<DoorIdentifier>();
             idComp.doorID = doorID;
 
-            var special = specialDoors.Find(d => d.doorIndex == i);
+            SpecialDoorConfig special = specialDoors.Find(d => d.doorIndex == i);
 
             if (special != null)
             {
                 idComp.doorName = special.doorName;
 
-                if (holder.TryGetComponent<DoorReferences>(out var references))
+                if (holder.TryGetComponent<DoorReferences>(out DoorReferences? references))
                 {
                     idComp.targetSceneName = special.targetSceneName; // TODO: integrate enum (DoorIdentifierName), avoid duplicata
                     references.trigger.targetSceneName = special.targetSceneName; // TODO: remove

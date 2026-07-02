@@ -1,14 +1,13 @@
+using DoorScript;
 using UnityEngine;
 
 public class DoorController : MonoBehaviour
 {
     [SerializeField] private GameObject _door;
 
-    void Awake()
+    private void Awake()
     {
-        MeshRenderer _meshRenderer = _door.GetComponent<MeshRenderer>();
-
-        if (_meshRenderer == null)
+        if (!_door.TryGetComponent<MeshRenderer>(out _))
         {
             Debug.LogWarning("MeshRenderer not found on DoorController GameObject!");
         }
@@ -16,7 +15,7 @@ public class DoorController : MonoBehaviour
 
     public void ToggleDoor()
     {
-        if (_door.TryGetComponent<DoorScript.Door>(out var doorScript))
+        if (_door.TryGetComponent(out Door doorScript))
         {
             doorScript.ToggleDoor();
         }
@@ -24,17 +23,33 @@ public class DoorController : MonoBehaviour
 
     public void SetDoorColor(Color color)
     {
-        if (_door.TryGetComponent<MeshRenderer>(out var _meshRenderer))
+        if (_door.TryGetComponent(out MeshRenderer meshRenderer))
         {
-            if (_meshRenderer == null) return;
-            if (_meshRenderer.sharedMaterial == null) return;
+            if (meshRenderer == null) return;
+            if (meshRenderer.sharedMaterial == null) return;
 
-            var matInstance = new Material(_meshRenderer.sharedMaterial)
+            meshRenderer.sharedMaterial = new Material(meshRenderer.sharedMaterial)
             {
                 color = color
             };
-            _meshRenderer.sharedMaterial = matInstance;
         }
+    }
+
+    public Color GetDoorColor()
+    {
+        if (!_door.TryGetComponent(out MeshRenderer meshRenderer))
+        {
+            Debug.LogWarning("MeshRenderer not found on Door GameObject!");
+            return Color.white;
+        }
+
+        if (meshRenderer.sharedMaterial == null)
+        {
+            Debug.LogWarning("Door material is null!");
+            return Color.white;
+        }
+
+        return meshRenderer.sharedMaterial.color;
     }
 }
 

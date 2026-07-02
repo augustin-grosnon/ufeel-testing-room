@@ -38,9 +38,9 @@ public class VoiceWindowController : MonoBehaviour
         Vector3 rightPos = rightShutter.localPosition;
 
 
-        leftPos.x = Mathf.Lerp(leftPos.x, isOpen ? openLeft: closeLeft, Time.deltaTime * speed);
+        leftPos.x = Mathf.Lerp(leftPos.x, isOpen ? openLeft : closeLeft, Time.deltaTime * speed);
 
-        rightPos.x = Mathf.Lerp( rightPos.x, isOpen ? openRight : closeRight, Time.deltaTime * speed);
+        rightPos.x = Mathf.Lerp(rightPos.x, isOpen ? openRight : closeRight, Time.deltaTime * speed);
 
 
         leftShutter.localPosition = leftPos;

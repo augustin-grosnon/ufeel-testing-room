@@ -56,7 +56,7 @@ public class SpeechManager : MonoBehaviour
     {
         UFeelDebugHUD.UseDefaultDebugHUD = false;
         UFeelDebugHUD.Clear();
-        UFeelDebugHUD.Set("Current Speech", () =>  UFeelAPI.GetCurrentSpeech());
+        UFeelDebugHUD.Set("Current Speech", () => UFeelAPI.GetCurrentSpeech());
 
 
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -76,14 +76,14 @@ public class SpeechManager : MonoBehaviour
         // {
         //     _player = playerObject.GetComponent<FirstPersonController>();
         // }
-        
+
         // radioAudio.Play();
         radioLoopCoroutine = StartCoroutine(PlayRadioWithDelay());
         LightStep();
     }
 
     private void LightStep()
-    {   
+    {
         currentStep = EscapeStep.Light;
         StartHintTimer("Dites: \n\"allume la lumière\"");
     }
@@ -96,7 +96,7 @@ public class SpeechManager : MonoBehaviour
         radioHintText.SetActive(true);
         windowHintTextLeft.SetActive(true);
         windowHintTextRight.SetActive(true);
-        
+
         currentStep = EscapeStep.Radio;
         StartHintTimer("Dites: \n\"éteins la radio\"");
     }
@@ -107,7 +107,7 @@ public class SpeechManager : MonoBehaviour
         if (radioLoopCoroutine != null) { StopCoroutine(radioLoopCoroutine); }
         if (radioAudio != null) radioAudio.Stop();
         if (radioHintText != null) radioHintText.SetActive(false);
-        
+
         currentStep = EscapeStep.Window;
         StartHintTimer("Dites: \n\"ferme la fenêtre\"");
     }
@@ -115,15 +115,17 @@ public class SpeechManager : MonoBehaviour
     private void ExecuteWindowAction()
     {
         KillHint();
-        if (windowController != null) {
+        if (windowController != null)
+        {
             windowController.CloseWindow();
             StartCoroutine(SlideWindowTexts(1.5f));
         }
-        if (windowHintText != null) {
+        if (windowHintText != null)
+        {
             StartCoroutine(FadeInText(windowHintText, 6f));
             windAudio.Stop();
         }
-        
+
         currentStep = EscapeStep.BlueLight;
         StartHintTimer("Dites: \n\"lumière violette\"");
     }
@@ -131,14 +133,15 @@ public class SpeechManager : MonoBehaviour
     private void ExecuteBlueLightAction()
     {
         KillHint();
-        if (blueLight != null && roomLight != null && dummyLight != null && bookHintText != null) {
+        if (blueLight != null && roomLight != null && dummyLight != null && bookHintText != null)
+        {
             roomLight.enabled = false;
             dummyLight.enabled = false;
             blueLight.enabled = true;
             windowHintText.SetActive(false);
             StartCoroutine(FadeInText(bookHintText, 3f));
         }
-        
+
         currentStep = EscapeStep.TV;
         StartHintTimer("Dites: \n\"allume l'écran\"");
     }
@@ -150,7 +153,7 @@ public class SpeechManager : MonoBehaviour
         bookHintText.SetActive(false);
         if (tvRenderer != null && tvBlueMaterial != null) StartCoroutine(TvOn(1.5f));
         if (tvHintText != null) StartCoroutine(FadeInText(tvHintText, 3f));
-        
+
         currentStep = EscapeStep.Door;
         StartHintTimer("Dites: \n\"ouvre la porte\"");
     }
@@ -164,7 +167,7 @@ public class SpeechManager : MonoBehaviour
         StartCoroutine(ShowEndScreen());
     }
 
-  void Update()
+    void Update()
     {
         string currentSpeech = UFeelAPI.GetCurrentSpeech();
 
@@ -174,17 +177,47 @@ public class SpeechManager : MonoBehaviour
         switch (currentStep)
         {
             case EscapeStep.Light:
-                if (IsSpeechMatch(currentSpeech, "allume la lumière", 0.75f)) { ExecuteLightAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "allume la lumière", 0.75f))
+                {
+                    ExecuteLightAction();
+                    matchFound = true;
+                }
+                break;
             case EscapeStep.Radio:
-                if (IsSpeechMatch(currentSpeech, "éteins la radio", 0.75f)) { ExecuteRadioAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "éteins la radio", 0.75f))
+                {
+                    ExecuteRadioAction();
+                    matchFound = true;
+                }
+                break;
             case EscapeStep.Window:
-                if (IsSpeechMatch(currentSpeech, "ferme la fenêtre", 0.75f)) { ExecuteWindowAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "ferme la fenêtre", 0.75f))
+                {
+                    ExecuteWindowAction();
+                    matchFound = true;
+                }
+                break;
             case EscapeStep.BlueLight:
-                if (IsSpeechMatch(currentSpeech, "lumière violette", 0.75f)) { ExecuteBlueLightAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "lumière violette", 0.75f))
+                {
+                    ExecuteBlueLightAction();
+                    matchFound = true;
+                }
+                break;
             case EscapeStep.TV:
-                if (IsSpeechMatch(currentSpeech, "allume l'écran", 0.75f)) { ExecuteTvAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "allume l'écran", 0.75f))
+                {
+                    ExecuteTvAction();
+                    matchFound = true;
+                }
+                break;
             case EscapeStep.Door:
-                if (IsSpeechMatch(currentSpeech, "ouvre la porte", 0.75f)) { ExecuteDoorAction(); matchFound = true; } break;
+                if (IsSpeechMatch(currentSpeech, "ouvre la porte", 0.75f))
+                {
+                    ExecuteDoorAction();
+                    matchFound = true;
+                }
+                break;
         }
 
         if (matchFound) { lastProcessedSpeech = currentSpeech; }
@@ -242,7 +275,8 @@ public class SpeechManager : MonoBehaviour
 
         if (tmp == null) yield break;
 
-        for (float t = 0; t < duration; t += Time.deltaTime) {
+        for (float t = 0; t < duration; t += Time.deltaTime)
+        {
             tmp.alpha = t / duration;
             yield return null;
         }
@@ -253,10 +287,11 @@ public class SpeechManager : MonoBehaviour
     {
         Vector3 leftStart = windowHintTextLeft.transform.position;
         Vector3 rightStart = windowHintTextRight.transform.position;
-        Vector3 leftTarget = new Vector3(22.16f, leftStart.y, leftStart.z);
-        Vector3 rightTarget = new Vector3(27.14f, rightStart.y, rightStart.z);
+        Vector3 leftTarget = new(22.16f, leftStart.y, leftStart.z);
+        Vector3 rightTarget = new(27.14f, rightStart.y, rightStart.z);
 
-        for (float t = 0; t < duration; t += Time.deltaTime) {
+        for (float t = 0; t < duration; t += Time.deltaTime)
+        {
             windowHintTextLeft.transform.position = Vector3.Lerp(leftStart, leftTarget, t / duration);
             windowHintTextRight.transform.position = Vector3.Lerp(rightStart, rightTarget, t / duration);
             yield return null;
@@ -271,7 +306,8 @@ public class SpeechManager : MonoBehaviour
 
         Material mat = tvRenderer.material;
         mat.EnableKeyword("_EMISSION");
-        for (float t = 0; t < duration; t += Time.deltaTime) {
+        for (float t = 0; t < duration; t += Time.deltaTime)
+        {
             Color c = Color.Lerp(Color.black, Color.white, t / duration);
             mat.SetColor("_BaseColor", c);
             mat.SetColor("_EmissionColor", c * 3f);
@@ -291,23 +327,23 @@ public class SpeechManager : MonoBehaviour
         yield return new WaitForSeconds(5f);
         Application.Quit();
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+#endif
     }
 
     private IEnumerator PlayRadioWithDelay()
-{
-    while (currentStep == EscapeStep.Light || currentStep == EscapeStep.Radio)
     {
-        if (radioAudio != null)
+        while (currentStep is EscapeStep.Light or EscapeStep.Radio)
         {
-            radioAudio.Play();            
-            yield return new WaitForSeconds(radioAudio.clip.length);
-        }        
-        yield return new WaitForSeconds(5f);
+            if (radioAudio != null)
+            {
+                radioAudio.Play();
+                yield return new WaitForSeconds(radioAudio.clip.length);
+            }
+            yield return new WaitForSeconds(5f);
+        }
     }
-}
 
     void OnDestroy()
     {
@@ -331,8 +367,8 @@ public class SpeechManager : MonoBehaviour
         int m = cleanTarget.Length;
         int[,] d = new int[n + 1, m + 1];
 
-        for (int i = 0; i <= n; d[i, 0] = i++) {}
-        for (int j = 0; j <= m; d[0, j] = j++) {}
+        for (int i = 0; i <= n; d[i, 0] = i++) { }
+        for (int j = 0; j <= m; d[0, j] = j++) { }
 
         for (int i = 1; i <= n; i++)
         {
@@ -348,7 +384,7 @@ public class SpeechManager : MonoBehaviour
 
         int distance = d[n, m];
         int maxLength = Mathf.Max(n, m);
-        
+
         float similarity = 1.0f - ((float)distance / maxLength);
         Debug.Log($"Similarity: {similarity:F2}");
         return similarity >= thresholdPercent;

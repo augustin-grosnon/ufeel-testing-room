@@ -21,7 +21,7 @@ public class VoiceDoorController : MonoBehaviour
     void Update()
     {
         float targetY = isOpen ? openAngle : 0f;
-        Vector3 targetRotation = new Vector3(0, targetY, 0);
+        Vector3 targetRotation = new(0, targetY, 0);
 
         pivot.localRotation = Quaternion.Lerp(
             pivot.localRotation,
