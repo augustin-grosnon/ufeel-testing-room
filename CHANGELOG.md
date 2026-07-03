@@ -9,6 +9,8 @@
 
 - Adding Levenshtein distance in Escape room scene to improve speech recognition tolerance.
 - Adding progress bar in Animals's memory game.
+- Adding back Eye Tracking Car scene
+- Integrating our own emotion detection model
 
 
 ## [2026-06]
