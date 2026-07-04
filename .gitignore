@@ -91,6 +91,7 @@ Assets/YughuesFreeGroundMaterials
 Assets/YughuesFreeGroundMaterials.meta
 Assets/TextMesh Pro
 Assets/TextMesh Pro.meta
+# TODO: push when we can
 
 *.so
 *.so*
@@ -98,5 +99,3 @@ Assets/TextMesh Pro.meta
 *.blob
 *.log
 venv
-
-packages-lock.json
