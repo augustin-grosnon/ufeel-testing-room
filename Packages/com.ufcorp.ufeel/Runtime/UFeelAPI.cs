@@ -9,22 +9,22 @@ namespace UFeel
     {
         private static UFeelAPI _instance;
 
-        private readonly static EmotionReceiver _emotionReceiver = new(4100);
-        private static bool _emotionIsRunning = false;
+        private static readonly EmotionReceiver _emotionReceiver = new(4100);
+        private static bool _emotionIsRunning;
 
-        private readonly static EyeTrackingReceiver _eyeTrackingReceiver = new(4000);
-        private static bool _eyeTrackingIsRunning = false;
+        private static readonly EyeTrackingReceiver _eyeTrackingReceiver = new(4000);
+        private static bool _eyeTrackingIsRunning;
 
-        private readonly static SpeechToTextReceiver _speechToTextReceiver = new(3900);
-        private static bool _speechToTextIsRunning = false;
+        private static readonly SpeechToTextReceiver _speechToTextReceiver = new(3900);
+        private static bool _speechToTextIsRunning;
 
-        private readonly static HeartRateSensorReceiver _heartRateSensorReceiver = new(3800);
-        private static bool _heartRateSensorIsRunning = false;
+        private static readonly HeartRateSensorReceiver _heartRateSensorReceiver = new(3800);
+        private static bool _heartRateSensorIsRunning;
 
         private static int _nextRuleId = 0;
-        private readonly static List<Rule> _rules = new();
-        private readonly static List<Rule> _rulesToAdd = new();
-        private readonly static HashSet<int> _rulesToRemove = new();
+        private static readonly List<Rule> _rules = new();
+        private static readonly List<Rule> _rulesToAdd = new();
+        private static readonly HashSet<int> _rulesToRemove = new();
 
         // TODO: Remove this when removing the server
         public static async Task StartAPI()
@@ -48,7 +48,7 @@ namespace UFeel
 // * ------------------------ Rules logic ------------------------ * //
         private void Update()
         {
-            foreach (var rule in _rules)
+            foreach (Rule rule in _rules)
             {
                 if (!rule.Condition())
                     continue;
@@ -85,11 +85,17 @@ namespace UFeel
             if (!UFeelDebugHUD.DEBUG_MODE || !UFeelDebugHUD.UseDefaultDebugHUD)
                 return;
 
-            UFeelDebugHUD.Set("Emotions", () => _emotionReceiver.CurrentEmotionsData?.ToString());
-            UFeelDebugHUD.Set("Eye Tracking", () => _eyeTrackingReceiver.CurrentEyeTrackingData?.ToString());
-            UFeelDebugHUD.Set("Speech To Text", () => _speechToTextReceiver.CurrentSpeechToTextData?.text);
-            UFeelDebugHUD.Set("Heart Rate Sensor", () => _heartRateSensorReceiver.CurrentHeartRateSensorData?.rate.ToString());
-            UFeelDebugHUD.Set("CINQS", () => "COUCOU JE SUIS MOI EN TRÈS LONG");
+            UFeelDebugHUD.Set("Emotions", () =>
+                _emotionIsRunning ? _emotionReceiver?.CurrentEmotionsData?.ToString() : "Disabled");
+
+            UFeelDebugHUD.Set("Eye Tracking", () =>
+                !_eyeTrackingIsRunning ? "Disabled" : _eyeTrackingReceiver.CurrentEyeTrackingData?.ToString());
+
+            UFeelDebugHUD.Set("Speech To Text", () =>
+                !_speechToTextIsRunning ? "Disabled" : _speechToTextReceiver.CurrentSpeechToTextData?.text);
+
+            UFeelDebugHUD.Set("Heart Rate Sensor", () =>
+                !_heartRateSensorIsRunning ? "Disabled" : _heartRateSensorReceiver.CurrentHeartRateSensorData?.rate.ToString());
         }
 
         private static RuleKey AddRule(Func<bool> condition, Action action, bool isUnique = false)
@@ -145,8 +151,7 @@ namespace UFeel
         {
             if (!_emotionIsRunning) return null;
 
-            EmotionData? currentEmotions = _emotionReceiver.CurrentEmotionsData;
-            return currentEmotions;
+            return _emotionReceiver.CurrentEmotionsData;
         }
 
         public static EmotionData.EmotionType? GetDominantEmotion()
@@ -204,8 +209,7 @@ namespace UFeel
         {
             if (!_eyeTrackingIsRunning) return null;
 
-            EyeTrackingData? currentEyeTracking = _eyeTrackingReceiver.CurrentEyeTrackingData;
-            return currentEyeTracking;
+            return _eyeTrackingReceiver.CurrentEyeTrackingData;
         }
 
         public static EyeTrackingData.EyeTrackingType? GetDominantDirection()
@@ -259,12 +263,11 @@ namespace UFeel
             Debug.Log("Speech detection stopped.");
         }
 
-        public static string GetCurrentSpeech()
+        public static string? GetCurrentSpeech()
         {
             if (!_speechToTextIsRunning) return null;
 
-            SpeechToTextData? currentSpeechData = _speechToTextReceiver.CurrentSpeechToTextData;
-            return currentSpeechData?.text;
+            return _speechToTextReceiver.CurrentSpeechToTextData?.text;
         }
 
         public static RuleKey TriggerActionOnSpeech(string text, Action action, bool isUnique)
@@ -368,12 +371,17 @@ namespace UFeel
             Debug.Log("Game stopped - OnDisable called!");
         }
 
+        public static void ToggleOffEverything()
+        {
+            StopEmotionDetection();
+            StopEyeTrackingDetection();
+            StopSpeechDetection();
+            StopHeartRateDetection();
+        }
+
         public static void StopAPI()
         {
-            ToggleEmotionDetection(false);
-            ToggleEyeTrackingDetection(false);
-            ToggleSpeechDetection(false);
-            ToggleHeartRateDetection(false);
+            ToggleOffEverything();
 
             PythonServerController.Instance.StopServer();
         }

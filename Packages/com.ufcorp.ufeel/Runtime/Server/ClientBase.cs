@@ -81,7 +81,7 @@ public abstract class ClientBase
                 int newlineIndex;
                 while ((newlineIndex = dataStr.IndexOf('\n')) >= 0)
                 {
-                    string jsonMsg = dataStr.Substring(0, newlineIndex).Trim();
+                    string jsonMsg = dataStr[..newlineIndex].Trim();
                     if (!string.IsNullOrEmpty(jsonMsg))
                     {
                         try
@@ -93,10 +93,9 @@ public abstract class ClientBase
                             Debug.LogWarning($"Exception in ProcessData: {ex}");
                         }
                     }
-                    dataStr = dataStr.Substring(newlineIndex + 1);
+                    dataStr = dataStr[(newlineIndex + 1)..];
                 }
-                sb.Clear()
-                    .Append(dataStr);
+                sb.Clear().Append(dataStr);
             }
         }
         catch (ThreadAbortException)
