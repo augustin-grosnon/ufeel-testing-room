@@ -8,6 +8,7 @@ TagManager:
   - Vehicle
   - Activator
   - PerturbatorDetector
+  - Environment
   layers:
   - Default
   - TransparentFX

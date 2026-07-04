@@ -1,6 +1,6 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -8,7 +8,7 @@ public class SceneLoader : MonoBehaviour
 
     private bool isLoading = false;
 
-    void Awake()
+    private void Awake()
     {
         if (Instance == null)
         {
@@ -94,6 +94,12 @@ public class SceneLoader : MonoBehaviour
             {
                 playerObject.SetActive(false);
             }
+
+            GameObject environmentObject = GameObject.FindGameObjectWithTag("Environment");
+            if (environmentObject != null)
+            {
+                environmentObject.SetActive(false);
+            }
         }
 
         ApplySceneLighting(loadedScene);
@@ -101,7 +107,7 @@ public class SceneLoader : MonoBehaviour
         isLoading = false;
     }
 
-    private void ApplySceneLighting(Scene scene)
+    private static void ApplySceneLighting(Scene scene)
     {
         SceneManager.SetActiveScene(scene);
     }

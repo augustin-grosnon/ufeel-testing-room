@@ -1,12 +1,17 @@
-using UnityEngine;
-using UFeel;
-using System.Threading.Tasks;
-using TMPro;
 using System.Collections;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using TMPro;
+using UFeel;
+using UnityEngine;
 
 public class SpeechManager : MonoBehaviour
 {
+    private static WaitForSeconds _waitForSeconds60 = new(60f);
+    private static WaitForSeconds _waitForSeconds5 = new(5f);
+    private static WaitForSeconds _waitForSeconds3 = new(3f);
+    private static WaitForSeconds _waitForSeconds2 = new(2f);
+
     [Header("Scene References")]
     // private FirstPersonController _player;
     [SerializeField] private VoiceDoorController doorController;
@@ -19,33 +24,40 @@ public class SpeechManager : MonoBehaviour
     [SerializeField] private Light blueLight;
 
     [Header("TV System")]
-    public Renderer tvRenderer;
-    public Material tvBlueMaterial;
-
+    [SerializeField] private Renderer tvRenderer;
+    [SerializeField] private Material tvBlueMaterial;
 
     [Header("Scene Hints")]
-    public GameObject radioHintText;
-    public GameObject windowHintText;
-    public GameObject windowHintTextLeft;
-    public GameObject windowHintTextRight;
-    public GameObject tvHintText;
-    public GameObject bookHintText;
-
+    [SerializeField] private GameObject radioHintText;
+    [SerializeField] private GameObject windowHintText;
+    [SerializeField] private GameObject windowHintTextLeft;
+    [SerializeField] private GameObject windowHintTextRight;
+    [SerializeField] private GameObject tvHintText;
+    [SerializeField] private GameObject bookHintText;
 
     [Header("End Game")]
-    public CanvasGroup endCanvasGroup;
-    public TextMeshProUGUI endText;
-    public float fadeDuration = 5f;
+    [SerializeField] private CanvasGroup endCanvasGroup;
+    [SerializeField] private TextMeshProUGUI endText;
+    [SerializeField] private float fadeDuration = 5f;
 
     [Header("Hints System")]
-    public CanvasGroup hintCanvasGroup;
-    public TextMeshProUGUI hintText;
+    [SerializeField] private CanvasGroup hintCanvasGroup;
+    [SerializeField] private TextMeshProUGUI hintText;
     private Coroutine hintCoroutine;
     private Coroutine activeShowHintCoroutine;
 
-    private enum EscapeStep { Light, Radio, Window, BlueLight, TV, Door, Finished }
+    private enum EscapeStep
+    {
+        Light,
+        Radio,
+        Window,
+        BlueLight,
+        TV,
+        Door,
+        Finished
+    }
     private EscapeStep currentStep = EscapeStep.Light;
-    private string lastProcessedSpeech = "";
+    private string lastProcessedSpeech = string.Empty;
     private Coroutine radioLoopCoroutine;
 
     private async void Start()
@@ -53,7 +65,6 @@ public class SpeechManager : MonoBehaviour
         UFeelDebugHUD.UseDefaultDebugHUD = false;
         UFeelDebugHUD.Clear();
         UFeelDebugHUD.Set("Current Speech", () => UFeelAPI.GetCurrentSpeech());
-
 
         // GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         // if (playerObject != null)
@@ -100,9 +111,14 @@ public class SpeechManager : MonoBehaviour
     private void ExecuteRadioAction()
     {
         KillHint();
-        if (radioLoopCoroutine != null) { StopCoroutine(radioLoopCoroutine); }
-        if (radioAudio != null) radioAudio.Stop();
-        if (radioHintText != null) radioHintText.SetActive(false);
+        if (radioLoopCoroutine != null)
+        {
+            StopCoroutine(radioLoopCoroutine);
+        }
+        if (radioAudio != null)
+            radioAudio.Stop();
+        if (radioHintText != null)
+            radioHintText.SetActive(false);
 
         currentStep = EscapeStep.Window;
         StartHintTimer("Dites: \n\"ferme la fenêtre\"");
@@ -216,7 +232,10 @@ public class SpeechManager : MonoBehaviour
                 break;
         }
 
-        if (matchFound) { lastProcessedSpeech = currentSpeech; }
+        if (matchFound)
+        {
+            lastProcessedSpeech = currentSpeech;
+        }
     }
 
     private void StartHintTimer(string command)
@@ -243,7 +262,7 @@ public class SpeechManager : MonoBehaviour
 
         hintCanvasGroup.alpha = 0f;
         hintCanvasGroup.gameObject.SetActive(false);
-        hintText.text = "";
+        hintText.text = string.Empty;
     }
 
     private IEnumerator ShowHint(string text)
@@ -257,19 +276,17 @@ public class SpeechManager : MonoBehaviour
 
     private IEnumerator HintTimerCoroutine(string command)
     {
-        yield return new WaitForSeconds(60f);
+        yield return _waitForSeconds60;
         activeShowHintCoroutine = StartCoroutine(ShowHint(command));
     }
 
-    IEnumerator FadeInText(GameObject textObject, float duration)
+    private IEnumerator FadeInText(GameObject textObject, float duration)
     {
         if (textObject == null) yield break;
 
-        yield return new WaitForSeconds(3f);
+        yield return _waitForSeconds3;
 
-        TextMeshPro tmp = textObject.GetComponent<TextMeshPro>();
-
-        if (tmp == null) yield break;
+        if (!textObject.TryGetComponent<TextMeshPro>(out TextMeshPro? tmp)) yield break;
 
         for (float t = 0; t < duration; t += Time.deltaTime)
         {
@@ -317,13 +334,14 @@ public class SpeechManager : MonoBehaviour
 
     private IEnumerator ShowEndScreen()
     {
-        yield return new WaitForSeconds(2f);
-        for (float t = 0; t < fadeDuration; t += Time.deltaTime) {
+        yield return _waitForSeconds2;
+        for (float t = 0; t < fadeDuration; t += Time.deltaTime)
+        {
             endCanvasGroup.alpha = t / fadeDuration;
             yield return null;
         }
 
-        yield return new WaitForSeconds(5f);
+        yield return _waitForSeconds5;
         PauseMenu.GoToLobby();
     }
 
@@ -336,7 +354,7 @@ public class SpeechManager : MonoBehaviour
                 radioAudio.Play();
                 yield return new WaitForSeconds(radioAudio.clip.length);
             }
-            yield return new WaitForSeconds(5f);
+            yield return _waitForSeconds5;
         }
     }
 

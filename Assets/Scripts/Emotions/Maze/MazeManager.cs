@@ -63,7 +63,7 @@ public class MazeManager : MonoBehaviour
         SetNextTargetEmotion();
         UpdateScoreText();
 
-        if (GameObject.FindWithTag("Player").TryGetComponent<Transform>(out var transform))
+        if (GameObject.FindWithTag("Player").TryGetComponent<Transform>(out Transform? transform))
         {
             _player = transform;
         }

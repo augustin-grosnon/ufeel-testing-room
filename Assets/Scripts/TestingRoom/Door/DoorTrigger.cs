@@ -11,9 +11,9 @@ public class DoorTrigger : MonoBehaviour
     [Tooltip("The wall GameObject (quad) to disable when loading the new scene.")]
     public GameObject wallToDisable;
 
-    void Start()
+    private void Start()
     {
-        if (TryGetComponent<DoorController>(out var doorController))
+        if (TryGetComponent(out DoorController doorController))
         {
             _doorController = doorController;
         }
@@ -23,7 +23,7 @@ public class DoorTrigger : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Update()
     {
         if (SceneLoader.Instance.IsLoading()) return;
 
@@ -46,17 +46,13 @@ public class DoorTrigger : MonoBehaviour
 
             // SceneLoader.Instance.LoadSceneAsync(targetSceneName, 3.0f);
 
-            SceneLoader.Instance.LoadAdditiveSceneAtPosition(targetSceneName, new Vector3(0.0f, 0.0f, 20f), () =>
-            {
-                _doorController.ToggleDoor();
-            }
-            );
+            SceneLoader.Instance.LoadAdditiveSceneAtPosition(targetSceneName, new Vector3(0.0f, 0.0f, 20f), () => _doorController.ToggleDoor());
 
             // TODO: start loading when the door touches the ground
         }
     }
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -64,7 +60,7 @@ public class DoorTrigger : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -72,9 +68,9 @@ public class DoorTrigger : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
-        if (TryGetComponent<BoxCollider>(out var box) && box.isTrigger)
+        if (TryGetComponent(out BoxCollider box) && box.isTrigger)
         {
             Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
             Gizmos.matrix = transform.localToWorldMatrix;
