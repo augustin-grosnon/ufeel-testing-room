@@ -1,6 +1,5 @@
-using UnityEngine;
 using UFeel;
-using System.Threading.Tasks;
+using UnityEngine;
 
 public class FirstPersonController : MonoBehaviour
 {
@@ -18,7 +17,7 @@ public class FirstPersonController : MonoBehaviour
     private float verticalVelocity;
     private CharacterController controller;
 
-    async void Start()
+    private async void Start()
     {
         controller = gameObject.AddComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -27,7 +26,7 @@ public class FirstPersonController : MonoBehaviour
         await UFeelAPI.StartAPI();
     }
 
-    void Update()
+    private void Update()
     {
         HandleMovement();
 
@@ -42,7 +41,7 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
-    void ToggleCursor()
+    private void ToggleCursor()
     {
         if (Cursor.lockState == CursorLockMode.Locked)
         {
@@ -58,12 +57,12 @@ public class FirstPersonController : MonoBehaviour
         isUsingMouseToMoveView = !isUsingMouseToMoveView;
     }
 
-    void HandleMovement()
+    private void HandleMovement()
     {
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        Vector3 move = (transform.right * moveX) + (transform.forward * moveZ);
         verticalVelocity += gravity * Time.deltaTime;
 
         move.y = verticalVelocity;
@@ -71,7 +70,7 @@ public class FirstPersonController : MonoBehaviour
         controller.Move(moveSpeed * Time.deltaTime * move);
     }
 
-    void HandleMouseLook()
+    private void HandleMouseLook()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;

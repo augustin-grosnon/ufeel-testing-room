@@ -3,23 +3,20 @@ using UFeel;
 using System.Threading.Tasks;
 using TMPro;
 using System.Collections;
-using System.Reflection;
-using UnityEngine.UI;
 using System.Text.RegularExpressions;
 
 public class SpeechManager : MonoBehaviour
 {
     [Header("Scene References")]
-    private FirstPersonController _player;
-    public VoiceDoorController doorController;
-    public VoiceWindowController windowController;
-    public AudioSource radioAudio;
-    public AudioSource windAudio;
-    public AudioSource tvAudio;
-    public Light roomLight;
-    public Light dummyLight;
-    public Light blueLight;
-
+    // private FirstPersonController _player;
+    [SerializeField] private VoiceDoorController doorController;
+    [SerializeField] private VoiceWindowController windowController;
+    [SerializeField] private AudioSource radioAudio;
+    [SerializeField] private AudioSource windAudio;
+    [SerializeField] private AudioSource tvAudio;
+    [SerializeField] private Light roomLight;
+    [SerializeField] private Light dummyLight;
+    [SerializeField] private Light blueLight;
 
     [Header("TV System")]
     public Renderer tvRenderer;
@@ -51,19 +48,18 @@ public class SpeechManager : MonoBehaviour
     private string lastProcessedSpeech = "";
     private Coroutine radioLoopCoroutine;
 
-
-    async void Start()
+    private async void Start()
     {
         UFeelDebugHUD.UseDefaultDebugHUD = false;
         UFeelDebugHUD.Clear();
         UFeelDebugHUD.Set("Current Speech", () => UFeelAPI.GetCurrentSpeech());
 
 
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        if (playerObject != null)
-        {
-            _player = playerObject.GetComponent<FirstPersonController>();
-        }
+        // GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        // if (playerObject != null)
+        // {
+        //     _player = playerObject.GetComponent<FirstPersonController>();
+        // }
 
         // await UFeelAPI.StartAPI();
         await Task.Delay(5000);
@@ -167,7 +163,7 @@ public class SpeechManager : MonoBehaviour
         StartCoroutine(ShowEndScreen());
     }
 
-    void Update()
+    private void Update()
     {
         string currentSpeech = UFeelAPI.GetCurrentSpeech();
 
@@ -283,7 +279,7 @@ public class SpeechManager : MonoBehaviour
         tmp.alpha = 1f;
     }
 
-    IEnumerator SlideWindowTexts(float duration)
+    private IEnumerator SlideWindowTexts(float duration)
     {
         Vector3 leftStart = windowHintTextLeft.transform.position;
         Vector3 rightStart = windowHintTextRight.transform.position;
@@ -300,7 +296,7 @@ public class SpeechManager : MonoBehaviour
         windowHintTextRight.SetActive(false);
     }
 
-    IEnumerator TvOn(float duration)
+    private IEnumerator TvOn(float duration)
     {
         if (tvRenderer == null) yield break;
 
@@ -313,7 +309,10 @@ public class SpeechManager : MonoBehaviour
             mat.SetColor("_EmissionColor", c * 3f);
             yield return null;
         }
-        tvAudio?.Play();
+        if (tvAudio != null)
+        {
+            tvAudio.Play();
+        }
     }
 
     private IEnumerator ShowEndScreen()
@@ -341,13 +340,13 @@ public class SpeechManager : MonoBehaviour
         }
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
         UFeelDebugHUD.UseDefaultDebugHUD = true;
     }
 
     // Levenshtein Algo
-    private bool IsSpeechMatch(string currentText, string targetText, float thresholdPercent = 0.75f)
+    private static bool IsSpeechMatch(string currentText, string targetText, float thresholdPercent = 0.75f)
     {
         if (string.IsNullOrEmpty(currentText) || string.IsNullOrEmpty(targetText)) return false;
 
@@ -382,7 +381,7 @@ public class SpeechManager : MonoBehaviour
         return similarity >= thresholdPercent;
     }
 
-    private string CleanText(string text)
+    private static string CleanText(string text)
     {
         string t = text.ToLower().Trim();
 

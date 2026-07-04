@@ -12,6 +12,7 @@ public class PauseMenu : MonoBehaviour
 
     public GameObject PauseMenuUI;
     public FirstPersonController PlayerController;
+    private bool disabledPlayer;
 
     private void Update()
     {
@@ -33,7 +34,11 @@ public class PauseMenu : MonoBehaviour
         PauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
 
-        PlayerController.enabled = true;
+        if (disabledPlayer)
+        {
+            PlayerController.enabled = true;
+            disabledPlayer = false;
+        }
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -46,7 +51,11 @@ public class PauseMenu : MonoBehaviour
         PauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
 
-        PlayerController.enabled = false;
+        if (PlayerController.enabled)
+        {
+            PlayerController.enabled = false;
+            disabledPlayer = true;
+        }
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

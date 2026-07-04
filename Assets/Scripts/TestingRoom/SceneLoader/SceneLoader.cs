@@ -75,12 +75,24 @@ public class SceneLoader : MonoBehaviour
         while (!loadedScene.isLoaded)
             yield return null;
 
+        bool foundRoot = false;
+
         foreach (GameObject rootObj in loadedScene.GetRootGameObjects())
         {
             if (rootObj.name == "Root") // TODO: check if this main object detection logic is appropriate
             {
                 rootObj.transform.position = targetPosition;
+                foundRoot = true;
                 break;
+            }
+        }
+
+        if (!foundRoot)
+        {
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject != null)
+            {
+                playerObject.SetActive(false);
             }
         }
 
@@ -115,7 +127,7 @@ public class SceneLoader : MonoBehaviour
 
         isLoading = false;
 
-        var testingRoomScene = SceneManager.GetSceneByName("TestingRoom");
+        Scene testingRoomScene = SceneManager.GetSceneByName("TestingRoom");
         ApplySceneLighting(testingRoomScene);
         complete?.Invoke();
     }
