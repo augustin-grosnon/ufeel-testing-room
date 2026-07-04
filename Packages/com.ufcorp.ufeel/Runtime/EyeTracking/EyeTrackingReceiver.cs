@@ -22,4 +22,9 @@ internal class EyeTrackingReceiver : ClientBase
             Debug.Log("Error parsing eye direction JSON: " + e.Message);
         }
     }
+
+    public override void ResetData()
+    {
+        CurrentEyeTrackingData = null;
+    }
 }

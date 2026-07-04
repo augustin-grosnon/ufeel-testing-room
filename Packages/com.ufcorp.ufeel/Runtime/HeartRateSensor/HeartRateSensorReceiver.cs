@@ -22,4 +22,9 @@ public class HeartRateSensorReceiver : ClientBase
             Debug.Log("Error parsing heartRate JSON: " + e.Message);
         }
     }
+
+    public override void ResetData()
+    {
+        CurrentHeartRateSensorData = null;
+    }
 }

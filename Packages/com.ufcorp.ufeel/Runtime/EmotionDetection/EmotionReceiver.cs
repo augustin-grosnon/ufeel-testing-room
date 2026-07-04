@@ -22,4 +22,9 @@ internal class EmotionReceiver : ClientBase
             Debug.Log("Error parsing emotion JSON: " + e.Message);
         }
     }
+
+    public override void ResetData()
+    {
+        CurrentEmotionsData = null;
+    }
 }

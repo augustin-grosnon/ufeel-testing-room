@@ -79,6 +79,7 @@ class SpeechToText(ClientBase):
         self.process_enable = False
         self.current_text = "None"
         self.thread = None
+        self.stop_event = threading.Event()
 
     def toggle_speech_detection(self, state):
         self.process_enable = state
@@ -86,14 +87,18 @@ class SpeechToText(ClientBase):
         logging.info(f"Speech detection {status} {state}")
 
     def _start_thread(self):
-        if self.thread is not None:
+        if self.thread is not None and self.thread.is_alive():
             return
+        self.stop_event.clear()
         self.thread = threading.Thread(target=self._run_audio_loop, daemon=True)
         self.thread.start()
 
     def _stop_thread(self):
-        if self.thread is not None:
-            self.thread.join(timeout=1)
+        if self.thread is None:
+            return;
+
+        self.stop_event.set()
+        self.thread.join()
         self.thread = None
 
     def draw_centered_text_bottom(self, frame, text, max_width_ratio=0.8, line_height=40):
@@ -138,7 +143,7 @@ class SpeechToText(ClientBase):
     def _run_audio_loop(self):
         try:
             with sd.RawInputStream(samplerate=16000, blocksize=8000, dtype="int16", channels=1, callback=self._callback):
-                while True:
+                while not self.stop_event.is_set():
                     sd.sleep(5)
         except Exception as e:
             print("Audio thread error:", e)

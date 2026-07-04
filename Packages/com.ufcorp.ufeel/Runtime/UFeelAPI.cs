@@ -144,6 +144,7 @@ namespace UFeel
         {
             ToggleEmotionDetection(false);
             _emotionIsRunning = false;
+            _emotionReceiver.ResetData();
             Debug.Log("Emotion detection stopped.");
         }
 
@@ -202,6 +203,7 @@ namespace UFeel
         {
             ToggleEyeTrackingDetection(false);
             _eyeTrackingIsRunning = false;
+            _eyeTrackingReceiver.ResetData();
             Debug.Log("Eye Tracking detection stopped.");
         }
 
@@ -260,6 +262,7 @@ namespace UFeel
         {
             ToggleSpeechDetection(false);
             _speechToTextIsRunning = false;
+            _speechToTextReceiver.ResetData();
             Debug.Log("Speech detection stopped.");
         }
 
@@ -318,6 +321,7 @@ namespace UFeel
         {
             ToggleHeartRateDetection(false);
             _heartRateSensorIsRunning = false;
+            _heartRateSensorReceiver.ResetData();
             Debug.Log("Heart Rate detection stopped.");
         }
 

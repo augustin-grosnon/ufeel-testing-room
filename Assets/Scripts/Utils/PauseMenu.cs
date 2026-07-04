@@ -15,7 +15,7 @@ public class PauseMenu : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.M))
         {
             if (GameisPaused)
             {
@@ -54,15 +54,22 @@ public class PauseMenu : MonoBehaviour
         GameisPaused = true;
     }
 
-    public void LoadLobby()
+    public static void GoToLobby()
     {
-        Debug.Log("Load Lobby");
         if (SceneManager.GetActiveScene().name != "TestingRoom")
         {
             SceneManager.LoadScene("TestingRoom");
         }
-        Resume();
+
         UFeel.UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
+    }
+
+    public void LoadLobby()
+    {
+        Debug.Log("Load Lobby");
+        Resume();
+        GoToLobby();
     }
 
     public static void QuitGame()

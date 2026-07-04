@@ -149,6 +149,7 @@ public abstract class ClientBase
     }
 
     protected abstract void ProcessData(byte[] data);
+    public abstract void ResetData();
 
     protected virtual void OnApplicationQuit()
     {

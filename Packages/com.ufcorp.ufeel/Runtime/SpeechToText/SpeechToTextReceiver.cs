@@ -22,4 +22,9 @@ internal class SpeechToTextReceiver : ClientBase
             Debug.Log("Error parsing speechToText JSON: " + e.Message);
         }
     }
+
+    public override void ResetData()
+    {
+        CurrentSpeechToTextData = null;
+    }
 }
