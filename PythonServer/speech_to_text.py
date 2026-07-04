@@ -54,6 +54,7 @@ from client_base import ClientBase
 import logging
 import threading
 import os
+import unicodedata
 
 logging.basicConfig(
     filename="client_base.log",
@@ -96,6 +97,8 @@ class SpeechToText(ClientBase):
         self.thread = None
 
     def draw_centered_text_bottom(self, frame, text, max_width_ratio=0.8, line_height=40):
+        text = unicodedata.normalize("NFKD", text)
+        text = text.encode("ascii", "ignore").decode("ascii")
         h, w, _ = frame.shape
         max_width = int(w * max_width_ratio)
 
