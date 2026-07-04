@@ -3,6 +3,7 @@
     "rootNamespace": "",
     "references": [
         "UFeel",
+        "Utils",
         "UnityEngine.UI",
         "Unity.TextMeshPro"
     ],

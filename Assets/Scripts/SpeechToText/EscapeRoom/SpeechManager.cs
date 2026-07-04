@@ -349,13 +349,10 @@ public class SpeechManager : MonoBehaviour
     // Levenshtein Algo
     private bool IsSpeechMatch(string currentText, string targetText, float thresholdPercent = 0.75f)
     {
-        // Debug.Log($"Comparing: \"{currentText}\" with \"{targetText}\"");
         if (string.IsNullOrEmpty(currentText) || string.IsNullOrEmpty(targetText)) return false;
 
         string cleanSpoken = CleanText(currentText);
         string cleanTarget = CleanText(targetText);
-
-        // Debug.Log($"Cleaned: \"{cleanSpoken}\" with \"{cleanTarget}\"");
 
         if (cleanSpoken == cleanTarget) return true;
 
@@ -382,7 +379,6 @@ public class SpeechManager : MonoBehaviour
         int maxLength = Mathf.Max(n, m);
 
         float similarity = 1.0f - ((float)distance / maxLength);
-        // Debug.Log($"Similarity: {similarity:F2}");
         return similarity >= thresholdPercent;
     }
 

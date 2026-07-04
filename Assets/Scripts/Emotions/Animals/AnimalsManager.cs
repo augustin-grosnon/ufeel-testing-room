@@ -88,10 +88,7 @@ public class AnimalsManager : MonoBehaviour
             {
                 instructionText.text = "GAME OVER...";
                 yield return _waitForSeconds5;
-                Application.Quit();
-#if UNITY_EDITOR
-                UnityEditor.EditorApplication.isPlaying = false;
-#endif
+                PauseMenu.GoToLobby();
                 yield break;
             }
 
@@ -101,10 +98,7 @@ public class AnimalsManager : MonoBehaviour
         instructionText.text = "CONGRATULATIONS! YOU ARE A MASTER OF EMOTIONS!";
 
         yield return _waitForSeconds5;
-        Application.Quit();
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
+        PauseMenu.GoToLobby();
     }
 
     private IEnumerator InitLevel(int level)
