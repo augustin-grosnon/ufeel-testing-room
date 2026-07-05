@@ -21,9 +21,12 @@ public class GameManager : MonoBehaviour
 	public int multiplierTracker = 0;
 	public int multiplierThreshold = 4;
 	
-	private int minBpm = 60;
-	private int maxBpm = 180;
+	private const int minBpm = 60;
+	private const int maxBpm = 180;
 	private Coroutine actionCoroutine;
+
+	private const int hpGainScore = 1;
+	public Slider _slider;
     
     async void Start()
     {
@@ -49,6 +52,9 @@ public class GameManager : MonoBehaviour
                 bs.started = true;
             }
         }
+		if (_slider.value <= 0) {
+			// DISPLAY GAME OVER SCREEN
+		}
     }
 
     public void NoteHit()
@@ -65,6 +71,7 @@ public class GameManager : MonoBehaviour
 		currentScore += scorePerNote * currentMultiplier;
 		scoreText.text = "Score: " + currentScore;
 		multiplierText.text = "Multiplier: x" + currentMultiplier;
+		_slider.value = Mathf.Clamp(_slider.value + hpGainScore * currentMultiplier, _slider.minValue, _slider.maxValue);
     }
 
     public void NoteMissed()
@@ -73,6 +80,7 @@ public class GameManager : MonoBehaviour
 		multiplierTracker = 0;
 		multiplierThreshold = 4;
 		multiplierText.text = "Multiplier: x" + currentMultiplier;
+		_slider.value = Mathf.Clamp(_slider.value - 5, _slider.minValue, _slider.maxValue);
     }
     
     IEnumerator UpdateBPM()
