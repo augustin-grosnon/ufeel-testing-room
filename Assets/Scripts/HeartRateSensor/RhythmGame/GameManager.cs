@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
 
 	private const int hpGainScore = 1;
 	public Slider _slider;
+
+	public AudioSource _audioSource;
     
     async void Start()
     {
@@ -50,6 +52,7 @@ public class GameManager : MonoBehaviour
             {
                 startPlaying = true;
                 bs.started = true;
+				_audioSource.Play();
             }
         }
 		if (_slider.value <= 0) {
@@ -93,6 +96,7 @@ public class GameManager : MonoBehaviour
 			    yield break;
 		    
 		    bs.beatTempo = bpm / 30f; // 60f / 2
+			_audioSource.pitch = (float)bpm / (float)minBpm;
 		    
 		    yield return new WaitForSeconds(1f);
 	    }

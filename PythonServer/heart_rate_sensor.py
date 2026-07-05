@@ -2,6 +2,7 @@ import cv2
 import json
 from client_base import ClientBase
 import logging
+import requests
 
 logging.basicConfig(
     filename="client_base.log",
@@ -18,12 +19,16 @@ class HeartRateGenerator:
         self.min_hr = min_hr
         self.max_hr = max_hr
         self.max_step = max_step
+        self.source = 0 # source: 0 = external sensor, 1 = simulated
 
-    def get(self):
+    def get_simulated(self):
         step = random.randint(-self.max_step, self.max_step)
         self.value += step
         self.value = max(self.min_hr, min(self.max_hr, self.value))
         return self.value
+    
+    def get_sensor(self):
+        return requests.get("http://localhost:8000").json()["bpm"]
 
 class HeartRateSensor(ClientBase):
     def __init__(self):
@@ -32,13 +37,16 @@ class HeartRateSensor(ClientBase):
             "heart_rate_detection": self.toggle_heart_rate_detection,
         }
 
-        self.process_enable = False
+        self.process_enable = True
         self.hr_gen = HeartRateGenerator()
 
     def toggle_heart_rate_detection(self, state):
         self.process_enable = state
         status = "enabled" if state else "disabled"
         logging.info(f"Heart Rate detection {status} {state}")
+
+    def change_data_source(source):
+        self.hr_gen.source = source
 
     def draw_heart_rate_frame(self, frame, heart_rate):
         text = f"{heart_rate}"
@@ -56,6 +64,6 @@ class HeartRateSensor(ClientBase):
         if not self.process_enable:
             return
 
-        heart_rate = self.hr_gen.get()
+        heart_rate = self.hr_gen.get_sensor() if not self.hr_gen.source else self.hr_gen.get_simulated()
         self.draw_heart_rate_frame(frame, heart_rate)
         self.send({"rate": heart_rate});
