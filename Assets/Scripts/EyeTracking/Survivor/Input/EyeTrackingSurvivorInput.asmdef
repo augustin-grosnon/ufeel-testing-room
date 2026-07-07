@@ -1,0 +1,16 @@
+{
+    "name": "EyeTrackingSurvivorInput",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1cc73362deea25d7a98c8f2266df3451"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

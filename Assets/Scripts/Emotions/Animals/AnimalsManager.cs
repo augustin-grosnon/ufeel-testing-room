@@ -60,7 +60,7 @@ public class AnimalsManager : MonoBehaviour
         // UFeelDebugHUD.UseDefaultDebugHUD = false; // decoment when merge with main
         // UFeelDebugHUD.Clear();
         // UFeelDebugHUD.Set("Current Emotion", () => {
-        //     var data = UFeelAPI.GetDominantEmotion();
+        //     var data = UFeelAPI.DominantEmotion;
         //     return data.HasValue ? data.Value.ToString() : "Unknown";
         // });
 
@@ -272,7 +272,7 @@ public class AnimalsManager : MonoBehaviour
     {
         if (!isLevelActive || !isTrackingEmotion || currentAnimalGO == null) return;
 
-        EmotionData.EmotionType? dominantEmotion = UFeelAPI.GetDominantEmotion();
+        EmotionData.EmotionType? dominantEmotion = UFeelAPI.DominantEmotion;
         EmotionData.EmotionType targetEmotion = animalEmotions[currentTargetAnimal];
 
         if (dominantEmotion.HasValue && dominantEmotion.Value == targetEmotion)

@@ -20,7 +20,7 @@ public class UFeelDebugHUD : MonoBehaviour
         if (_instance != null)
             return;
 
-        GameObject obj = new GameObject("UFeelDebugHUD");
+        GameObject obj = new("UFeelDebugHUD");
         _instance = obj.AddComponent<UFeelDebugHUD>();
         DontDestroyOnLoad(obj);
 #endif
@@ -78,15 +78,13 @@ public class UFeelDebugHUD : MonoBehaviour
         return text[..left] + suffix;
     }
 
-
-
-    private static (float width, List<string> lines) GetWidthAndLines()
+    private static (float Width, List<string> Lines) GetWidthAndLines()
     {
         List<string> lines = new();
 
         float maxLineWidth = 0f;
 
-        foreach (var kvp in _entries)
+        foreach (KeyValuePair<string, Func<string>> kvp in _entries)
         {
             string label = kvp.Key;
             string value = "Unknown";
@@ -109,25 +107,26 @@ public class UFeelDebugHUD : MonoBehaviour
                 maxLineWidth = size.x;
         }
 
-        float width = maxLineWidth + Padding * 2 + 10;
+        float width = maxLineWidth + (Padding * 2) + 10;
         return (width, lines);
     }
 
-
-    void OnGUI()
+    private void OnGUI()
     {
+#if DEBUG_MODE
         if (!DEBUG_MODE)
             return;
+#endif
 
-        var (width, lines) = GetWidthAndLines();
-        float height = 40 + _entries.Count * LineHeight;
+        (float width, List<string> lines) = GetWidthAndLines();
+        float height = 40 + (_entries.Count * LineHeight);
 
         GUI.Box(new Rect(BaseX, BaseY, width, height), "UFeel Debug HUD");
 
         float currentY = BaseY + 25;
-        foreach (var line in lines)
+        foreach (string line in lines)
         {
-            GUI.Label(new Rect(BaseX + Padding, currentY, width - Padding * 2, LineHeight), line);
+            GUI.Label(new Rect(BaseX + Padding, currentY, width - (Padding * 2), LineHeight), line);
             currentY += LineHeight;
         }
     }

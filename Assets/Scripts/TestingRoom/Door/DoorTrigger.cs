@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DoorTrigger : MonoBehaviour
 {
-    private bool playerInRange = false;
+    private bool playerInRange;
     private DoorController _doorController;
 
     [Tooltip("Name of the scene to load additively.")]

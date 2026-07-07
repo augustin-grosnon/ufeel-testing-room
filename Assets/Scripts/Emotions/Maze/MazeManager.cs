@@ -63,7 +63,7 @@ public class MazeManager : MonoBehaviour
         SetNextTargetEmotion();
         UpdateScoreText();
 
-        if (GameObject.FindWithTag("Player").TryGetComponent<Transform>(out Transform? transform))
+        if (GameObject.FindWithTag("Player").TryGetComponent(out Transform transform))
         {
             _player = transform;
         }
@@ -76,7 +76,7 @@ public class MazeManager : MonoBehaviour
 
         HandleDebugSkipInput();
 
-        EmotionData? currentEmotions = UFeelAPI.GetCurrentEmotionsData();
+        EmotionData? currentEmotions = UFeelAPI.CurrentEmotionsData;
 
         if (currentEmotions is not EmotionData emotions)
             return;

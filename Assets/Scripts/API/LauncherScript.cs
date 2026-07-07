@@ -9,7 +9,7 @@ using UnityEditor;
 
 public class LauncherScript : MonoBehaviour
 {
-    void StopUnity()
+    private static void StopUnity()
     {
         UFeelAPI.StopAPI();
         UFeelAPI.Status();
@@ -21,15 +21,15 @@ public class LauncherScript : MonoBehaviour
 #endif
     }
 
-    async void Start()
+    private async void Start()
     {
         await UFeelAPI.StartAPI();
 
         UFeelAPI.StartEmotionDetection();
         UFeelAPI.Status();
 
-        Debug.Log("Here is the current emotion " + UFeelAPI.GetCurrentEmotionsData());
-        Debug.Log("Here is the dominant emotion " + UFeelAPI.GetDominantEmotion());
+        Debug.Log("Here is the current emotion " + UFeelAPI.CurrentEmotionsData);
+        Debug.Log("Here is the dominant emotion " + UFeelAPI.DominantEmotion);
 
         UFeelAPI.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, () =>
         {
@@ -38,10 +38,10 @@ public class LauncherScript : MonoBehaviour
             UFeelAPI.StartEyeTrackingDetection();
             UFeelAPI.Status();
 
-            Debug.Log("Here is the current eye data " + UFeelAPI.GetCurrentDirections());
-            Debug.Log("Here is the dominant direction " + UFeelAPI.GetDominantDirection());
+            Debug.Log("Here is the current eye data " + UFeelAPI.CurrentDirections);
+            Debug.Log("Here is the dominant direction " + UFeelAPI.DominantDirection);
 
-            UFeelAPI.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
+            UFeelAPI.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingDirection.Right, () =>
             {
                 UFeelAPI.StopEyeTrackingDetection();
 
@@ -60,7 +60,7 @@ public class LauncherScript : MonoBehaviour
 
                 UFeelAPI.TriggerActionOnSpeechOnce("Camion", () =>
                 {
-                    Debug.Log("Here is the current speech " + UFeelAPI.GetCurrentSpeech());
+                    Debug.Log("Here is the current speech " + UFeelAPI.CurrentSpeech);
 
                     // Remove Continuous Emotion
                     UFeelAPI.RemoveRule(key);
@@ -80,7 +80,7 @@ public class LauncherScript : MonoBehaviour
         });
     }
 
-    void Update()
+    private void Update()
     {
         return;
     }

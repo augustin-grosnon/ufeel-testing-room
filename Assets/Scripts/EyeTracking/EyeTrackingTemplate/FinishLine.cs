@@ -13,10 +13,5 @@ public class FinishLine : MonoBehaviour
         if (!playerObject) return;
 
         PauseMenu.GoToLobby();
-
-        // SceneLoader.Instance.UnloadAdditiveScene("TestingRoom_EyeTracking");
-
-        // Scene testingRoomScene = SceneManager.GetSceneByName("TestingRoom");
-        // SceneManager.LoadScene(testingRoomScene.name, LoadSceneMode.Single);
     }
 }

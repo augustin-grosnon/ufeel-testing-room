@@ -1,18 +1,19 @@
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class ButtonController : MonoBehaviour
 {
     private SpriteRenderer sr;
     public Sprite image;
     public Sprite pressedImage;
     public KeyCode keyToPress;
-    
-    void Start()
+
+    private void Start()
     {
         sr = GetComponent<SpriteRenderer>();
     }
 
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(keyToPress))
         {

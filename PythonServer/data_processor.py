@@ -1,4 +1,3 @@
-import sys
 import os
 
 import cv2
@@ -36,7 +35,7 @@ class DataProcessor:
 
     def process(self):
         while self.cap.isOpened():
-            start_time = time.perf_counter()
+            start_time = time.time()
             ret, frame = self.cap.read()
             if not ret:
                 break
@@ -60,7 +59,7 @@ class DataProcessor:
                     break
             self.counter = (self.counter + 1) % self.freq
 
-            elapsed = time.perf_counter() - start_time
+            elapsed = time.time() - start_time
             sleep_time = self.frame_time - elapsed
 
             if sleep_time > 0:

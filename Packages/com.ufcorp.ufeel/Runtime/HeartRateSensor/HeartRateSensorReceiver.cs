@@ -1,11 +1,12 @@
-using UnityEngine;
 using System.Text;
+using UnityEngine;
 
 public class HeartRateSensorReceiver : ClientBase
 {
-    public UFeel.HeartRateSensorData? CurrentHeartRateSensorData { get; private set; } = null;
+    public UFeel.HeartRateSensorData? CurrentHeartRateSensorData { get; private set; }
 
-    public HeartRateSensorReceiver(int port) : base(port)
+    public HeartRateSensorReceiver(int port)
+        : base(port)
     {
         PythonServerController.Instance.EnsureServerRunning();
     }

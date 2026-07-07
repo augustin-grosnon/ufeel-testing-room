@@ -40,22 +40,25 @@ namespace UFeel
             Surprise,
         }
 
-        public readonly EmotionType GetDominantEmotion()
+        public readonly EmotionType DominantEmotion
         {
-            Dictionary<EmotionType, float> emotions = new()
+            get
             {
-                { EmotionType.Anger, angry },
-                { EmotionType.Contempt, contemptuous },
-                { EmotionType.Disgust, disgusted },
-                { EmotionType.Fear, fearful },
-                { EmotionType.Happiness, happy },
-                { EmotionType.Neutral, neutral },
-                { EmotionType.Sadness, sad },
-                { EmotionType.Surprise, surprised },
-            };
+                Dictionary<EmotionType, float> emotions = new()
+                {
+                    { EmotionType.Anger, angry },
+                    { EmotionType.Contempt, contemptuous },
+                    { EmotionType.Disgust, disgusted },
+                    { EmotionType.Fear, fearful },
+                    { EmotionType.Happiness, happy },
+                    { EmotionType.Neutral, neutral },
+                    { EmotionType.Sadness, sad },
+                    { EmotionType.Surprise, surprised },
+                };
 
-            KeyValuePair<EmotionType, float> maxEntry = emotions.OrderByDescending(kv => kv.Value).First();
-            return maxEntry.Value > 0f ? maxEntry.Key : EmotionType.None;
+                KeyValuePair<EmotionType, float> maxEntry = emotions.OrderByDescending(kv => kv.Value).First();
+                return maxEntry.Value > 0f ? maxEntry.Key : EmotionType.None;
+            }
         }
     }
 }

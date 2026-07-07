@@ -27,21 +27,16 @@ public class VoiceWindowController : MonoBehaviour
         isOpen = false;
     }
 
-    public Vector3 GetShutterPositions()
-    {
-        return new Vector3(leftShutter.localPosition.x, rightShutter.localPosition.x, 0);
-    }
+    public Vector3 ShutterPositions => new(leftShutter.localPosition.x, rightShutter.localPosition.x, 0);
 
-    void Update()
+    private void Update()
     {
         Vector3 leftPos = leftShutter.localPosition;
         Vector3 rightPos = rightShutter.localPosition;
 
-
         leftPos.x = Mathf.Lerp(leftPos.x, isOpen ? openLeft : closeLeft, Time.deltaTime * speed);
 
         rightPos.x = Mathf.Lerp(rightPos.x, isOpen ? openRight : closeRight, Time.deltaTime * speed);
-
 
         leftShutter.localPosition = leftPos;
         rightShutter.localPosition = rightPos;

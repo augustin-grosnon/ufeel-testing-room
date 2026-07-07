@@ -1,5 +1,5 @@
-using UnityEngine;
 using UFeel;
+using UnityEngine;
 
 public sealed class EyeTrackingManager : MonoBehaviour
 {
@@ -17,11 +17,11 @@ public sealed class EyeTrackingManager : MonoBehaviour
     [SerializeField] private float gazeHoldThreshold = 0.25f;
     [SerializeField] private float gazeReleaseCooldown = 0.5f;
 
-    private float gazeTimer = 0f;
-    private bool isGazing = false;
+    private float gazeTimer;
+    private bool isGazing;
     private float timeSinceLostGaze = Mathf.Infinity;
 
-    void Awake()
+    private void Awake()
     {
         UFeelAPI.StartEyeTrackingDetection();
 
@@ -33,7 +33,7 @@ public sealed class EyeTrackingManager : MonoBehaviour
         }
     }
 
-    void Update()
+    private void Update()
     {
         if (playerCamera == null || _sphere == null) return;
 
@@ -45,7 +45,7 @@ public sealed class EyeTrackingManager : MonoBehaviour
         MoveSphere(targetPosition);
     }
 
-    void UpdateGazeStatus()
+    private void UpdateGazeStatus()
     {
         if (IsLookingAtSphere())
         {
@@ -55,7 +55,8 @@ public sealed class EyeTrackingManager : MonoBehaviour
             if (!isGazing && gazeTimer >= gazeHoldThreshold)
             {
                 isGazing = true;
-                interactionDisabler?.OnInteract();
+                if (interactionDisabler)
+                    interactionDisabler.OnInteract();
             }
         }
         else
@@ -70,7 +71,7 @@ public sealed class EyeTrackingManager : MonoBehaviour
         }
     }
 
-    bool IsLookingAtSphere()
+    private bool IsLookingAtSphere()
     {
         // Ray ray = new(playerCamera.transform.position, playerCamera.transform.forward);
         // return Physics.Raycast(ray, out RaycastHit hit, 100f) && hit.collider?.gameObject == _sphere.gameObject;
@@ -86,16 +87,16 @@ public sealed class EyeTrackingManager : MonoBehaviour
         return angleToSphere < cameraFOV / 2f;
     }
 
-    Vector3 ComputeTargetPosition()
+    private Vector3 ComputeTargetPosition()
     {
-        EyeTrackingData? currentDirections = UFeelAPI.GetCurrentDirections();
+        EyeTrackingData? currentDirections = UFeelAPI.CurrentDirections;
         if (currentDirections is not EyeTrackingData directions)
             return Vector2.zero;
         Vector2 direction = Vector2.zero;
-        if (directions.left) direction.x -= 1;
-        if (directions.right) direction.x += 1;
-        if (directions.up) direction.y += 1;
-        if (directions.down) direction.y -= 1;
+        if (directions.left) direction.x--;
+        if (directions.right) direction.x++;
+        // if (directions.up) direction.y++;
+        // if (directions.down) direction.y--;
 
         if (direction != Vector2.zero && !directions.center)
         {
@@ -115,16 +116,13 @@ public sealed class EyeTrackingManager : MonoBehaviour
 
         if (currentDistance < sphereDistance)
         {
-            Vector3 newPosition = playerCamera.transform.position + directionFromCamera.normalized * sphereDistance;
-            return newPosition;
+            return playerCamera.transform.position + (directionFromCamera.normalized * sphereDistance);
         }
-        else
-        {
-            return playerCamera.transform.position + directionFromCamera.normalized * currentDistance;
-        }
+
+        return playerCamera.transform.position + (directionFromCamera.normalized * currentDistance);
     }
 
-    void MoveSphere(Vector3 targetPosition)
+    private void MoveSphere(Vector3 targetPosition)
     {
         _sphere.position = Vector3.Lerp(_sphere.position, targetPosition, Time.deltaTime * smoothSpeed);
     }

@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
     
 	int getBPM()
 	{
-	    int currentBPM = UFeelAPI.GetCurrentHeartRate() ?? 0;
+	    int currentBPM = UFeelAPI.CurrentHeartRate ?? 0;
 	    
 	    if (currentBPM == 0)
 		    return currentBPM;

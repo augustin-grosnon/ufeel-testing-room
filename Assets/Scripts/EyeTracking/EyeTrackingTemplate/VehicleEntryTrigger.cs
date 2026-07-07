@@ -59,11 +59,6 @@ public class VehicleEntryTrigger : MonoBehaviour
         Debug.Log("Entered vehicle.");
     }
 
-    public GameObject GetPlayer()
-    {
-        return playerObject;
-    }
-
     public GameObject ExitVehicle()
     {
         hasEntered = false;

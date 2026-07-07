@@ -9,12 +9,12 @@ public class CarouselRotator : MonoBehaviour
     public Transform doorHoldersParent;
 
     [Header("Target Rotation")]
-    public bool rotateToTarget = false;
-    public float targetAngle = 0f;
+    public bool rotateToTarget;
+    public float targetAngle;
     public float rotationSmoothSpeed = 3f;
 
     private Transform[] doorHolders;
-    private float currentAngle = 0f;
+    private float currentAngle;
 
     void Start()
     {
@@ -33,7 +33,7 @@ public class CarouselRotator : MonoBehaviour
         PositionDoors();
     }
 
-    void Update()
+    private void Update()
     {
         if (rotateToTarget)
         {
@@ -48,7 +48,7 @@ public class CarouselRotator : MonoBehaviour
         HandleInput();
     }
 
-    void HandleInput()
+    private void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -56,13 +56,13 @@ public class CarouselRotator : MonoBehaviour
         }
     }
 
-    void PositionDoors()
+    private void PositionDoors()
     {
         float angleStep = 360f / doorHolders.Length;
 
         for (int i = 0; i < doorHolders.Length; i++)
         {
-            float angle = i * angleStep + currentAngle;
+            float angle = (i * angleStep) + currentAngle;
             float angleRad = Mathf.Deg2Rad * angle;
             float x = Mathf.Sin(angleRad) * radius;
             float z = Mathf.Cos(angleRad) * radius;

@@ -9,14 +9,14 @@ public class DoorChainController : MonoBehaviour
     public float maxChainLength = 5.9f;
 
     private float originalChainLength;
-    private bool isExtending = false;
+    private bool isExtending;
 
-    void Start()
+    private void Start()
     {
         originalChainLength = chain.localScale.y;
     }
 
-    void Update()
+    private void Update()
     {
         // if (Input.GetKeyDown(KeyCode.E))
         //     isExtending = true;
@@ -32,7 +32,7 @@ public class DoorChainController : MonoBehaviour
     }
 
     // ? isExtending is still true even when the door is down so it can be used for extended checks
-    void ExtendChainAndMoveDoor()
+    private void ExtendChainAndMoveDoor()
     {
         // TODO: check if door is already extended and ignore this logic if it is
         float delta = chainExtensionSpeed * Time.deltaTime;
