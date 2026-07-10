@@ -23,11 +23,12 @@ logging.basicConfig(
 
 
 class EmotionDetector(ClientBase):
-    def __init__(self, model_path, config_path, device="cpu"):
+    def __init__(self, model_path, config_path, cap, device="cpu"):
         super().__init__("127.0.0.1", 4100)
 
         self.handlers = {
             "emotion_detection": self.toggle_emotion_detection,
+            "process": self.process
         }
 
         self.device = torch.device(device)
@@ -57,13 +58,18 @@ class EmotionDetector(ClientBase):
 
         self.process_enable = False
         self.selected = []
+        self.cap = cap
 
     def toggle_emotion_detection(self, state):
         self.process_enable = state
         status = "enabled" if state else "disabled"
         logging.info(f"Emotion detection {status} {state}")
 
-    def process(self, frame, counter, show_window=True):
+    def process(self, show_window=True):
+        ret, frame = self.cap.read()
+        if not ret:
+            return
+        frame = cv2.flip(frame, 1)
         if not self.process_enable:
             return
 
@@ -77,14 +83,8 @@ class EmotionDetector(ClientBase):
 
         selected = [k for k, v in out["binary"].items() if v]
 
-        if counter == 0:
-            self.selected = selected
-            self.send(out["heads"])
-
-        selected = self.selected
-
-        if show_window:
-            self._draw(frame, out["heads"], selected)
+        self.selected = selected
+        self.send(out["heads"])
 
     def _draw(self, frame, probs, selected):
         y = 30

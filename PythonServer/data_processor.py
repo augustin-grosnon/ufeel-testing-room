@@ -20,6 +20,7 @@ class DataProcessor:
         self.emotion_detector = EmotionDetector(
             model_path=emotion_model_path,
             config_path=emotion_config_path,
+            cap=self.cap
         )
 
         self.eye_tracker = EyeTracker()
@@ -42,7 +43,7 @@ class DataProcessor:
                 break
             frame = cv2.flip(frame, 1)
             #if not self.calibration:
-            self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
+            # self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
             self.eye_tracker.process(frame, self.calibration, show_window=self.show_window)
             self.speech_to_text.process(frame)
             self.heart_rate_sensor.process(frame)
@@ -56,7 +57,7 @@ class DataProcessor:
                     interpolation=cv2.INTER_LINEAR
                 )
                 cv2.imshow("Combined Output", resized_frame)
-                if cv2.waitKey(1) & 0xFF == ord("q"):
+                if cv2.waitKey(1) & 0xFF == ord("p"):
                     break
             self.counter = (self.counter + 1) % self.freq
 

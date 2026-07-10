@@ -76,38 +76,38 @@ public class MazeManager : MonoBehaviour
 
         HandleDebugSkipInput();
 
-        EmotionData? currentEmotions = UFeelAPI.GetCurrentEmotionsData();
+        // EmotionData? currentEmotions = UFeelAPI.GetCurrentEmotionsData();
 
-        if (currentEmotions is not EmotionData emotions)
-            return;
-        string detectedEmotion = DetermineDominantEmotion(emotions);
+        // if (currentEmotions is not EmotionData emotions)
+        //     return;
+        // string detectedEmotion = DetermineDominantEmotion(emotions);
 
-        if (detectedEmotion == _currentTarget)
-        {
-            _matchTimer += Time.deltaTime;
+        // if (detectedEmotion == _currentTarget)
+        // {
+        //     _matchTimer += Time.deltaTime;
 
-            if (_matchTimer < _requiredMatchDuration)
-            {
-                _instructionText.color = new Color(1f, 0.65f, 0f);
-            }
-            else
-            {
-                _instructionText.color = Color.green;
-                _successTriggered = true;
-                _doorController.ToggleDoor();
+        //     if (_matchTimer < _requiredMatchDuration)
+        //     {
+        //         _instructionText.color = new Color(1f, 0.65f, 0f);
+        //     }
+        //     else
+        //     {
+        //         _instructionText.color = Color.green;
+        //         _successTriggered = true;
+        //         _doorController.ToggleDoor();
 
-                _score++;
-                UpdateScoreText();
-                SpawnWatermelon();
+        //         _score++;
+        //         UpdateScoreText();
+        //         SpawnWatermelon();
 
-                StartCoroutine(WaitAfterSuccess());
-            }
-        }
-        else
-        {
-            _matchTimer = 0f;
-            _instructionText.color = Color.red;
-        }
+        //         StartCoroutine(WaitAfterSuccess());
+        //     }
+        // }
+        // else
+        // {
+        //     _matchTimer = 0f;
+        //     _instructionText.color = Color.red;
+        // }
     }
 
     private void HandleDebugSkipInput()

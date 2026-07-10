@@ -148,9 +148,19 @@ namespace UFeel
             Debug.Log("Emotion detection stopped.");
         }
 
-        public static EmotionData? GetCurrentEmotionsData()
+        public static async Task<EmotionData?> GetCurrentEmotionsData()
         {
             if (!_emotionIsRunning) return null;
+
+            _emotionReceiver.HaveBeenReceived = false;
+
+            byte[] bytes = ClientBase.CreateData("process", "true");
+            _emotionReceiver?.SendData(bytes);
+
+            while (!_emotionReceiver.HaveBeenReceived)
+            {
+                await Task.Delay(10);
+            }
 
             return _emotionReceiver.CurrentEmotionsData;
         }

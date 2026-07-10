@@ -4,6 +4,7 @@ using System.Text;
 internal class EmotionReceiver : ClientBase
 {
     public UFeel.EmotionData? CurrentEmotionsData { get; private set; } = null;
+    public bool HaveBeenReceived = false;
 
     public EmotionReceiver(int port) : base(port)
     {
@@ -16,6 +17,7 @@ internal class EmotionReceiver : ClientBase
         try
         {
             CurrentEmotionsData = JsonUtility.FromJson<UFeel.EmotionData>(json);
+            HaveBeenReceived = true;
         }
         catch (System.Exception e)
         {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UFeel;
 using System.Threading.Tasks;
-
+using System.Diagnostics;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -9,75 +9,23 @@ using UnityEditor;
 
 public class LauncherScript : MonoBehaviour
 {
-    void StopUnity()
-    {
-        UFeelAPI.StopAPI();
-        UFeelAPI.Status();
-        Debug.Log("Testing UFEEL Script");
-#if UNITY_EDITOR
-        EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
-
     async void Start()
     {
-        await UFeelAPI.StartAPI();
+        await UFeelAPI.StartAPI().ConfigureAwait(true);
 
         UFeelAPI.StartEmotionDetection();
         UFeelAPI.Status();
 
-        Debug.Log("Here is the current emotion " + UFeelAPI.GetCurrentEmotionsData());
-        Debug.Log("Here is the dominant emotion " + UFeelAPI.GetDominantEmotion());
 
-        UFeelAPI.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, () =>
-        {
-            UFeelAPI.StopEmotionDetection();
-            UFeelAPI.Status();
-            UFeelAPI.StartEyeTrackingDetection();
-            UFeelAPI.Status();
+        Stopwatch stopwatch = Stopwatch.StartNew();
 
-            Debug.Log("Here is the current eye data " + UFeelAPI.GetCurrentDirections());
-            Debug.Log("Here is the dominant direction " + UFeelAPI.GetDominantDirection());
+        EmotionData? currentEmotions = await UFeelAPI.GetCurrentEmotionsData()
+            .ConfigureAwait(true);
 
-            UFeelAPI.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
-            {
-                UFeelAPI.StopEyeTrackingDetection();
+        stopwatch.Stop();
 
-                UFeelAPI.StartSpeechDetection();
-
-                // Continuous Emotion
-                UFeelAPI.StartEmotionDetection();
-                RuleKey key = UFeelAPI.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
-                {
-                    await Task.Delay(1000);
-                    Debug.Log("Emotion Continuellement");
-                });
-                //
-
-                UFeelAPI.Status();
-
-                UFeelAPI.TriggerActionOnSpeechOnce("Camion", () =>
-                {
-                    Debug.Log("Here is the current speech " + UFeelAPI.GetCurrentSpeech());
-
-                    // Remove Continuous Emotion
-                    UFeelAPI.RemoveRule(key);
-                    UFeelAPI.StopEmotionDetection();
-                    //
-
-                    UFeelAPI.StopSpeechDetection();
-                    UFeelAPI.StartHeartRateDetection();
-                    UFeelAPI.Status();
-
-                    UFeelAPI.TriggerActionOnHeartRateOnce(80, () =>
-                    {
-                        StopUnity();
-                    });
-                });
-            });
-        });
+        UnityEngine.Debug.Log($"GetCurrentEmotionsData took {stopwatch.ElapsedMilliseconds} ms");
+        UnityEngine.Debug.Log($"Result {currentEmotions}");
     }
 
     void Update()
