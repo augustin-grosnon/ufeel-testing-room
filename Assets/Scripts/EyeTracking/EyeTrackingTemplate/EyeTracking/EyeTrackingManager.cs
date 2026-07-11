@@ -23,6 +23,9 @@ public sealed class EyeTrackingManager : MonoBehaviour
 
     private void Awake()
     {
+        UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
+
         UFeelAPI.StartEyeTrackingDetection();
 
         if (playerCamera == null)

@@ -55,7 +55,7 @@ public class AnimalsManager : MonoBehaviour
     private bool isTrackingEmotion = false;
     private AnimalType currentTargetAnimal;
 
-    private async void Start()
+    private void Start()
     {
         // UFeelDebugHUD.UseDefaultDebugHUD = false; // decoment when merge with main
         // UFeelDebugHUD.Clear();
@@ -64,8 +64,11 @@ public class AnimalsManager : MonoBehaviour
         //     return data.HasValue ? data.Value.ToString() : "Unknown";
         // });
 
-        await UFeelAPI.StartAPI();
-        await Task.Delay(10000);
+        // await UFeelAPI.StartAPI();
+        // await Task.Delay(10000);
+
+        UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
 
         UFeelAPI.StartEmotionDetection();
         UFeelAPI.Status();

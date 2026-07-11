@@ -37,11 +37,15 @@ public class GameManager : MonoBehaviour
         instance = this;
 		_ECGBeep.volume = 0.25f;
 
-        await UFeelAPI.StartAPI();
-        await Task.Delay(3000);
+        // await UFeelAPI.StartAPI();
+        // await Task.Delay(3000);
+
+        UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
+
         UFeelAPI.StartHeartRateDetection();
         await Task.Delay(3000);
-        
+
         actionCoroutine = StartCoroutine(UpdateBPM());
         actionCoroutine2 = StartCoroutine(PlayECGBeep());
     }

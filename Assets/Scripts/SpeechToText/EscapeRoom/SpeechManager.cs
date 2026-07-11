@@ -60,7 +60,7 @@ public class SpeechManager : MonoBehaviour
     private string lastProcessedSpeech = string.Empty;
     private Coroutine radioLoopCoroutine;
 
-    private async void Start()
+    private void Start()
     {
         UFeelDebugHUD.UseDefaultDebugHUD = false;
         UFeelDebugHUD.Clear();
@@ -73,7 +73,10 @@ public class SpeechManager : MonoBehaviour
         // }
 
         // await UFeelAPI.StartAPI();
-        await Task.Delay(5000);
+        // await Task.Delay(5000);
+
+        UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
 
         UFeelAPI.StartSpeechDetection();
         UFeelAPI.Status();

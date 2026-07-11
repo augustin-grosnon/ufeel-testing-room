@@ -58,6 +58,9 @@ public class MazeManager : MonoBehaviour
 
     private void Start()
     {
+        UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
+
         UFeelAPI.StartEmotionDetection();
 
         SetNextTargetEmotion();

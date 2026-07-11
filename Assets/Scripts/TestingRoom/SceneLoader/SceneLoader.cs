@@ -104,6 +104,7 @@ public class SceneLoader : MonoBehaviour
 
         ApplySceneLighting(loadedScene);
         onLoaded?.Invoke();
+
         isLoading = false;
     }
 
