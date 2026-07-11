@@ -44,6 +44,9 @@ public class LabyrinthManager : MonoBehaviour
 
     private async void Start()
     {
+        UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
+
         GenerateRooms();
 
         foreach (EmotionInfo emotionInfo in EmotionInfo.Emotions)
