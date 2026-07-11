@@ -1,5 +1,5 @@
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UFeel;
 using UnityEngine;
@@ -9,36 +9,77 @@ public class LabyrinthManager : MonoBehaviour
 {
     public static LabyrinthManager Instance { get; private set; }
 
-    private const float MaxEmotionValue = 3f;
+    [Header("References")]
+    public GameObject RoomPrefab;
+    public GameObject PlayerObject;
 
+    [SerializeField]
+    private Text emotionDebugText;
+
+    [Header("Labyrinth Settings")]
+    public static int LabyrinthSize = 5;
+    public float RoomSpacing = 25f;
+
+    private RoomController[,] rooms;
+
+    private int currentX;
+    private int currentZ;
+
+    private const float MaxEmotionValue = 3f;
     private static readonly Dictionary<EmotionData.EmotionType, float> _emotionLevels = new();
+
+    private static WaitForSeconds _waitForSeconds5 = new(5f);
+    private bool playerDidWin;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
+
+    private async void Start()
+    {
+        GenerateRooms();
+
+        foreach (EmotionInfo emotionInfo in EmotionInfo.Emotions)
+        {
+            _emotionLevels[emotionInfo.Emotion] = 0f;
+        }
+
+        await Task.Delay(5000).ConfigureAwait(true);
+
+        UFeelAPI.StartEmotionDetection();
+    }
 
     private void Update()
     {
-        foreach (EmotionData.EmotionType emotion in System.Enum.GetValues(typeof(EmotionData.EmotionType)))
-        {
-            _emotionLevels.TryAdd(emotion, 0f);
-        }
-
         EmotionData.EmotionType? currentEmotion = UFeelAPI.CurrentEmotionsData?.DominantEmotion;
 
         if (currentEmotion == null)
             return;
 
-        foreach (EmotionData.EmotionType emotion in _emotionLevels.Keys.ToArray())
+        foreach (EmotionInfo emotionInfo in EmotionInfo.Emotions)
         {
-            _emotionLevels[emotion] = emotion == currentEmotion
-                ? Mathf.Min(
+            EmotionData.EmotionType emotion = emotionInfo.Emotion;
+
+            _emotionLevels[emotion] =
+                emotion == currentEmotion
+                    ? Mathf.Min(
                         MaxEmotionValue,
                         _emotionLevels[emotion] + Time.deltaTime
                     )
-                : Mathf.Max(
+                    : Mathf.Max(
                         0f,
                         _emotionLevels[emotion] - Time.deltaTime
                     );
         }
 
-        UpdateEmotionDebugText();
+        UpdateEmotionDebugText(currentEmotion);
     }
 
     public static bool IsEmotionCharged(EmotionData.EmotionType emotion)
@@ -54,62 +95,29 @@ public class LabyrinthManager : MonoBehaviour
             : 0f;
     }
 
-    [Header("References")]
-    public GameObject RoomPrefab;
-    private GameObject playerObject;
-
-    [SerializeField]
-    private Text emotionDebugText;
-
-    [Header("Labyrinth Settings")]
-    public int LabyrinthSize = 5;
-    public float RoomSpacing = 25f;
-
-    private RoomController[,] rooms;
-
-    private int currentX;
-    private int currentZ;
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-    }
-
-    private async void Start()
-    {
-        playerObject = GameObject.FindWithTag("Adventurer");
-        if (playerObject)
-        {
-            Debug.Log("I Found the player");
-        }
-        else
-        {
-            Debug.Log("Didn't find any player");
-        }
-        GenerateRooms();
-
-        await Task.Delay(5000).ConfigureAwait(true);
-
-        UFeelAPI.StartEmotionDetection();
-    }
-
-    private void UpdateEmotionDebugText()
+    private void UpdateEmotionDebugText(EmotionData.EmotionType? currentEmotion)
     {
         if (emotionDebugText == null)
             return;
 
+        if (playerDidWin)
+            return;
+
         System.Text.StringBuilder builder = new();
 
-        foreach (var pair in _emotionLevels)
+        foreach (EmotionInfo emotionInfo in EmotionInfo.Emotions)
         {
-            builder.AppendLine(
-                $"{pair.Key}: {pair.Value:F1}/3"
+            EmotionData.EmotionType emotion = emotionInfo.Emotion;
+            float value = GetEmotionLevel(emotion);
+
+            string color = "white";
+
+            if (emotion == currentEmotion)
+            {
+                color = value >= 2.5f ? "green" : "orange";
+            }
+            builder.Append(
+                $"<color={color}>{emotion} ({value:F1})</color>    "
             );
         }
 
@@ -152,9 +160,13 @@ public class LabyrinthManager : MonoBehaviour
     {
         FogCondition condition = room.GetCondition(direction);
 
+        if (playerDidWin)
+        {
+            return;
+        }
+
         if (!condition.CanPass())
         {
-            Debug.Log("Cannot pass");
             return;
         }
 
@@ -226,7 +238,7 @@ public class LabyrinthManager : MonoBehaviour
                 break;
         }
 
-        if (playerObject.TryGetComponent(out FirstPersonController firstPersonController))
+        if (PlayerObject.TryGetComponent(out FirstPersonController firstPersonController))
         {
             firstPersonController.Controller.enabled = false;
             firstPersonController.transform.position = targetPosition;
@@ -238,7 +250,18 @@ public class LabyrinthManager : MonoBehaviour
     {
         if (currentX == LabyrinthSize - 1 && currentZ == LabyrinthSize - 1)
         {
-            Debug.Log("YOU ESCAPED !");
+            playerDidWin = true;
+
+            emotionDebugText.text = "<color=green>You won! Congratulations</color>";
+
+            StartCoroutine(VictoryRoutine());
         }
+    }
+
+    private static IEnumerator VictoryRoutine()
+    {
+        yield return _waitForSeconds5;
+
+        PauseMenu.GoToLobby();
     }
 }

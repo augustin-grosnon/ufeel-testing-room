@@ -1,5 +1,4 @@
 using TMPro;
-using UFeel;
 using UnityEngine;
 
 public class RoomController : MonoBehaviour
@@ -17,49 +16,12 @@ public class RoomController : MonoBehaviour
     public TMP_Text EastText;
     public TMP_Text WestText;
 
-    private readonly struct EmotionInfo
-    {
-        public EmotionData.EmotionType Emotion { get; }
-        public Color Color { get; }
-
-        public EmotionInfo(EmotionData.EmotionType emotion, Color color)
-        {
-            Emotion = emotion;
-            Color = color;
-        }
-    }
-
-    private static readonly EmotionInfo[] Emotions =
-    {
-        new(
-            EmotionData.EmotionType.Happiness,
-            new Color(1f, 1f, 0f, 0.4f)
-        ),
-        new(
-            EmotionData.EmotionType.Surprise,
-            new Color(1f, 0.5f, 0f, 0.4f)
-        ),
-        new(
-            EmotionData.EmotionType.Neutral,
-            new Color(0.5f, 0.5f, 0.5f, 0.4f)
-        ),
-        new(
-            EmotionData.EmotionType.Fear,
-            new Color(0f, 0f, 1f, 0.4f)
-        )
-    };
-
-    private static EmotionInfo GetRandomEmotion()
-    {
-        return Emotions[Random.Range(0, Emotions.Length)];
-    }
-
     public void Setup(int x, int y)
     {
-        EmotionInfo nordData = GetRandomEmotion();
-        EmotionInfo southData = GetRandomEmotion();
-        EmotionInfo eastData = GetRandomEmotion();
-        EmotionInfo westData = GetRandomEmotion();
+        EmotionInfo nordData = EmotionInfo.GetRandomEmotion();
+        EmotionInfo southData = EmotionInfo.GetRandomEmotion();
+        EmotionInfo eastData = EmotionInfo.GetRandomEmotion();
+        EmotionInfo westData = EmotionInfo.GetRandomEmotion();
 
         Data = new RoomData
         {
@@ -91,7 +53,7 @@ public class RoomController : MonoBehaviour
             WestFog.SetActive(false);
         }
 
-        if (Data.X == 4 && EastFog != null)
+        if (Data.X == LabyrinthManager.LabyrinthSize - 1 && EastFog != null)
         {
             EastFog.SetActive(false);
         }
@@ -101,7 +63,7 @@ public class RoomController : MonoBehaviour
             SouthFog.SetActive(false);
         }
 
-        if (Data.Z == 4 && NorthFog != null)
+        if (Data.Z == LabyrinthManager.LabyrinthSize - 1 && NorthFog != null)
         {
             NorthFog.SetActive(false);
         }

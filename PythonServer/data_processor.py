@@ -55,7 +55,7 @@ class DataProcessor:
                     interpolation=cv2.INTER_LINEAR
                 )
                 cv2.imshow("Combined Output", resized_frame)
-                if cv2.waitKey(1) & 0xFF == ord("q"):
+                if cv2.waitKey(1) & 0xFF == ord("p"):
                     break
             self.counter = (self.counter + 1) % self.freq
 

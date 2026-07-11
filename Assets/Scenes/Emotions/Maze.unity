@@ -151,11 +151,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 943250205}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 20}
-  m_SizeDelta: {x: 1000, y: 200}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 1200, y: 80}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &708054045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,13 +183,14 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Text
+  m_Text: <color=white>Happiness (0.0)</color>    <color=white>Surprise (0.0)</color>   
+    <color=white>Neutral (0.0)</color>    <color=white>Fear (0.0)</color>
 --- !u!222 &708054046
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -750,8 +751,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RoomPrefab: {fileID: 6843624912501542543, guid: 63afb187dda6b6e71a784e1b202c6709, type: 3}
+  PlayerObject: {fileID: 1489305189}
   emotionDebugText: {fileID: 708054045}
-  LabyrinthSize: 5
+  LabyrinthSize: 3
   RoomSpacing: 25
 --- !u!4 &2128694441
 Transform:
