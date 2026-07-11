@@ -1,21 +1,71 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using UFeel;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
+using UnityEngine.UI;
 
 public class LabyrinthManager : MonoBehaviour
 {
     public static LabyrinthManager Instance { get; private set; }
 
+    private const float MaxEmotionValue = 3f;
+
+    private static readonly Dictionary<EmotionData.EmotionType, float> _emotionLevels = new();
+
+    private void Update()
+    {
+        foreach (EmotionData.EmotionType emotion in System.Enum.GetValues(typeof(EmotionData.EmotionType)))
+        {
+            _emotionLevels.TryAdd(emotion, 0f);
+        }
+
+        EmotionData.EmotionType? currentEmotion = UFeelAPI.CurrentEmotionsData?.DominantEmotion;
+
+        if (currentEmotion == null)
+            return;
+
+        foreach (EmotionData.EmotionType emotion in _emotionLevels.Keys.ToArray())
+        {
+            _emotionLevels[emotion] = emotion == currentEmotion
+                ? Mathf.Min(
+                        MaxEmotionValue,
+                        _emotionLevels[emotion] + Time.deltaTime
+                    )
+                : Mathf.Max(
+                        0f,
+                        _emotionLevels[emotion] - Time.deltaTime
+                    );
+        }
+
+        UpdateEmotionDebugText();
+    }
+
+    public static bool IsEmotionCharged(EmotionData.EmotionType emotion)
+    {
+        return _emotionLevels.TryGetValue(emotion, out float value)
+            && value >= MaxEmotionValue;
+    }
+
+    public static float GetEmotionLevel(EmotionData.EmotionType emotion)
+    {
+        return _emotionLevels.TryGetValue(emotion, out float value)
+            ? value
+            : 0f;
+    }
+
     [Header("References")]
     public GameObject RoomPrefab;
     private GameObject playerObject;
+
+    [SerializeField]
+    private Text emotionDebugText;
 
     [Header("Labyrinth Settings")]
     public int LabyrinthSize = 5;
     public float RoomSpacing = 25f;
 
     private RoomController[,] rooms;
-
-    private RoomController currentRoom;
 
     private int currentX;
     private int currentZ;
@@ -31,7 +81,7 @@ public class LabyrinthManager : MonoBehaviour
         Instance = this;
     }
 
-    private void Start()
+    private async void Start()
     {
         playerObject = GameObject.FindWithTag("Adventurer");
         if (playerObject)
@@ -43,6 +93,27 @@ public class LabyrinthManager : MonoBehaviour
             Debug.Log("Didn't find any player");
         }
         GenerateRooms();
+
+        await Task.Delay(5000).ConfigureAwait(true);
+
+        UFeelAPI.StartEmotionDetection();
+    }
+
+    private void UpdateEmotionDebugText()
+    {
+        if (emotionDebugText == null)
+            return;
+
+        System.Text.StringBuilder builder = new();
+
+        foreach (var pair in _emotionLevels)
+        {
+            builder.AppendLine(
+                $"{pair.Key}: {pair.Value:F1}/3"
+            );
+        }
+
+        emotionDebugText.text = builder.ToString();
     }
 
     private void GenerateRooms()
@@ -79,6 +150,14 @@ public class LabyrinthManager : MonoBehaviour
 
     public void TryMove(RoomController room, Direction direction)
     {
+        FogCondition condition = room.GetCondition(direction);
+
+        if (!condition.CanPass())
+        {
+            Debug.Log("Cannot pass");
+            return;
+        }
+
         int targetX = room.Data.X;
         int targetZ = room.Data.Z;
 
@@ -113,8 +192,6 @@ public class LabyrinthManager : MonoBehaviour
         currentX = targetX;
         currentZ = targetZ;
 
-        currentRoom = rooms[currentX, currentZ];
-
         TeleportPlayer(currentX, currentZ, direction);
 
         Debug.Log($"Moved to ({currentX},{currentZ})");
@@ -124,27 +201,6 @@ public class LabyrinthManager : MonoBehaviour
 
     private void TeleportPlayer(int x, int z, Direction cameFrom)
     {
-        // Vector3 targetPosition = default;
-
-        // switch (cameFrom)
-        // {
-        //     case Direction.North:
-        //         targetPosition.z = 10f;
-        //         break;
-
-        //     case Direction.South:
-        //         targetPosition.z = -10f;
-        //         break;
-
-        //     case Direction.East:
-        //         targetPosition.x = 10f;
-        //         break;
-
-        //     case Direction.West:
-        //         targetPosition.x = -10f;
-        //         break;
-        // }
-
         Vector3 targetPosition = new(
             x * RoomSpacing,
             1f,
