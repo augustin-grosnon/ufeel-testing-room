@@ -2,8 +2,8 @@
     "name": "EmotionSceneDefs",
     "rootNamespace": "",
     "references": [
-        "Door",
-        "UFeel"
+        "UFeel",
+        "Utils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

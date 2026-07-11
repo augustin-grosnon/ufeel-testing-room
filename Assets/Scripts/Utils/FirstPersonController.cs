@@ -15,11 +15,11 @@ public class FirstPersonController : MonoBehaviour
     [Header("Gravity")]
     public float gravity = -9.81f;
     private float verticalVelocity;
-    private CharacterController controller;
+    public CharacterController Controller;
 
     private async void Start()
     {
-        controller = gameObject.AddComponent<CharacterController>();
+        Controller = gameObject.AddComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -67,7 +67,7 @@ public class FirstPersonController : MonoBehaviour
 
         move.y = verticalVelocity;
 
-        controller.Move(moveSpeed * Time.deltaTime * move);
+        Controller.Move(moveSpeed * Time.deltaTime * move);
     }
 
     private void HandleMouseLook()
