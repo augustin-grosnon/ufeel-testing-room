@@ -28,7 +28,7 @@ class HeartRateGenerator:
         return self.value
     
     def get_sensor(self):
-        return requests.get("http://localhost:8000").json()["bpm"]
+        return requests.get("http://heartbeatufeel.local").json()["bpm"]
 
 class HeartRateSensor(ClientBase):
     def __init__(self):
