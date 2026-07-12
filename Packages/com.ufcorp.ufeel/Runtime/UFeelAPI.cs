@@ -1,7 +1,7 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace UFeel
 {
@@ -21,10 +21,16 @@ namespace UFeel
         private static readonly HeartRateSensorReceiver _heartRateSensorReceiver = new(3800);
         private static bool _heartRateSensorIsRunning;
 
-        private static int _nextRuleId = 0;
+        private static int _nextRuleId;
         private static readonly List<Rule> _rules = new();
         private static readonly List<Rule> _rulesToAdd = new();
         private static readonly HashSet<int> _rulesToRemove = new();
+
+        private static bool pendingEmotionReceiverStartup;
+        private static bool pendingEyeTrackingReceiverStartup;
+        private static bool pendingSpeechToTextReceiverStartup;
+        private static bool pendingHeartRateReceiverStartup;
+        // ! could be cleaner but this will be removed when switching to using a compiled library anyway
 
         // TODO: Remove this when removing the server
         public static async Task StartAPI()
@@ -40,14 +46,17 @@ namespace UFeel
             GameObject obj = new("UFeelAPI");
             _instance = obj.AddComponent<UFeelAPI>();
 
-            await Task.Delay(5000);
+            await Task.Delay(millisecondsDelay: 5000);
             Debug.Log("Hello UFEEL User ");
+
             DontDestroyOnLoad(obj);
         }
 
 // * ------------------------ Rules logic ------------------------ * //
         private void Update()
         {
+            SendPendingActivationCommands();
+
             foreach (Rule rule in _rules)
             {
                 if (!rule.Condition())
@@ -80,6 +89,33 @@ namespace UFeel
             RefreshGUI();
         }
 
+        private static void SendPendingActivationCommands()
+        {
+            if (pendingEmotionReceiverStartup && _emotionReceiver.ClientConnected)
+            {
+                StartEmotionDetection();
+                pendingEmotionReceiverStartup = false;
+            }
+
+            if (pendingEyeTrackingReceiverStartup && _eyeTrackingReceiver.ClientConnected)
+            {
+                StartEyeTrackingDetection();
+                pendingEyeTrackingReceiverStartup = false;
+            }
+
+            if (pendingHeartRateReceiverStartup && _heartRateSensorReceiver.ClientConnected)
+            {
+                StartHeartRateDetection();
+                pendingHeartRateReceiverStartup = false;
+            }
+
+            if (pendingSpeechToTextReceiverStartup && _speechToTextReceiver.ClientConnected)
+            {
+                StartSpeechDetection();
+                pendingSpeechToTextReceiverStartup = false;
+            }
+        }
+
         private static void RefreshGUI()
         {
             if (!UFeelDebugHUD.DEBUG_MODE || !UFeelDebugHUD.UseDefaultDebugHUD)
@@ -100,7 +136,7 @@ namespace UFeel
 
         private static RuleKey AddRule(Func<bool> condition, Action action, bool isUnique = false)
         {
-            var rule = new Rule(
+            Rule rule = new(
                 id: _nextRuleId++,
                 condition: condition,
                 action: action,
@@ -135,6 +171,12 @@ namespace UFeel
 
         public static void StartEmotionDetection()
         {
+            if (!_emotionReceiver.ClientConnected)
+            {
+                pendingEmotionReceiverStartup = true;
+                return;
+            }
+
             ToggleEmotionDetection(true);
             _emotionIsRunning = true;
             Debug.Log("Emotion detection started.");
@@ -148,19 +190,25 @@ namespace UFeel
             Debug.Log("Emotion detection stopped.");
         }
 
-        public static EmotionData? GetCurrentEmotionsData()
+        public static EmotionData? CurrentEmotionsData
         {
-            if (!_emotionIsRunning) return null;
+            get
+            {
+                if (!_emotionIsRunning) return null;
 
-            return _emotionReceiver.CurrentEmotionsData;
+                return _emotionReceiver.CurrentEmotionsData;
+            }
         }
 
-        public static EmotionData.EmotionType? GetDominantEmotion()
+        public static EmotionData.EmotionType? DominantEmotion
         {
-            if (!_emotionIsRunning) return null;
+            get
+            {
+                if (!_emotionIsRunning) return null;
 
-            EmotionData? currentEmotions = _emotionReceiver.CurrentEmotionsData;
-            return currentEmotions?.GetDominantEmotion();
+                EmotionData? currentEmotions = _emotionReceiver.CurrentEmotionsData;
+                return currentEmotions?.DominantEmotion;
+            }
         }
 
         public static RuleKey TriggerActionOnEmotion(EmotionData.EmotionType emotion, Action action, bool isUnique)
@@ -169,7 +217,7 @@ namespace UFeel
                 throw new ArgumentNullException(nameof(action));
 
             return AddRule(
-                condition: () => GetDominantEmotion() == emotion,
+                condition: () => DominantEmotion == emotion,
                 action: action,
                 isUnique: isUnique
             );
@@ -192,8 +240,14 @@ namespace UFeel
             _eyeTrackingReceiver?.SendData(bytes);
         }
 
-        public static void StartEyeTrackingDetection()
+        public static void StartEyeTrackingDetection() // ? should we check if it is already running to avoid sending a start command to an already started module? or it doesn't matter
         {
+            if (!_eyeTrackingReceiver.ClientConnected)
+            {
+                pendingEyeTrackingReceiverStartup = true;
+                return;
+            }
+
             ToggleEyeTrackingDetection(true);
             _eyeTrackingIsRunning = true;
             Debug.Log("Eye Tracking detection started.");
@@ -207,39 +261,55 @@ namespace UFeel
             Debug.Log("Eye Tracking detection stopped.");
         }
 
-        public static EyeTrackingData? GetCurrentDirections()
+        public static EyeTrackingData? CurrentDirections
         {
-            if (!_eyeTrackingIsRunning) return null;
+            get
+            {
+                if (!_eyeTrackingIsRunning) return null;
 
-            return _eyeTrackingReceiver.CurrentEyeTrackingData;
+                return _eyeTrackingReceiver.CurrentEyeTrackingData;
+            }
         }
 
-        public static EyeTrackingData.EyeTrackingType? GetDominantDirection()
+        public static EyeTrackingData.EyeTrackingDirection? DominantDirection
         {
-            if (!_eyeTrackingIsRunning) return null;
+            get
+            {
+                if (!_eyeTrackingIsRunning) return null;
 
-            EyeTrackingData? currentEyeTracking = _eyeTrackingReceiver.CurrentEyeTrackingData;
-            return currentEyeTracking?.GetEyeTrackingType();
+                EyeTrackingData? currentEyeTracking = _eyeTrackingReceiver.CurrentEyeTrackingData;
+                return currentEyeTracking?.CurrentEyeTrackingDirection;
+            }
         }
 
-        public static RuleKey TriggerActionOnDirection(EyeTrackingData.EyeTrackingType direction, Action action, bool isUnique)
+        public static bool? BlinkStatus
+        {
+            get
+            {
+                if (!_eyeTrackingIsRunning) return null;
+
+                return _eyeTrackingReceiver.CurrentEyeTrackingData?.blink;
+            }
+        }
+
+        public static RuleKey TriggerActionOnDirection(EyeTrackingData.EyeTrackingDirection direction, Action action, bool isUnique)
         {
             if (action == null)
                 throw new ArgumentNullException(nameof(action));
 
             return AddRule(
-                condition: () => GetDominantDirection() == direction,
+                condition: () => DominantDirection == direction,
                 action: action,
                 isUnique: isUnique
             );
         }
 
-        public static RuleKey TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType direction, Action action)
+        public static RuleKey TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingDirection direction, Action action)
         {
             return TriggerActionOnDirection(direction, action, true);
         }
 
-        public static RuleKey TriggerActionOnDirectionContinuous(EyeTrackingData.EyeTrackingType direction, Action action)
+        public static RuleKey TriggerActionOnDirectionContinuous(EyeTrackingData.EyeTrackingDirection direction, Action action)
         {
             return TriggerActionOnDirection(direction, action, false);
         }
@@ -253,6 +323,12 @@ namespace UFeel
 
         public static void StartSpeechDetection()
         {
+            if (!_speechToTextReceiver.ClientConnected)
+            {
+                pendingSpeechToTextReceiverStartup = true;
+                return;
+            }
+
             ToggleSpeechDetection(true);
             _speechToTextIsRunning = true;
             Debug.Log("Speech detection started.");
@@ -266,11 +342,14 @@ namespace UFeel
             Debug.Log("Speech detection stopped.");
         }
 
-        public static string? GetCurrentSpeech()
+        public static string CurrentSpeech
         {
-            if (!_speechToTextIsRunning) return null;
+            get
+            {
+                if (!_speechToTextIsRunning) return null;
 
-            return _speechToTextReceiver.CurrentSpeechToTextData?.text;
+                return _speechToTextReceiver.CurrentSpeechToTextData?.text;
+            }
         }
 
         public static RuleKey TriggerActionOnSpeech(string text, Action action, bool isUnique)
@@ -312,6 +391,12 @@ namespace UFeel
 
         public static void StartHeartRateDetection()
         {
+            if (!_heartRateSensorReceiver.ClientConnected)
+            {
+                pendingHeartRateReceiverStartup = true;
+                return;
+            }
+
             ToggleHeartRateDetection(true);
             _heartRateSensorIsRunning = true;
             Debug.Log("Heart Rate detection started.");
@@ -325,12 +410,15 @@ namespace UFeel
             Debug.Log("Heart Rate detection stopped.");
         }
 
-        public static int? GetCurrentHeartRate()
+        public static int? CurrentHeartRate
         {
-            if (!_heartRateSensorIsRunning) return 0;
+            get
+            {
+                if (!_heartRateSensorIsRunning) return 0;
 
-            HeartRateSensorData? currentHeartRateSensorData = _heartRateSensorReceiver.CurrentHeartRateSensorData;
-            return currentHeartRateSensorData?.rate;
+                HeartRateSensorData? currentHeartRateSensorData = _heartRateSensorReceiver.CurrentHeartRateSensorData;
+                return currentHeartRateSensorData?.rate;
+            }
         }
 
         public static RuleKey TriggerActionOnHeartRate(int rate, Action action, bool isUnique, int tolerance = 0)

@@ -2,21 +2,96 @@
 
 > [<- Testing Room](README.md)
 
-## Base Scene (TestingRoom)
+## Global Controls
 
-- **Role**: Hub for scene transitions.
-- Carousel for selecting scenes, doors using `DoorController`.
-- Lighting disabled intentionally.
+These shortcuts are available in all scenes:
 
-## Eye Tracking Scene (TestingRoom_EyeTracking)
+| Key                           | Action                                     |
+| ----------------------------- | ------------------------------------------ |
+| **P**                         | Permanently stop the Python camera process |
+| **,** (M on QWERTY keyboards) | Open the debug/menu interface              |
 
-- **Role**: Player steers a vehicle using gaze direction.
-- Left/right gaze -> steering; up/down speed control (coming soon).
-- Key script: `VehicleController`
+---
 
-## Emotion Scene (TestingRoom_EmotionDetection)
+# Base Scene (TestingRoom)
 
-- **Role**: Emotion recognition controls door access.
-- Key script: `EmotionGameManager`
+## Role
 
-**See also:** [Setup Instructions](SetupInstructions.md) - [Testing & Debugging](TestingTips.md)
+Main hub used to access all available experiences.
+
+## Features
+
+* First-person controller.
+* Mouse controls camera rotation.
+* **W**: Move forward.
+* **S**: Move backward.
+* Scene selection through interactive doors.
+* Lighting is intentionally disabled.
+
+All other scenes can be accessed by entering the corresponding door.
+
+---
+
+# Emotion-Based Experiences
+
+## Maze
+
+**Role:** Emotion-driven labyrinth experience.
+
+**Main Script:** `MazeManager`
+
+**See also:** [Maze README](../Emotions/Maze/README.md)
+
+---
+
+## Animals
+
+**Role:** Emotion-based memory game.
+
+**Main Script:** `AnimalsManager`
+
+**See also:** [Animals README](../Emotions/Animals/README.md)
+
+---
+
+# Eye Tracking Experiences
+
+## Car
+
+**Role:** Vehicle control using eye tracking.
+
+**Main Script:** `VehicleController`
+
+**See also:** [Eye Tracking README](../EyeTracking/Car/README.md)
+
+---
+
+## Survivor
+
+**Role:** Eye-tracking survival experience.
+
+**Status:** Planned for future development.
+
+---
+
+# Speech-To-Text Experiences
+
+## EscapeRoom
+
+**Role:** Voice-controlled escape room.
+
+**Main Script:** `SpeechManager`
+
+**See also:** [EscapeRoom README](../SpeechToText/EscapeRoom/README.md)
+
+---
+
+# Heart Rate Experiences
+
+## RhythmGame
+
+**Role:** Heart-rate-adaptive rhythm game.
+
+**Main Script:** `GameManager`
+
+**See also:** [RhythmGame README](../HeartRateSensor/RhythmGame/README.md)

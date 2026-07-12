@@ -148,6 +148,8 @@ public abstract class ClientBase
         }
     }
 
+    public bool ClientConnected => _stream != null && _client != null && _client.Connected;
+
     protected abstract void ProcessData(byte[] data);
     public abstract void ResetData();
 

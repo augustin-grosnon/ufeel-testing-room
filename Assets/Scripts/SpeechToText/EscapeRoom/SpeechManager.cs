@@ -60,11 +60,11 @@ public class SpeechManager : MonoBehaviour
     private string lastProcessedSpeech = string.Empty;
     private Coroutine radioLoopCoroutine;
 
-    private async void Start()
+    private void Start()
     {
-        UFeelDebugHUD.UseDefaultDebugHUD = false;
-        UFeelDebugHUD.Clear();
-        UFeelDebugHUD.Set("Current Speech", () => UFeelAPI.GetCurrentSpeech());
+        // UFeelDebugHUD.UseDefaultDebugHUD = false;
+        // UFeelDebugHUD.Clear();
+        // UFeelDebugHUD.Set("Current Speech", () => UFeelAPI.CurrentSpeech);
 
         // GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         // if (playerObject != null)
@@ -73,7 +73,10 @@ public class SpeechManager : MonoBehaviour
         // }
 
         // await UFeelAPI.StartAPI();
-        await Task.Delay(5000);
+        // await Task.Delay(5000);
+
+        UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
 
         UFeelAPI.StartSpeechDetection();
         UFeelAPI.Status();
@@ -181,7 +184,7 @@ public class SpeechManager : MonoBehaviour
 
     private void Update()
     {
-        string currentSpeech = UFeelAPI.GetCurrentSpeech();
+        string currentSpeech = UFeelAPI.CurrentSpeech;
 
         if (string.IsNullOrEmpty(currentSpeech) || currentSpeech == lastProcessedSpeech) return;
         bool matchFound = false;
@@ -280,13 +283,13 @@ public class SpeechManager : MonoBehaviour
         activeShowHintCoroutine = StartCoroutine(ShowHint(command));
     }
 
-    private IEnumerator FadeInText(GameObject textObject, float duration)
+    private static IEnumerator FadeInText(GameObject textObject, float duration)
     {
         if (textObject == null) yield break;
 
         yield return _waitForSeconds3;
 
-        if (!textObject.TryGetComponent<TextMeshPro>(out TextMeshPro? tmp)) yield break;
+        if (!textObject.TryGetComponent(out TextMeshPro tmp)) yield break;
 
         for (float t = 0; t < duration; t += Time.deltaTime)
         {
@@ -358,10 +361,10 @@ public class SpeechManager : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        UFeelDebugHUD.UseDefaultDebugHUD = true;
-    }
+    // private void OnDestroy()
+    // {
+    //     UFeelDebugHUD.UseDefaultDebugHUD = true;
+    // }
 
     // Levenshtein Algo
     private static bool IsSpeechMatch(string currentText, string targetText, float thresholdPercent = 0.75f)
@@ -377,8 +380,13 @@ public class SpeechManager : MonoBehaviour
         int m = cleanTarget.Length;
         int[,] d = new int[n + 1, m + 1];
 
-        for (int i = 0; i <= n; d[i, 0] = i++) { }
-        for (int j = 0; j <= m; d[0, j] = j++) { }
+        for (int i = 0; i <= n; d[i, 0] = i++)
+        {
+        }
+
+        for (int j = 0; j <= m; d[0, j] = j++)
+        {
+        }
 
         for (int i = 1; i <= n; i++)
         {

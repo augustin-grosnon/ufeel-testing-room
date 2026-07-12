@@ -112,7 +112,7 @@ public class CarouselBuilder : EditorWindow
                 doorIndex = identifier.doorID,
                 doorName = identifier.doorName,
                 targetSceneName = identifier.targetSceneName,
-                doorColor = references.controller.GetDoorColor()
+                doorColor = references.controller.DoorColor
             });
         }
 
@@ -156,7 +156,7 @@ public class CarouselBuilder : EditorWindow
             {
                 idComp.doorName = special.doorName;
 
-                if (holder.TryGetComponent<DoorReferences>(out DoorReferences? references))
+                if (holder.TryGetComponent(out DoorReferences references))
                 {
                     idComp.targetSceneName = special.targetSceneName; // TODO: integrate enum (DoorIdentifierName), avoid duplicata
                     references.trigger.targetSceneName = special.targetSceneName; // TODO: remove

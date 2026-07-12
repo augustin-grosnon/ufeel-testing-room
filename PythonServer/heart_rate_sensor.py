@@ -1,14 +1,13 @@
 import cv2
-import json
 from client_base import ClientBase
 import logging
 import requests
 
 logging.basicConfig(
     filename="client_base.log",
-    filemode="a",  # Append mode
+    filemode="a",
     format="%(asctime)s - %(levelname)s - %(message)s",
-    level=logging.DEBUG  # Use DEBUG level to log everything
+    level=logging.DEBUG
 )
 
 import random
@@ -19,14 +18,14 @@ class HeartRateGenerator:
         self.min_hr = min_hr
         self.max_hr = max_hr
         self.max_step = max_step
-        self.source = 0 # source: 0 = external sensor, 1 = simulated
+        self.source = 1 # source: 0 = external sensor, 1 = simulated
 
     def get_simulated(self):
         step = random.randint(-self.max_step, self.max_step)
         self.value += step
         self.value = max(self.min_hr, min(self.max_hr, self.value))
         return self.value
-    
+
     def get_sensor(self):
         return requests.get("http://heartbeatufeel.local").json()["bpm"]
 
@@ -37,7 +36,7 @@ class HeartRateSensor(ClientBase):
             "heart_rate_detection": self.toggle_heart_rate_detection,
         }
 
-        self.process_enable = True
+        self.process_enable = False
         self.hr_gen = HeartRateGenerator()
 
     def toggle_heart_rate_detection(self, state):
@@ -45,7 +44,7 @@ class HeartRateSensor(ClientBase):
         status = "enabled" if state else "disabled"
         logging.info(f"Heart Rate detection {status} {state}")
 
-    def change_data_source(source):
+    def change_data_source(self, source):
         self.hr_gen.source = source
 
     def draw_heart_rate_frame(self, frame, heart_rate):

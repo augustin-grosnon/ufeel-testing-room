@@ -35,21 +35,24 @@ public class DoorController : MonoBehaviour
         }
     }
 
-    public Color GetDoorColor()
+    public Color DoorColor
     {
-        if (!_door.TryGetComponent(out MeshRenderer meshRenderer))
+        get
         {
-            Debug.LogWarning("MeshRenderer not found on Door GameObject!");
-            return Color.white;
-        }
+            if (!_door.TryGetComponent(out MeshRenderer meshRenderer))
+            {
+                Debug.LogWarning("MeshRenderer not found on Door GameObject!");
+                return Color.white;
+            }
 
-        if (meshRenderer.sharedMaterial == null)
-        {
-            Debug.LogWarning("Door material is null!");
-            return Color.white;
-        }
+            if (meshRenderer.sharedMaterial == null)
+            {
+                Debug.LogWarning("Door material is null!");
+                return Color.white;
+            }
 
-        return meshRenderer.sharedMaterial.color;
+            return meshRenderer.sharedMaterial.color;
+        }
     }
 }
 

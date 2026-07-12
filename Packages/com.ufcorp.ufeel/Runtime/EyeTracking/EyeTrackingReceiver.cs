@@ -1,11 +1,12 @@
-using UnityEngine;
 using System.Text;
+using UnityEngine;
 
 internal class EyeTrackingReceiver : ClientBase
 {
-    public UFeel.EyeTrackingData? CurrentEyeTrackingData { get; private set; } = null;
+    public UFeel.EyeTrackingData? CurrentEyeTrackingData { get; private set; }
 
-    public EyeTrackingReceiver(int port) : base(port)
+    public EyeTrackingReceiver(int port)
+        : base(port)
     {
         PythonServerController.Instance.EnsureServerRunning();
     }
@@ -19,7 +20,7 @@ internal class EyeTrackingReceiver : ClientBase
         }
         catch (System.Exception e)
         {
-            Debug.Log("Error parsing eye direction JSON: " + e.Message);
+            Debug.Log("Error parsing eye direction JSON: " + e);
         }
     }
 

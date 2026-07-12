@@ -9,6 +9,7 @@ TagManager:
   - Activator
   - PerturbatorDetector
   - Environment
+  - Adventurer
   layers:
   - Default
   - TransparentFX

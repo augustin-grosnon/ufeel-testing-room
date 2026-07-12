@@ -48,11 +48,11 @@ Emotion detection must be started before reading data or registering rules.
 ### Reading Emotion Data
 
 ```csharp
-EmotionData? emotions = UFeelAPI.GetCurrentEmotionsData();
-EmotionData.EmotionType? dominant = UFeelAPI.GetDominantEmotion();
+EmotionData? emotions = UFeelAPI.CurrentEmotionsData;
+EmotionData.EmotionType? dominant = UFeelAPI.DominantEmotion;
 ```
 
-Returns `null` if the system is not running. `GetDominantEmotion()` returns the highest-confidence emotion.
+Returns `null` if the system is not running. `DominantEmotion` returns the highest-confidence emotion.
 
 ### Triggering Rules from Emotions
 
@@ -92,15 +92,15 @@ UFeelAPI.StopEyeTrackingDetection();
 ### Reading Gaze Direction
 
 ```csharp
-EyeTrackingData? data = UFeelAPI.GetCurrentDirections();
-EyeTrackingData.EyeTrackingType? direction = UFeelAPI.GetDominantDirection();
+EyeTrackingData? data = UFeelAPI.CurrentDirections;
+EyeTrackingData.EyeTrackingDirection? direction = UFeelAPI.DominantDirection;
 ```
 
 ### Triggering Gameplay from Gaze
 
 ```csharp
 UFeelAPI.TriggerActionOnDirectionOnce(
-    EyeTrackingData.EyeTrackingType.Left,
+    EyeTrackingData.EyeTrackingDirection.Left,
     () => OpenLeftDoor()
 );
 ```
@@ -109,7 +109,7 @@ or continuously:
 
 ```csharp
 UFeelAPI.TriggerActionOnDirectionContinuous(
-    EyeTrackingData.EyeTrackingType.Up,
+    EyeTrackingData.EyeTrackingDirection.Up,
     () => AimUpwards()
 );
 ```
@@ -126,7 +126,7 @@ UFeelAPI.StopSpeechDetection();
 ### Reading Current Speech
 
 ```csharp
-string spokenText = UFeelAPI.GetCurrentSpeech();
+string spokenText = UFeelAPI.CurrentSpeech;
 ```
 
 Returns `null` if speech detection is not running.
@@ -163,7 +163,7 @@ UFeelAPI.StopHeartRateDetection();
 ### Reading Heart Rate
 
 ```csharp
-int? bpm = UFeelAPI.GetCurrentHeartRate();
+int? bpm = UFeelAPI.CurrentHeartRate;
 ```
 
 ### Triggering Rules from Heart Rate
@@ -230,8 +230,8 @@ async void Start()
     UFeelAPI.StartEmotionDetection();
     UFeelAPI.Status();
 
-    Debug.Log("Here is the current emotion " + UFeelAPI.GetCurrentEmotionsData());
-    Debug.Log("Here is the dominant emotion " + UFeelAPI.GetDominantEmotion());
+    Debug.Log("Here is the current emotion " + UFeelAPI.CurrentEmotionsData);
+    Debug.Log("Here is the dominant emotion " + UFeelAPI.DominantEmotion);
 
     UFeelAPI.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, async () =>
     {
@@ -240,10 +240,10 @@ async void Start()
         UFeelAPI.StartEyeTrackingDetection();
         UFeelAPI.Status();
 
-        Debug.Log("Here is the current eye data " + UFeelAPI.GetCurrentDirections());
-        Debug.Log("Here is the dominant direction " + UFeelAPI.GetDominantDirection());
+        Debug.Log("Here is the current eye data " + UFeelAPI.CurrentDirections);
+        Debug.Log("Here is the dominant direction " + UFeelAPI.DominantDirection);
 
-        UFeelAPI.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
+        UFeelAPI.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingDirection.UpRight, () =>
         {
             UFeelAPI.StopEyeTrackingDetection();
 
@@ -262,7 +262,7 @@ async void Start()
 
             UFeelAPI.TriggerActionOnSpeechOnce("Camion", async () =>
             {
-                Debug.Log("Here is the current speech " + UFeelAPI.GetCurrentSpeech());
+                Debug.Log("Here is the current speech " + UFeelAPI.CurrentSpeech);
 
                 // Remove Continuous Emotion
                 UFeelAPI.RemoveRule(key);

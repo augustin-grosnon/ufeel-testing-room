@@ -1,9 +1,10 @@
 {
-    "name": "EmotionSceneDefs",
+    "name": "Maze",
     "rootNamespace": "",
     "references": [
-        "Door",
-        "UFeel"
+        "UFeel",
+        "Utils",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

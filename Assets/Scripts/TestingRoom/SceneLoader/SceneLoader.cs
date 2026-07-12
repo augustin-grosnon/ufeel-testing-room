@@ -6,7 +6,7 @@ public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance { get; private set; }
 
-    private bool isLoading = false;
+    private bool isLoading;
 
     private void Awake()
     {
@@ -104,6 +104,7 @@ public class SceneLoader : MonoBehaviour
 
         ApplySceneLighting(loadedScene);
         onLoaded?.Invoke();
+
         isLoading = false;
     }
 

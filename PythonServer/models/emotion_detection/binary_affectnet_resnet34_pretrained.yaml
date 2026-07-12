@@ -5,7 +5,7 @@ model:
     angry: 0.3
     contemptuous: 0.4
     disgusted: 0.3
-    fearful: 0.5
+    fearful: 0.15
     happy: 0.5
     neutral: 0.7
     sad: 0.3

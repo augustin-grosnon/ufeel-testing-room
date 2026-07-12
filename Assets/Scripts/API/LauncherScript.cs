@@ -1,15 +1,30 @@
-using UnityEngine;
-using UFeel;
 using System.Threading.Tasks;
-
-
-#if UNITY_EDITOR
+using UFeel;
 using UnityEditor;
-#endif
+using UnityEngine;
 
 public class LauncherScript : MonoBehaviour
 {
-    void StopUnity()
+    private int currentStep = -1;
+
+    private async void Start()
+    {
+        await UFeelAPI.StartAPI().ConfigureAwait(true);
+
+        await Task.Delay(millisecondsDelay: 5000).ConfigureAwait(true);
+
+        NextStep();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            NextStep();
+        }
+    }
+
+    private static void StopUnity()
     {
         UFeelAPI.StopAPI();
         UFeelAPI.Status();
@@ -21,67 +36,64 @@ public class LauncherScript : MonoBehaviour
 #endif
     }
 
-    async void Start()
+    private void NextStep()
     {
-        await UFeelAPI.StartAPI();
+        currentStep++;
 
-        UFeelAPI.StartEmotionDetection();
-        UFeelAPI.Status();
-
-        Debug.Log("Here is the current emotion " + UFeelAPI.GetCurrentEmotionsData());
-        Debug.Log("Here is the dominant emotion " + UFeelAPI.GetDominantEmotion());
-
-        UFeelAPI.TriggerActionOnEmotionOnce(EmotionData.EmotionType.Anger, () =>
+        switch (currentStep)
         {
-            UFeelAPI.StopEmotionDetection();
-            UFeelAPI.Status();
-            UFeelAPI.StartEyeTrackingDetection();
-            UFeelAPI.Status();
+            case 0:
+                Debug.Log("=== Emotion Detection ===");
 
-            Debug.Log("Here is the current eye data " + UFeelAPI.GetCurrentDirections());
-            Debug.Log("Here is the dominant direction " + UFeelAPI.GetDominantDirection());
+                UFeelAPI.StartEmotionDetection();
+                UFeelAPI.Status();
 
-            UFeelAPI.TriggerActionOnDirectionOnce(EyeTrackingData.EyeTrackingType.UpRight, () =>
-            {
+                Debug.Log("Current emotion: " + UFeelAPI.CurrentEmotionsData);
+                Debug.Log("Dominant emotion: " + UFeelAPI.DominantEmotion);
+                break;
+
+            case 1:
+                Debug.Log("=== Eye Tracking Detection ===");
+
+                UFeelAPI.StopEmotionDetection();
+
+                UFeelAPI.StartEyeTrackingDetection();
+                UFeelAPI.Status();
+
+                Debug.Log("Current eye data: " + UFeelAPI.CurrentDirections);
+                Debug.Log("Dominant direction: " + UFeelAPI.DominantDirection);
+                break;
+
+            case 2:
+                Debug.Log("=== Speech Detection ===");
+
                 UFeelAPI.StopEyeTrackingDetection();
 
                 UFeelAPI.StartSpeechDetection();
-
-                // Continuous Emotion
-                UFeelAPI.StartEmotionDetection();
-                RuleKey key = UFeelAPI.TriggerActionOnEmotionContinuous(EmotionData.EmotionType.Happiness, async () =>
-                {
-                    await Task.Delay(1000);
-                    Debug.Log("Emotion Continuellement");
-                });
-                //
-
                 UFeelAPI.Status();
+                break;
 
-                UFeelAPI.TriggerActionOnSpeechOnce("Camion", () =>
-                {
-                    Debug.Log("Here is the current speech " + UFeelAPI.GetCurrentSpeech());
+            case 3:
+                Debug.Log("Current speech: " + UFeelAPI.CurrentSpeech);
 
-                    // Remove Continuous Emotion
-                    UFeelAPI.RemoveRule(key);
-                    UFeelAPI.StopEmotionDetection();
-                    //
+                UFeelAPI.StopSpeechDetection();
 
-                    UFeelAPI.StopSpeechDetection();
-                    UFeelAPI.StartHeartRateDetection();
-                    UFeelAPI.Status();
+                UFeelAPI.StartHeartRateDetection();
+                UFeelAPI.Status();
+                break;
 
-                    UFeelAPI.TriggerActionOnHeartRateOnce(80, () =>
-                    {
-                        StopUnity();
-                    });
-                });
-            });
-        });
-    }
+            case 4:
+                Debug.Log("=== Heart Rate Detection ===");
 
-    void Update()
-    {
-        return;
+                Debug.Log("Current heart rate: " + UFeelAPI.CurrentHeartRate);
+                break;
+
+            case 5:
+                Debug.Log("=== End ===");
+
+                UFeelAPI.StopHeartRateDetection();
+                StopUnity();
+                break;
+        }
     }
 }

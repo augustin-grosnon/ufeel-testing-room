@@ -79,7 +79,14 @@ class EmotionDetector(ClientBase):
 
         if counter == 0:
             self.selected = selected
-            self.send(out["heads"])
+            emotion_data = {
+                emotion.lower(): {
+                    "value": value,
+                    "enabled": out["binary"][emotion],
+                }
+                for emotion, value in out["heads"].items()
+            }
+            self.send(emotion_data)
 
         selected = self.selected
 
@@ -87,29 +94,68 @@ class EmotionDetector(ClientBase):
             self._draw(frame, out["heads"], selected)
 
     def _draw(self, frame, probs, selected):
-        y = 30
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        scale = 0.7
 
-        for k, v in probs.items():
+        def draw_text(text, pos, color):
             cv2.putText(
                 frame,
-                f"{k}: {v:.2f}",
-                (10, y),
+                text,
+                pos,
+                font,
+                scale,
+                (0, 0, 0),
+                4,
+                cv2.LINE_AA,
+            )
+            cv2.putText(
+                frame,
+                text,
+                pos,
+                font,
+                scale,
+                color,
+                2,
+                cv2.LINE_AA,
+            )
+
+        y = 30
+
+        label_x = 10
+
+        max_width = max(
+            cv2.getTextSize(
+                emotion,
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.7,
-                (255, 255, 255),
                 2,
+            )[0][0]
+            for emotion in probs
+        )
+
+        value_x = label_x + max_width + 20
+
+        for emotion, value in probs.items():
+            draw_text(
+                emotion,
+                (label_x, y),
+                (255, 255, 255),
             )
+
+            draw_text(
+                f"{value:.2f}",
+                (value_x, y),
+                (255, 255, 255),
+            )
+
             y += 25
 
         y = 30
 
-        for i, e in enumerate(selected):
-            cv2.putText(
-                frame,
-                e,
-                (300, y + i * 25),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.7,
-                (0, 0, 0),
-                2,
+        for emotion in selected:
+            draw_text(
+                f"{emotion}",
+                (300, y),
+                (0, 255, 0),
             )
+            y += 25

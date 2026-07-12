@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DoorTrigger : MonoBehaviour
 {
-    private bool playerInRange = false;
+    private bool playerInRange;
     private DoorController _doorController;
 
     [Tooltip("Name of the scene to load additively.")]
@@ -46,7 +46,14 @@ public class DoorTrigger : MonoBehaviour
 
             // SceneLoader.Instance.LoadSceneAsync(targetSceneName, 3.0f);
 
-            SceneLoader.Instance.LoadAdditiveSceneAtPosition(targetSceneName, new Vector3(0.0f, 0.0f, 20f), () => _doorController.ToggleDoor());
+            SceneLoader.Instance.LoadAdditiveSceneAtPosition(
+                targetSceneName,
+                new Vector3(0.0f, 0.0f, 20f),
+                () =>
+                {
+                    _doorController.ToggleDoor();
+                }
+            );
 
             // TODO: start loading when the door touches the ground
         }

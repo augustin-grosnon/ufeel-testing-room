@@ -1,240 +1,270 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
+using UFeel;
 using UnityEngine;
 using UnityEngine.UI;
-using UFeel;
 
 public class MazeManager : MonoBehaviour
 {
-    private static readonly WaitForSeconds _waitForSeconds0_5 = new(0.5f);
-    private static readonly WaitForSeconds _waitForSeconds1_5 = new(1.5f);
+    public static MazeManager Instance { get; private set; }
 
-    private readonly List<string> _targetEmotions = new()
+    [Header("References")]
+    public GameObject RoomPrefab;
+    public GameObject PlayerObject;
+
+    [SerializeField]
+    private Text emotionDebugText;
+
+    [Header("Maze Settings")]
+    public static int MazeSize = 3;
+    public float RoomSpacing = 25f;
+
+    private RoomController[,] rooms;
+
+    private int currentX;
+    private int currentZ;
+
+    private const float MaxEmotionValue = 3f;
+    private static readonly Dictionary<EmotionData.EmotionType, float> _emotionLevels = new();
+
+    private static WaitForSeconds _waitForSeconds5 = new(5f);
+    private bool playerDidWin;
+
+    private void Awake()
     {
-        "happy",
-        "surprised",
-        "neutral",
-        "scared",
-    };
-
-    private readonly Dictionary<string, float> _emotionThresholds = new()
-    {
-        { "happy", 0.0f },
-        { "surprised", 0.0f },
-        { "neutral", 0.0f },
-        { "scared", 0.0f },
-    };
-
-    private readonly Dictionary<string, Color> _emotionColors = new()
-    {
-        { "happy", Color.yellow },
-        { "surprised", Color.magenta },
-        { "neutral", Color.gray },
-        { "scared", Color.blue },
-    };
-
-    [SerializeField] private Text _instructionText;
-    [SerializeField] private Text _scoreText;
-    [SerializeField] private DoorController _doorController;
-    [SerializeField] private float _requiredMatchDuration = 1f;
-    private Transform _player;
-    [SerializeField] private Transform _respawnPosition;
-
-    [SerializeField] private GameObject _watermelonPrefab;
-    [SerializeField] private Vector3 _spawnAreaCenter = new(0, 3, 3f);
-    [SerializeField] private Vector3 _spawnAreaSize = new(1f, 10f, 2f);
-
-    private string _currentTarget;
-    private float _matchTimer;
-    private bool _successTriggered;
-
-    private int _score;
-
-    private readonly KeyCode[] _devCode = { KeyCode.U, KeyCode.F };
-    private int _devCodeProgress;
-    private readonly float _devCodeTimeout = 2f;
-    private float _devCodeTimer;
-
-    private void Start()
-    {
-        UFeelAPI.StartEmotionDetection();
-
-        SetNextTargetEmotion();
-        UpdateScoreText();
-
-        if (GameObject.FindWithTag("Player").TryGetComponent<Transform>(out Transform? transform))
+        if (Instance != null && Instance != this)
         {
-            _player = transform;
+            Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+    }
+
+    private async void Start()
+    {
+        UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
+
+        GenerateRooms();
+
+        foreach (EmotionInfo emotionInfo in EmotionInfo.Emotions)
+        {
+            _emotionLevels[emotionInfo.Emotion] = 0f;
+        }
+
+        await Task.Delay(5000).ConfigureAwait(true);
+
+        UFeelAPI.StartEmotionDetection();
     }
 
     private void Update()
     {
-        if (_successTriggered)
+        EmotionData.EmotionType? currentEmotion = UFeelAPI.CurrentEmotionsData?.DominantEmotion;
+
+        if (currentEmotion == null)
             return;
 
-        HandleDebugSkipInput();
+        foreach (EmotionInfo emotionInfo in EmotionInfo.Emotions)
+        {
+            EmotionData.EmotionType emotion = emotionInfo.Emotion;
 
-        EmotionData? currentEmotions = UFeelAPI.GetCurrentEmotionsData();
+            _emotionLevels[emotion] =
+                emotion == currentEmotion
+                    ? Mathf.Min(
+                        MaxEmotionValue,
+                        _emotionLevels[emotion] + Time.deltaTime
+                    )
+                    : Mathf.Max(
+                        0f,
+                        _emotionLevels[emotion] - Time.deltaTime
+                    );
+        }
 
-        if (currentEmotions is not EmotionData emotions)
+        UpdateEmotionDebugText(currentEmotion);
+    }
+
+    public static bool IsEmotionCharged(EmotionData.EmotionType emotion)
+    {
+        return _emotionLevels.TryGetValue(emotion, out float value)
+            && value >= MaxEmotionValue;
+    }
+
+    public static float GetEmotionLevel(EmotionData.EmotionType emotion)
+    {
+        return _emotionLevels.TryGetValue(emotion, out float value)
+            ? value
+            : 0f;
+    }
+
+    private void UpdateEmotionDebugText(EmotionData.EmotionType? currentEmotion)
+    {
+        if (emotionDebugText == null)
             return;
-        string detectedEmotion = DetermineDominantEmotion(emotions);
 
-        if (detectedEmotion == _currentTarget)
+        if (playerDidWin)
+            return;
+
+        System.Text.StringBuilder builder = new();
+
+        foreach (EmotionInfo emotionInfo in EmotionInfo.Emotions)
         {
-            _matchTimer += Time.deltaTime;
+            EmotionData.EmotionType emotion = emotionInfo.Emotion;
+            float value = GetEmotionLevel(emotion);
 
-            if (_matchTimer < _requiredMatchDuration)
+            string color = "white";
+
+            if (emotion == currentEmotion)
             {
-                _instructionText.color = new Color(1f, 0.65f, 0f);
+                color = value >= 2.5f ? "green" : "orange";
             }
-            else
-            {
-                _instructionText.color = Color.green;
-                _successTriggered = true;
-                _doorController.ToggleDoor();
-
-                _score++;
-                UpdateScoreText();
-                SpawnWatermelon();
-
-                StartCoroutine(WaitAfterSuccess());
-            }
+            builder.Append(
+                $"<color={color}>{emotion} ({value:F1})</color>    "
+            );
         }
-        else
-        {
-            _matchTimer = 0f;
-            _instructionText.color = Color.red;
-        }
+
+        emotionDebugText.text = builder.ToString();
     }
 
-    private void HandleDebugSkipInput()
+    private void GenerateRooms()
     {
-        if (_devCodeProgress > 0)
+        rooms = new RoomController[MazeSize, MazeSize];
+
+        GameObject parent = new("GeneratedRooms");
+
+        for (int x = 0; x < MazeSize; x++)
         {
-            _devCodeTimer += Time.deltaTime;
-
-            if (_devCodeTimer > _devCodeTimeout)
+            for (int z = 0; z < MazeSize; z++)
             {
-                _devCodeProgress = 0;
-                _devCodeTimer = 0f;
-            }
-        }
+                Vector3 position = new(
+                    x * RoomSpacing,
+                    0f,
+                    z * RoomSpacing
+                );
 
-        if (Input.GetKeyDown(_devCode[_devCodeProgress]))
-        {
-            _devCodeProgress++;
-            _devCodeTimer = 0f;
+                GameObject roomObject = Instantiate(RoomPrefab, position, Quaternion.identity);
 
-            if (_devCodeProgress >= _devCode.Length)
-            {
-                Debug.Log("Debug skip triggered!");
-                _devCodeProgress = 0;
-                _devCodeTimer = 0f;
+                roomObject.name = $"Room_{x}_{z}";
+                roomObject.transform.SetParent(parent.transform);
 
-                _matchTimer = 0f;
-                _successTriggered = false;
-                SetNextTargetEmotion();
-                // SpawnWatermelon();
-            }
-        }
-    }
+                RoomController room = roomObject.GetComponent<RoomController>();
 
-    private IEnumerator WaitAfterSuccess()
-    {
-        yield return _waitForSeconds1_5;
+                room.Setup(x, z);
 
-        _doorController.ToggleDoor();
-
-        yield return _waitForSeconds0_5;
-
-        if (_player != null)
-        {
-            Rigidbody playerRigidbody = _player.GetComponent<Rigidbody>();
-            Vector3 newPosition = _respawnPosition.position + new Vector3(0f, 0f, 2f);
-            if (playerRigidbody != null)
-            {
-                playerRigidbody.MovePosition(newPosition);
-            }
-            else
-            {
-                _player.position = newPosition;
+                rooms[x, z] = room;
             }
         }
 
-        SetNextTargetEmotion();
-        _matchTimer = 0f;
-        _successTriggered = false;
+        Debug.Log("All rooms generated.");
     }
 
-    private void SetNextTargetEmotion()
+    public void TryMove(RoomController room, Direction direction)
     {
-        string newTarget;
+        FogCondition condition = room.GetCondition(direction);
 
-        do
+        if (playerDidWin)
         {
-            newTarget = _targetEmotions[Random.Range(0, _targetEmotions.Count)];
-        }
-        while (newTarget == _currentTarget);
-
-        _currentTarget = newTarget;
-
-        _instructionText.text = "Be " + _currentTarget;
-        _instructionText.color = Color.red;
-
-        if (_doorController != null && _emotionColors.ContainsKey(_currentTarget))
-        {
-            _doorController.SetDoorColor(_emotionColors[_currentTarget]);
-        }
-    }
-
-    private string DetermineDominantEmotion(EmotionData data)
-    {
-        Dictionary<string, float> values = new()
-        {
-            { "happy", data.happy },
-            { "surprised", data.surprised },
-            { "neutral", data.neutral },
-            { "scared", data.fearful },
-            // { "sad", data.Sadness },
-            // { "angry", data.Anger },
-        };
-
-        Dictionary<string, float> filteredValues = values
-            .Where(kv => kv.Value >= _emotionThresholds[kv.Key])
-            .ToDictionary(kv => kv.Key, kv => kv.Value);
-
-        if (filteredValues.Count == 0) return string.Empty;
-
-        return filteredValues.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-    }
-
-    private void UpdateScoreText()
-    {
-        if (_scoreText != null)
-        {
-            _scoreText.text = "Score: " + _score;
-        }
-    }
-
-    private void SpawnWatermelon()
-    {
-        if (_watermelonPrefab == null)
-        {
-            Debug.LogWarning("No watermelon prefab assigned!");
             return;
         }
 
-        Vector3 randomPos = _spawnAreaCenter + new Vector3(
-            Random.Range(-_spawnAreaSize.x / 2, _spawnAreaSize.x / 2),
-            _spawnAreaSize.y,
-            Random.Range(-_spawnAreaSize.z / 2, _spawnAreaSize.z / 2)
+        if (!condition.CanPass())
+        {
+            return;
+        }
+
+        int targetX = room.Data.X;
+        int targetZ = room.Data.Z;
+
+        switch (direction)
+        {
+            case Direction.North:
+                targetZ++;
+                break;
+
+            case Direction.South:
+                targetZ--;
+                break;
+
+            case Direction.East:
+                targetX++;
+                break;
+
+            case Direction.West:
+                targetX--;
+                break;
+        }
+
+        if (targetX < 0 ||
+            targetX >= MazeSize ||
+            targetZ < 0 ||
+            targetZ >= MazeSize)
+        {
+            Debug.Log("Cannot leave labyrinth.");
+            return;
+        }
+
+        currentX = targetX;
+        currentZ = targetZ;
+
+        TeleportPlayer(currentX, currentZ, direction);
+
+        Debug.Log($"Moved to ({currentX},{currentZ})");
+
+        CheckVictory();
+    }
+
+    private void TeleportPlayer(int x, int z, Direction cameFrom)
+    {
+        Vector3 targetPosition = new(
+            x * RoomSpacing,
+            1f,
+            z * RoomSpacing
         );
 
-        Instantiate(_watermelonPrefab, randomPos, Quaternion.identity);
+        switch (cameFrom)
+        {
+            case Direction.North:
+                targetPosition.z -= 5f;
+                break;
+
+            case Direction.South:
+                targetPosition.z += 5f;
+                break;
+
+            case Direction.East:
+                targetPosition.x -= 5f;
+                break;
+
+            case Direction.West:
+                targetPosition.x += 5f;
+                break;
+        }
+
+        if (PlayerObject.TryGetComponent(out FirstPersonController firstPersonController))
+        {
+            firstPersonController.Controller.enabled = false;
+            firstPersonController.transform.position = targetPosition;
+            firstPersonController.Controller.enabled = true;
+        }
+    }
+
+    private void CheckVictory()
+    {
+        if (currentX == MazeSize - 1 && currentZ == MazeSize - 1)
+        {
+            playerDidWin = true;
+
+            emotionDebugText.text = "<color=green>You won! Congratulations</color>";
+
+            StartCoroutine(VictoryRoutine());
+        }
+    }
+
+    private static IEnumerator VictoryRoutine()
+    {
+        yield return _waitForSeconds5;
+
+        PauseMenu.GoToLobby();
     }
 }
-
-// TODO: modularize code

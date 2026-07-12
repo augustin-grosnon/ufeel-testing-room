@@ -24,24 +24,30 @@ public class GameManager : MonoBehaviour
 	private const int minBpm = 60;
 	private const int maxBpm = 180;
 	private Coroutine actionCoroutine;
+	private Coroutine actionCoroutine2;
 
 	private const int hpGainScore = 1;
 	public Slider _slider;
 
-	public AudioSource _audioSource;
+	public AudioSource _music;
+	public AudioSource _ECGBeep;
     
     async void Start()
     {
         instance = this;
-        await UFeelAPI.StartAPI();
-        
-        await Task.Delay(5000);
-        
+		_ECGBeep.volume = 0.25f;
+
+        // await UFeelAPI.StartAPI();
+        // await Task.Delay(3000);
+
+        UFeelAPI.ToggleOffEverything();
+        UFeelDebugHUD.Clear();
+
         UFeelAPI.StartHeartRateDetection();
-        
-        await Task.Delay(5000);
-        
+        await Task.Delay(3000);
+
         actionCoroutine = StartCoroutine(UpdateBPM());
+        actionCoroutine2 = StartCoroutine(PlayECGBeep());
     }
 
     void Update()
@@ -52,12 +58,13 @@ public class GameManager : MonoBehaviour
             {
                 startPlaying = true;
                 bs.started = true;
-				_audioSource.Play();
+				_music.Play();
             }
         }
 		if (_slider.value <= 0) {
 			// DISPLAY GAME OVER SCREEN
 		}
+		//Debug.Log(bs.bpm);
     }
 
     public void NoteHit()
@@ -95,16 +102,26 @@ public class GameManager : MonoBehaviour
 		    if (bpm == 0)
 			    yield break;
 		    
-		    bs.beatTempo = bpm / 30f; // 60f / 2
-			_audioSource.pitch = (float)bpm / (float)minBpm;
+			bs.bpm = bpm;
+			_music.pitch = (float)bpm / (float)minBpm;
 		    
 		    yield return new WaitForSeconds(1f);
+	    }
+    }
+
+	IEnumerator PlayECGBeep()
+    {
+	    while (true)
+	    {
+		    _ECGBeep.Play();
+		    
+		    yield return new WaitForSeconds(1f / ((float)bs.bpm / 60f));
 	    }
     }
     
 	int getBPM()
 	{
-	    int currentBPM = UFeelAPI.GetCurrentHeartRate() ?? 0;
+	    int currentBPM = UFeelAPI.CurrentHeartRate ?? 0;
 	    
 	    if (currentBPM == 0)
 		    return currentBPM;
