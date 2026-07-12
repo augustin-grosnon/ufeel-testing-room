@@ -38,7 +38,7 @@ All other scenes can be accessed by entering the corresponding door.
 
 **Role:** Emotion-driven labyrinth experience.
 
-**Main Script:** `LabyrinthManager`
+**Main Script:** `MazeManager`
 
 **See also:** [Maze README](../Emotions/Maze/README.md)
 

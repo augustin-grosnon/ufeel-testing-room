@@ -53,7 +53,7 @@ public class RoomController : MonoBehaviour
             WestFog.SetActive(false);
         }
 
-        if (Data.X == LabyrinthManager.LabyrinthSize - 1 && EastFog != null)
+        if (Data.X == MazeManager.MazeSize - 1 && EastFog != null)
         {
             EastFog.SetActive(false);
         }
@@ -63,7 +63,7 @@ public class RoomController : MonoBehaviour
             SouthFog.SetActive(false);
         }
 
-        if (Data.Z == LabyrinthManager.LabyrinthSize - 1 && NorthFog != null)
+        if (Data.Z == MazeManager.MazeSize - 1 && NorthFog != null)
         {
             NorthFog.SetActive(false);
         }

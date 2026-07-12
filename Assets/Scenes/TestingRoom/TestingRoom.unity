@@ -4405,6 +4405,7 @@ MonoBehaviour:
   cameraRoot: {fileID: 1126030246}
   mouseSensitivity: 2
   gravity: -9.81
+  Controller: {fileID: 0}
 --- !u!136 &943825819
 CapsuleCollider:
   m_ObjectHideFlags: 0

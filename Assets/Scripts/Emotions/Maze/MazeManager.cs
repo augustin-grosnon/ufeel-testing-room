@@ -5,9 +5,9 @@ using UFeel;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LabyrinthManager : MonoBehaviour
+public class MazeManager : MonoBehaviour
 {
-    public static LabyrinthManager Instance { get; private set; }
+    public static MazeManager Instance { get; private set; }
 
     [Header("References")]
     public GameObject RoomPrefab;
@@ -16,8 +16,8 @@ public class LabyrinthManager : MonoBehaviour
     [SerializeField]
     private Text emotionDebugText;
 
-    [Header("Labyrinth Settings")]
-    public static int LabyrinthSize = 5;
+    [Header("Maze Settings")]
+    public static int MazeSize = 5;
     public float RoomSpacing = 25f;
 
     private RoomController[,] rooms;
@@ -129,13 +129,13 @@ public class LabyrinthManager : MonoBehaviour
 
     private void GenerateRooms()
     {
-        rooms = new RoomController[LabyrinthSize, LabyrinthSize];
+        rooms = new RoomController[MazeSize, MazeSize];
 
         GameObject parent = new("GeneratedRooms");
 
-        for (int x = 0; x < LabyrinthSize; x++)
+        for (int x = 0; x < MazeSize; x++)
         {
-            for (int z = 0; z < LabyrinthSize; z++)
+            for (int z = 0; z < MazeSize; z++)
             {
                 Vector3 position = new(
                     x * RoomSpacing,
@@ -196,9 +196,9 @@ public class LabyrinthManager : MonoBehaviour
         }
 
         if (targetX < 0 ||
-            targetX >= LabyrinthSize ||
+            targetX >= MazeSize ||
             targetZ < 0 ||
-            targetZ >= LabyrinthSize)
+            targetZ >= MazeSize)
         {
             Debug.Log("Cannot leave labyrinth.");
             return;
@@ -251,7 +251,7 @@ public class LabyrinthManager : MonoBehaviour
 
     private void CheckVictory()
     {
-        if (currentX == LabyrinthSize - 1 && currentZ == LabyrinthSize - 1)
+        if (currentX == MazeSize - 1 && currentZ == MazeSize - 1)
         {
             playerDidWin = true;
 

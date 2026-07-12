@@ -11,6 +11,6 @@ public class EmotionCondition : FogCondition
 
     public override bool CanPass()
     {
-        return LabyrinthManager.GetEmotionLevel(_emotionType) >= 2.0f;
+        return MazeManager.GetEmotionLevel(_emotionType) >= 2.0f;
     }
 }

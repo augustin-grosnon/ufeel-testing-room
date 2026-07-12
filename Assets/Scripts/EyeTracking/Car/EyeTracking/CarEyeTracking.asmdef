@@ -1,10 +1,9 @@
 {
-    "name": "EyeTrackingSceneDefs",
+    "name": "CarEyeTracking",
     "rootNamespace": "",
     "references": [
-        "SceneLoader",
-        "UFeel",
-        "Utils"
+        "Car",
+        "UFeel"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

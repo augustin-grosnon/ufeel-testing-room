@@ -27,6 +27,6 @@ public class FogTrigger : MonoBehaviour
         if (room == null)
             return;
 
-        LabyrinthManager.Instance.TryMove(room, Direction);
+        MazeManager.Instance.TryMove(room, Direction);
     }
 }

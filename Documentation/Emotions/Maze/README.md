@@ -21,4 +21,4 @@ Reach the final room and escape the labyrinth.
 
 ## Main Script
 
-`LabyrinthManager`
+`MazeManager`
