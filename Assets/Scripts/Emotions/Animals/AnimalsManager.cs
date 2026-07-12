@@ -9,10 +9,10 @@ using UnityEngine.UI;
 public enum AnimalType
 {
     Cat,
-    Tiger,
     Deer,
-    Penguin,
-    Spider
+    Spider,
+    Tiger,
+    Penguin
 }
 
 public class AnimalsManager : MonoBehaviour
@@ -40,10 +40,10 @@ public class AnimalsManager : MonoBehaviour
         new()
     {
         { AnimalType.Cat, EmotionData.EmotionType.Happiness },
-        { AnimalType.Tiger, EmotionData.EmotionType.Anger },
         { AnimalType.Deer, EmotionData.EmotionType.Surprise },
-        { AnimalType.Penguin, EmotionData.EmotionType.Sadness },
-        { AnimalType.Spider, EmotionData.EmotionType.Fear }
+        { AnimalType.Spider, EmotionData.EmotionType.Fear },
+        { AnimalType.Tiger, EmotionData.EmotionType.Anger },
+        { AnimalType.Penguin, EmotionData.EmotionType.Sadness }
     };
 
     public Slider emotionProgressBar;
@@ -112,10 +112,10 @@ public class AnimalsManager : MonoBehaviour
         switch (level)
         {
             case 1: newAnimalInfo = "Cat -> Happiness"; break;
-            case 2: newAnimalInfo = "Tiger -> Anger"; break;
-            case 3: newAnimalInfo = "Deer -> Surprise"; break;
-            case 4: newAnimalInfo = "Penguin -> Sadness"; break;
-            case 5: newAnimalInfo = "Spider -> Fear"; break;
+            case 2: newAnimalInfo = "Deer -> Surprise"; break;
+            case 3: newAnimalInfo = "Spider -> Fear"; break;
+            case 4: newAnimalInfo = "Tiger -> Anger"; break;
+            case 5: newAnimalInfo = "Penguin -> Sadness"; break;
         }
 
         instructionText.text = $"LEVEL {level}\n\n{newAnimalInfo}";
@@ -148,10 +148,10 @@ public class AnimalsManager : MonoBehaviour
     private static List<AnimalType> GenerateAnimals(int level)
     {
         List<AnimalType> pool = new() { AnimalType.Cat };
-        if (level >= 2) pool.Add(AnimalType.Tiger);
-        if (level >= 3) pool.Add(AnimalType.Deer);
-        if (level >= 4) pool.Add(AnimalType.Penguin);
+        if (level >= 2) pool.Add(AnimalType.Deer);
         if (level >= 5) pool.Add(AnimalType.Spider);
+        if (level >= 3) pool.Add(AnimalType.Tiger);
+        if (level >= 4) pool.Add(AnimalType.Penguin);
 
         List<AnimalType> result = new();
         int totalTarget = GetAnimalNumber(level);
@@ -251,7 +251,7 @@ public class AnimalsManager : MonoBehaviour
 
     private static float GetLevelTime(int level)
     {
-        if (level == 1) return 30f;
+        if (level == 1) return 35f;
         if (level == 2) return 40f;
         if (level == 3) return 50f;
         if (level == 4) return 60f;

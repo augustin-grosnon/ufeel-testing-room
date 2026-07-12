@@ -62,9 +62,9 @@ public class SpeechManager : MonoBehaviour
 
     private void Start()
     {
-        UFeelDebugHUD.UseDefaultDebugHUD = false;
-        UFeelDebugHUD.Clear();
-        UFeelDebugHUD.Set("Current Speech", () => UFeelAPI.CurrentSpeech);
+        // UFeelDebugHUD.UseDefaultDebugHUD = false;
+        // UFeelDebugHUD.Clear();
+        // UFeelDebugHUD.Set("Current Speech", () => UFeelAPI.CurrentSpeech);
 
         // GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         // if (playerObject != null)
@@ -361,10 +361,10 @@ public class SpeechManager : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        UFeelDebugHUD.UseDefaultDebugHUD = true;
-    }
+    // private void OnDestroy()
+    // {
+    //     UFeelDebugHUD.UseDefaultDebugHUD = true;
+    // }
 
     // Levenshtein Algo
     private static bool IsSpeechMatch(string currentText, string targetText, float thresholdPercent = 0.75f)
