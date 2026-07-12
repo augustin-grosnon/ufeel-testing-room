@@ -22,6 +22,8 @@ public class DoorEyeController : MonoBehaviour
 
     private float lastBlinkTime = -10f;
 
+    private bool commandsEnabled = false;
+
     private void Awake()
     {
         if (doorSelectionManager == null)
@@ -36,6 +38,16 @@ public class DoorEyeController : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            ToggleCommands();
+        }
+
+        if (!commandsEnabled)
+        {
+            return;
+        }
+
         EyeTrackingData? currentDirections = UFeelAPI.CurrentDirections;
         bool? blinkStatus = UFeelAPI.BlinkStatus;
 
@@ -43,6 +55,11 @@ public class DoorEyeController : MonoBehaviour
             return;
 
         ProcessInput(directions, blinkStatus == true);
+    }
+
+    private void ToggleCommands()
+    {
+        commandsEnabled = !commandsEnabled;
     }
 
     private void ProcessInput(EyeTrackingData directions, bool blink)
