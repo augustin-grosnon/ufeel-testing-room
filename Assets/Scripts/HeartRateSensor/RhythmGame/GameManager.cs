@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     async void Start()
     {
         instance = this;
+		_music.volume = 0.5f;
 		_ECGBeep.volume = 0.25f;
 
         // await UFeelAPI.StartAPI();
