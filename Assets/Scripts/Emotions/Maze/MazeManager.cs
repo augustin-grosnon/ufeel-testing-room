@@ -17,7 +17,7 @@ public class MazeManager : MonoBehaviour
     private Text emotionDebugText;
 
     [Header("Maze Settings")]
-    public static int MazeSize = 5;
+    public static int MazeSize = 3;
     public float RoomSpacing = 25f;
 
     private RoomController[,] rooms;

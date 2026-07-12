@@ -28,10 +28,6 @@ public readonly struct EmotionInfo
             new Color(1f, 0.5f, 0f, 0.4f)
         ),
         new(
-            EmotionData.EmotionType.Anger,
-            new Color(1f, 0f, 0f, 0.4f)
-        ),
-        new(
             EmotionData.EmotionType.Fear,
             new Color(0f, 0f, 1f, 0.4f)
         )

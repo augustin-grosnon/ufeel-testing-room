@@ -18,7 +18,7 @@ public class RoomController : MonoBehaviour
 
     public void Setup(int x, int y)
     {
-        EmotionInfo nordData = EmotionInfo.GetRandomEmotion();
+        EmotionInfo northData = EmotionInfo.GetRandomEmotion();
         EmotionInfo southData = EmotionInfo.GetRandomEmotion();
         EmotionInfo eastData = EmotionInfo.GetRandomEmotion();
         EmotionInfo westData = EmotionInfo.GetRandomEmotion();
@@ -27,18 +27,18 @@ public class RoomController : MonoBehaviour
         {
             X = x,
             Z = y,
-            NorthCondition = new EmotionCondition(nordData.Emotion),
+            NorthCondition = new EmotionCondition(northData.Emotion),
             SouthCondition = new EmotionCondition(southData.Emotion),
             EastCondition = new EmotionCondition(eastData.Emotion),
             WestCondition = new EmotionCondition(westData.Emotion)
         };
 
-        NorthFog.GetComponent<Renderer>().material.color = nordData.Color;
+        NorthFog.GetComponent<Renderer>().material.color = northData.Color;
         SouthFog.GetComponent<Renderer>().material.color = southData.Color;
         EastFog.GetComponent<Renderer>().material.color = eastData.Color;
         WestFog.GetComponent<Renderer>().material.color = westData.Color;
 
-        NorthText.text = nordData.Emotion.ToString();
+        NorthText.text = northData.Emotion.ToString();
         SouthText.text = southData.Emotion.ToString();
         EastText.text = eastData.Emotion.ToString();
         WestText.text = westData.Emotion.ToString();
@@ -77,6 +77,7 @@ public class RoomController : MonoBehaviour
             Direction.South => Data.SouthCondition,
             Direction.East => Data.EastCondition,
             Direction.West => Data.WestCondition,
+            _ => Data.NorthCondition
         };
     }
 }
