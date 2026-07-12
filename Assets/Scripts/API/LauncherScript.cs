@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UFeel;
 using UnityEditor;
 using UnityEngine;
@@ -9,6 +10,8 @@ public class LauncherScript : MonoBehaviour
     private async void Start()
     {
         await UFeelAPI.StartAPI().ConfigureAwait(true);
+
+        await Task.Delay(millisecondsDelay: 5000).ConfigureAwait(true);
 
         NextStep();
     }
