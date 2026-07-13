@@ -133,10 +133,11 @@ class SpeechToText(ClientBase):
             y = y_start + i * line_height
             cv2.putText(frame, line, (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
 
-    def process(self, frame):
+    def process(self, frame, show_window):
         if self.process_enable:
             self._start_thread()
-            self.draw_centered_text_bottom(frame, self.current_text)
+            if show_window:
+                self.draw_centered_text_bottom(frame, self.current_text)
         else:
             self._stop_thread()
 

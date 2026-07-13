@@ -18,7 +18,7 @@ public class LauncherScript : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.N))
+        if (Input.GetKeyUp(KeyCode.N))
         {
             NextStep();
         }

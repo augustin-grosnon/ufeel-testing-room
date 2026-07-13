@@ -25,8 +25,12 @@ class DataProcessor:
         self.speech_to_text = SpeechToText()
         self.heart_rate_sensor = HeartRateSensor()
 
-        self.counter = 0
-        self.freq = 5
+        self.emotion_counter = 0
+        self.emotion_freq = 5
+
+        self.heartbeat_counter = 0
+        self.heartbeat_freq = 60
+
         self.scale_factor = 1.3
         self.calibration = calibration
 
@@ -41,10 +45,10 @@ class DataProcessor:
                 break
             frame = cv2.flip(frame, 1)
             #if not self.calibration:
-            self.emotion_detector.process(frame, self.counter, show_window=self.show_window)
+            self.emotion_detector.process(frame, self.emotion_counter, show_window=self.show_window)
             self.eye_tracker.process(frame, self.calibration, show_window=self.show_window)
-            self.speech_to_text.process(frame)
-            self.heart_rate_sensor.process(frame)
+            self.speech_to_text.process(frame, self.show_window)
+            self.heart_rate_sensor.process(frame, self.heartbeat_counter, self.show_window)
 
             if self.show_window:
                 resized_frame = cv2.resize(
@@ -57,7 +61,8 @@ class DataProcessor:
                 cv2.imshow("Combined Output", resized_frame)
                 if cv2.waitKey(1) & 0xFF == ord("p"):
                     break
-            self.counter = (self.counter + 1) % self.freq
+            self.emotion_counter = (self.emotion_counter + 1) % self.emotion_freq
+            self.heartbeat_counter = (self.heartbeat_counter + 1) % self.heartbeat_freq
 
             elapsed = time.time() - start_time
             sleep_time = self.frame_time - elapsed
