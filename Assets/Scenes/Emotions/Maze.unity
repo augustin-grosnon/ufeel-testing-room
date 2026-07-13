@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -753,7 +753,6 @@ MonoBehaviour:
   RoomPrefab: {fileID: 6843624912501542543, guid: 63afb187dda6b6e71a784e1b202c6709, type: 3}
   PlayerObject: {fileID: 1489305189}
   emotionDebugText: {fileID: 708054045}
-  LabyrinthSize: 3
   RoomSpacing: 25
 --- !u!4 &2128694441
 Transform:
