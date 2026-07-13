@@ -6,41 +6,41 @@ using UFeel;
 
 public class GameManager : MonoBehaviour
 {
-	public static GameManager instance;
+    public static GameManager instance;
 
     public bool startPlaying;
     public BeatScroller bs;
 
-	public int currentScore;
-	public int scorePerNote = 100;
+    public int currentScore;
+    public int scorePerNote = 100;
 
-	public Text scoreText;
-	public Text multiplierText;
+    public Text scoreText;
+    public Text multiplierText;
 
     public int currentMultiplier = 1;
-	public int multiplierTracker = 0;
-	public int multiplierThreshold = 4;
-	
-	private const int minBpm = 60;
-	private const int maxBpm = 180;
-	private Coroutine actionCoroutine;
-	private Coroutine actionCoroutine2;
+    public int multiplierTracker = 0;
+    public int multiplierThreshold = 4;
 
-	private bool simulated = false;
-	private const int hpGainScore = 1;
-	public Slider _slider;
+    private const int minBpm = 60;
+    private const int maxBpm = 180;
+    private Coroutine actionCoroutine;
+    private Coroutine actionCoroutine2;
 
-	public AudioSource _music;
-	public AudioSource _ECGBeep;
-    
-    async void Start()
+    private bool simulated = false;
+    private const int hpGainScore = 1;
+    public Slider _slider;
+
+    public AudioSource _music;
+    public AudioSource _ECGBeep;
+
+    private async void Start()
     {
         instance = this;
-		_music.volume = 0.5f;
-		_ECGBeep.volume = 0.25f;
+        _music.volume = 0.5f;
+        _ECGBeep.volume = 0.25f;
 
-        await UFeelAPI.StartAPI();
-        await Task.Delay(3000);
+        // await UFeelAPI.StartAPI();
+        // await Task.Delay(3000);
 
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
@@ -52,86 +52,84 @@ public class GameManager : MonoBehaviour
         actionCoroutine2 = StartCoroutine(PlayECGBeep());
     }
 
-    void Update()
+    private void Update()
     {
-        if (!startPlaying)
+        if (Input.GetKeyUp(KeyCode.N))
         {
-            if (Input.anyKeyDown)
-            {
-                startPlaying = true;
-                bs.started = true;
-				_music.Play();
-            }
-			if (Input.GetKeyUp(KeyCode.N))
-			{
-				simulated = !simulated;
-				UFeelAPI.ToggleHeartRateSimulation(simulated);
-			}
+            simulated = !simulated;
+            UFeelAPI.ToggleHeartRateSimulation(simulated);
         }
-		if (_slider.value <= 0) {
-			// DISPLAY GAME OVER SCREEN
-		}
+        if (!startPlaying && Input.anyKeyDown)
+        {
+            startPlaying = true;
+            bs.started = true;
+            _music.Play();
+        }
+        if (_slider.value <= 0)
+        {
+            // DISPLAY GAME OVER SCREEN
+        }
     }
 
     public void NoteHit()
     {
-		multiplierTracker++;
+        multiplierTracker++;
 
-		if (multiplierTracker >= multiplierThreshold)
-		{
-			multiplierTracker = 0;
-			multiplierThreshold *= 2;
-			currentMultiplier++;
-		}
+        if (multiplierTracker >= multiplierThreshold)
+        {
+            multiplierTracker = 0;
+            multiplierThreshold *= 2;
+            currentMultiplier++;
+        }
 
-		currentScore += scorePerNote * currentMultiplier;
-		scoreText.text = "Score: " + currentScore;
-		multiplierText.text = "Multiplier: x" + currentMultiplier;
-		_slider.value = Mathf.Clamp(_slider.value + hpGainScore * currentMultiplier, _slider.minValue, _slider.maxValue);
+        currentScore += scorePerNote * currentMultiplier;
+        scoreText.text = "Score: " + currentScore;
+        multiplierText.text = "Multiplier: x" + currentMultiplier;
+        _slider.value = Mathf.Clamp(_slider.value + hpGainScore * currentMultiplier, _slider.minValue, _slider.maxValue);
     }
 
     public void NoteMissed()
     {
-		currentMultiplier = 1;
-		multiplierTracker = 0;
-		multiplierThreshold = 4;
-		multiplierText.text = "Multiplier: x" + currentMultiplier;
-		_slider.value = Mathf.Clamp(_slider.value - 5, _slider.minValue, _slider.maxValue);
-    }
-    
-    IEnumerator UpdateBPM()
-    {
-	    while (true)
-	    {
-		    int bpm = getBPM();
-            
-		    if (bpm == 0)
-			    yield break;
-		    
-			bs.bpm = bpm;
-			_music.pitch = (float)bpm / (float)minBpm;
-		    
-		    yield return new WaitForSeconds(1f);
-	    }
+        currentMultiplier = 1;
+        multiplierTracker = 0;
+        multiplierThreshold = 4;
+        multiplierText.text = "Multiplier: x" + currentMultiplier;
+        _slider.value = Mathf.Clamp(_slider.value - 5, _slider.minValue, _slider.maxValue);
     }
 
-	IEnumerator PlayECGBeep()
+    private IEnumerator UpdateBPM()
     {
-	    while (true)
-	    {
-		    _ECGBeep.Play();
-		    
-		    yield return new WaitForSeconds(1f / ((float)bs.bpm / 60f));
-	    }
+        while (true)
+        {
+            int bpm = GetBPM();
+
+            if (bpm == 0)
+                yield break;
+
+            bs.bpm = bpm;
+            _music.pitch = (float)bpm / (float)minBpm;
+
+            yield return new WaitForSeconds(1f);
+        }
     }
-    
-	int getBPM()
-	{
-	    int currentBPM = UFeelAPI.CurrentHeartRate ?? 0;
-	    
-	    if (currentBPM == 0)
-		    return currentBPM;
-	    
-	    return Mathf.Clamp(currentBPM, minBpm, maxBpm);
-	}
+
+    private IEnumerator PlayECGBeep()
+    {
+        while (true)
+        {
+            _ECGBeep.Play();
+
+            yield return new WaitForSeconds(1f / ((float)bs.bpm / 60f));
+        }
+    }
+
+    private static int GetBPM()
+    {
+        int currentBPM = UFeelAPI.CurrentHeartRate ?? 0;
+
+        if (currentBPM == 0)
+            return currentBPM;
+
+        return Mathf.Clamp(currentBPM, minBpm, maxBpm);
+    }
 }

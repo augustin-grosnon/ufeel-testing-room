@@ -26,9 +26,7 @@ class HeartRateGenerator:
         self.sensor_value = -1
         self.running = True
         self.should_fetch = False
-
-        self.thread = threading.Thread(target=self._sensor_loop, daemon=True)
-        self.thread.start()
+        self.started = False
 
         self.session = requests.Session()
 
@@ -54,6 +52,11 @@ class HeartRateGenerator:
             time.sleep(0.1)
 
     def get_sensor(self):
+        if not self.started:
+            self.thread = threading.Thread(target=self._sensor_loop, daemon=True)
+            self.thread.start()
+            self.started = True
+
         self.should_fetch = True
         return self.sensor_value
 

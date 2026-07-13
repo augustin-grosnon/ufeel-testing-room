@@ -5,7 +5,11 @@ using Debug = UnityEngine.Debug;
 public sealed class PythonServerController
 {
     private static PythonServerController _instance;
+#if UNITY_EDITOR
     private static readonly string ScriptPath = Application.dataPath + "/../PythonServer/main.py";
+#else
+    private static readonly string ScriptPath = Application.dataPath + "/../../../PythonServer/main.py";
+#endif
 
     public static PythonServerController Instance
     {
@@ -15,10 +19,18 @@ public sealed class PythonServerController
     private Process _pythonProcess;
 
     private readonly string _venvPath =
+#if UNITY_EDITOR
 #if UNITY_STANDALONE_WIN
-    Application.dataPath + "/../PythonServer/venv/Scripts/python.exe";
+        Application.dataPath + "/../PythonServer/venv/Scripts/python.exe";
 #else
-    Application.dataPath + "/../PythonServer/venv/bin/python3";
+        Application.dataPath + "/../PythonServer/venv/bin/python3";
+#endif
+#else
+#if UNITY_STANDALONE_WIN
+        Application.dataPath + "/../../../PythonServer/venv/Scripts/python.exe";
+#else
+        Application.dataPath + "/../../../PythonServer/venv/bin/python3";
+#endif
 #endif
 
     private readonly string _scriptPath;
