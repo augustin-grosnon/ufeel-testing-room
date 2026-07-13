@@ -28,7 +28,7 @@ public class VehicleEntryTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             hasEntered = true;
-            EnterVehicle(other.gameObject);
+            EnterVehicle();
         }
     }
 
@@ -40,7 +40,7 @@ public class VehicleEntryTrigger : MonoBehaviour
         }
     }
 
-    private void EnterVehicle(GameObject player)
+    private void EnterVehicle()
     {
         playerObject.SetActive(false);
 

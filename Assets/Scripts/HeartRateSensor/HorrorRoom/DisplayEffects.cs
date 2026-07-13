@@ -1,64 +1,60 @@
+using System.Collections;
+using UFeel;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using System.Threading.Tasks;
-using UFeel;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class DisplayEffects : MonoBehaviour
 {
-    public AudioSource audioSource;
-    public Image redFilter;
+    public AudioSource AudioSource;
+    public Image RedFilter;
     private int minBpm = 60;
     private int maxBpm = 180;
     private int bpm = 0;
     private Coroutine actionCoroutine;
 
-    int getBPM()
+    private int GetBPM()
     {
         int currentBPM = UFeelAPI.CurrentHeartRate ?? 0;
 
         if (currentBPM == 0)
+        {
             return currentBPM;
+        }
 
         return Mathf.Clamp(currentBPM, minBpm, maxBpm);
     }
 
-    async void Start()
+    private void Start()
     {
-        // await UFeelAPI.StartAPI();
-        // await Task.Delay(5000);
-
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
 
         UFeelAPI.StartHeartRateDetection();
 
-        await Task.Delay(5000);
-
-        bpm = getBPM();
-        redFilter.color = new Color(1, 0, 0, 0);
+        bpm = GetBPM();
+        RedFilter.color = new Color(1, 0, 0, 0);
 
         actionCoroutine = StartCoroutine(RunAudio());
     }
 
-    IEnumerator RunAudio()
+    private IEnumerator RunAudio()
     {
         while (true)
         {
-            bpm = getBPM();
+            bpm = GetBPM();
             Debug.Log("BPM = " + bpm.ToString());
 
             if (bpm == 0)
                 yield break;
 
-            audioSource.Play();
+            AudioSource.Play();
 
-            float newAlpha = redFilter.color.a == 0 ? 0.25f : 0;
-            redFilter.color = new Color(1, 0, 0, newAlpha);
+            float newAlpha = RedFilter.color.a == 0 ? 0.25f : 0;
+            RedFilter.color = new Color(1, 0, 0, newAlpha);
 
-            Debug.Log(redFilter.color);
+            Debug.Log(RedFilter.color);
 
-            float wait = 1.0f / (float)bpm * minBpm;
+            float wait = 1.0f / bpm * minBpm;
             yield return new WaitForSeconds(wait);
         }
     }

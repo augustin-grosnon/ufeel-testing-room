@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UFeel;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,11 +9,9 @@ public class MazeManager : MonoBehaviour
     public static MazeManager Instance { get; private set; }
 
     [Header("References")]
-    public GameObject RoomPrefab;
-    public GameObject PlayerObject;
-
-    [SerializeField]
-    private Text emotionDebugText;
+    [SerializeField] private GameObject roomPrefab;
+    [SerializeField] private GameObject playerObject;
+    [SerializeField] private Text emotionDebugText;
 
     [Header("Maze Settings")]
     public static int MazeSize = 3;
@@ -42,7 +39,7 @@ public class MazeManager : MonoBehaviour
         Instance = this;
     }
 
-    private async void Start()
+    private void Start()
     {
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
@@ -53,8 +50,6 @@ public class MazeManager : MonoBehaviour
         {
             _emotionLevels[emotionInfo.Emotion] = 0f;
         }
-
-        await Task.Delay(5000).ConfigureAwait(true);
 
         UFeelAPI.StartEmotionDetection();
     }
@@ -143,7 +138,7 @@ public class MazeManager : MonoBehaviour
                     z * RoomSpacing
                 );
 
-                GameObject roomObject = Instantiate(RoomPrefab, position, Quaternion.identity);
+                GameObject roomObject = Instantiate(roomPrefab, position, Quaternion.identity);
 
                 roomObject.name = $"Room_{x}_{z}";
                 roomObject.transform.SetParent(parent.transform);
@@ -241,7 +236,7 @@ public class MazeManager : MonoBehaviour
                 break;
         }
 
-        if (PlayerObject.TryGetComponent(out FirstPersonController firstPersonController))
+        if (playerObject.TryGetComponent(out FirstPersonController firstPersonController))
         {
             firstPersonController.Controller.enabled = false;
             firstPersonController.transform.position = targetPosition;

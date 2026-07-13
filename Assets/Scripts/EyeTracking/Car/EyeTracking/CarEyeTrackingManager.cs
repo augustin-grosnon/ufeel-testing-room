@@ -1,7 +1,7 @@
 using UFeel;
 using UnityEngine;
 
-public sealed class EyeTrackingManager : MonoBehaviour
+public sealed class CarEyeTrackingManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform _sphere;
@@ -32,7 +32,7 @@ public sealed class EyeTrackingManager : MonoBehaviour
         {
             playerCamera = FindFirstObjectByType<Camera>();
             if (playerCamera == null)
-                Debug.LogWarning("EyeTrackingManager: No camera found in loaded scenes.");
+                Debug.LogWarning("CarEyeTrackingManager: No camera found in loaded scenes.");
         }
     }
 

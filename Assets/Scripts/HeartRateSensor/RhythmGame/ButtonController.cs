@@ -4,9 +4,9 @@ using UnityEngine;
 public class ButtonController : MonoBehaviour
 {
     private SpriteRenderer sr;
-    public Sprite image;
-    public Sprite pressedImage;
-    public KeyCode keyToPress;
+    public Sprite Image;
+    public Sprite PressedImage;
+    public KeyCode KeyToPress;
 
     private void Start()
     {
@@ -15,14 +15,14 @@ public class ButtonController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(keyToPress))
+        if (Input.GetKeyDown(KeyToPress))
         {
-            sr.sprite = pressedImage;
+            sr.sprite = PressedImage;
         }
 
-        if (Input.GetKeyUp(keyToPress))
+        if (Input.GetKeyUp(KeyToPress))
         {
-            sr.sprite = image;
+            sr.sprite = Image;
         }
     }
 }

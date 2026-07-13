@@ -3113,13 +3113,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2241eb5a93c8925c992e55e87f892ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftShutter: {fileID: 1937931401}
-  rightShutter: {fileID: 1066982561}
-  openLeft: -7.5
-  openRight: 7
-  closeLeft: -2.85
-  closeRight: 2.15
-  speed: 2
+  LeftShutter: {fileID: 1937931401}
+  RightShutter: {fileID: 1066982561}
+  OpenLeft: -7.5
+  OpenRight: 7
+  CloseLeft: -2.85
+  CloseRight: 2.15
+  Speed: 2
 --- !u!82 &1060289123
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5852,9 +5852,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bea61e0624f6c80782e18b29c6350e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pivot: {fileID: 2028626719}
-  openAngle: 90
-  speed: 2
+  Pivot: {fileID: 2028626719}
+  OpenAngle: 90
+  Speed: 2
 --- !u!4 &2060721737 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5318535632084050904, guid: afd227f78cf0bfb439553cd1ed02009e, type: 3}

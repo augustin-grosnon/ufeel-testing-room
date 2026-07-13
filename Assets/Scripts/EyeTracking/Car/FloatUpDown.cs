@@ -2,18 +2,18 @@ using UnityEngine;
 
 public class FloatUpDown : MonoBehaviour
 {
-    public float amplitude = 0.5f;
-    public float frequency = 1f;
+    public float Amplitude = 0.5f;
+    public float Frequency = 1f;
 
     private Vector3 startPos;
 
-    void Start()
+    private void Start()
     {
         startPos = transform.position;
     }
 
-    void Update()
+    private void Update()
     {
-        transform.position = startPos + Vector3.up * Mathf.Sin(Time.time * frequency) * amplitude;
+        transform.position = startPos + (Amplitude * Mathf.Sin(Time.time * Frequency) * Vector3.up);
     }
 }

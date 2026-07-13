@@ -1057,11 +1057,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &742106317 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7402009758359158996, guid: 4ecab060b0afb5d4db61f7f1311b9e24, type: 3}
-  m_PrefabInstance: {fileID: 1850088677}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &782912431
 GameObject:
   m_ObjectHideFlags: 0
@@ -1199,17 +1194,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94c36bf6cf5932467b45b97810d7a6d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPoint: {fileID: 1512753755}
-  animalPrefabs:
+  SpawnPoint: {fileID: 1512753755}
+  AnimalPrefabs:
   - {fileID: 1474675655}
-  - {fileID: 742106317}
+  - {fileID: 1850088679}
   - {fileID: 45812042}
   - {fileID: 1581083301}
   - {fileID: 1993335764}
-  instructionText: {fileID: 615035620}
-  timerText: {fileID: 1942205653}
-  scoreText: {fileID: 967958411}
-  emotionProgressBar: {fileID: 1627858474}
+  InstructionText: {fileID: 615035620}
+  TimerText: {fileID: 1942205653}
+  ScoreText: {fileID: 967958411}
+  EmotionProgressBar: {fileID: 1627858474}
 --- !u!4 &821079349
 Transform:
   m_ObjectHideFlags: 0
@@ -2947,6 +2942,11 @@ PrefabInstance:
 --- !u!4 &1850088678 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7922649801668778606, guid: 4ecab060b0afb5d4db61f7f1311b9e24, type: 3}
+  m_PrefabInstance: {fileID: 1850088677}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1850088679 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7402009758359158996, guid: 4ecab060b0afb5d4db61f7f1311b9e24, type: 3}
   m_PrefabInstance: {fileID: 1850088677}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1942205651

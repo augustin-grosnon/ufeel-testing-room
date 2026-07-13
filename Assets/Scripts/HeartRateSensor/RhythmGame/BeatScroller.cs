@@ -2,22 +2,22 @@ using UnityEngine;
 
 public class BeatScroller : MonoBehaviour
 {
-    public float beatTempo;
-    public int bpm;
-    public bool started;
-    
-    void Start()
+    public float BeatTempo;
+    public int Bpm;
+    public bool Started;
+
+    private void Start()
     {
-        beatTempo = 2;
-        bpm = 60;
+        BeatTempo = 2;
+        Bpm = 60;
     }
 
-    void Update()
+    private void Update()
     {
-        if (started)
+        if (Started)
         {
-            beatTempo = (float)bpm / 30f;
-            transform.position -= new Vector3(0f, beatTempo * Time.deltaTime, 0f);
+            BeatTempo = Bpm / 30f;
+            transform.position -= new Vector3(0f, BeatTempo * Time.deltaTime, 0f);
         }
     }
 }

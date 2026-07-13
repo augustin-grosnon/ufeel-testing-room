@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TMPro;
 using UFeel;
 using UnityEngine;
@@ -59,35 +58,18 @@ public class SpeechManager : MonoBehaviour
     private EscapeStep currentStep = EscapeStep.Light;
     private string lastProcessedSpeech = string.Empty;
     private Coroutine radioLoopCoroutine;
+    private static readonly Regex _regex = new(@"[.,\/#!$%\^&\*;:{}=\-_`~()?']");
+    private static readonly Regex _regex2 = new(@"\b(le|la|les|l|un|une|des|du|de)\b");
+    private static readonly Regex _regex3 = new(@"\s+");
 
     private void Start()
     {
-        // UFeelDebugHUD.UseDefaultDebugHUD = false;
-        // UFeelDebugHUD.Clear();
-        // UFeelDebugHUD.Set("Current Speech", () => UFeelAPI.CurrentSpeech);
-
-        // GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        // if (playerObject != null)
-        // {
-        //     _player = playerObject.GetComponent<FirstPersonController>();
-        // }
-
-        // await UFeelAPI.StartAPI();
-        // await Task.Delay(5000);
-
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
 
         UFeelAPI.StartSpeechDetection();
         UFeelAPI.Status();
 
-        // GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        // if (playerObject != null)
-        // {
-        //     _player = playerObject.GetComponent<FirstPersonController>();
-        // }
-
-        // radioAudio.Play();
         radioLoopCoroutine = StartCoroutine(PlayRadioWithDelay());
         LightStep();
     }
@@ -411,9 +393,9 @@ public class SpeechManager : MonoBehaviour
     {
         string t = text.ToLower().Trim();
 
-        t = Regex.Replace(t, @"[.,\/#!$%\^&\*;:{}=\-_`~()?']", " ");
-        t = Regex.Replace(t, @"\b(le|la|les|l|un|une|des|du|de)\b", "");
-        t = Regex.Replace(t, @"\s+", " ").Trim();
+        t = _regex.Replace(t, " ");
+        t = _regex2.Replace(t, string.Empty);
+        t = _regex3.Replace(t, " ").Trim();
         return t;
     }
 }

@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class VoiceDoorController : MonoBehaviour
 {
-    public Transform pivot;
-    public float openAngle = 90f;
-    public float speed = 2f;
+    public Transform Pivot;
+    public float OpenAngle = 90f;
+    public float Speed = 2f;
 
     private bool isOpen = false;
 
@@ -18,15 +18,15 @@ public class VoiceDoorController : MonoBehaviour
         isOpen = false;
     }
 
-    void Update()
+    private void Update()
     {
-        float targetY = isOpen ? openAngle : 0f;
+        float targetY = isOpen ? OpenAngle : 0f;
         Vector3 targetRotation = new(0, targetY, 0);
 
-        pivot.localRotation = Quaternion.Lerp(
-            pivot.localRotation,
+        Pivot.localRotation = Quaternion.Lerp(
+            Pivot.localRotation,
             Quaternion.Euler(targetRotation),
-            Time.deltaTime * speed
+            Time.deltaTime * Speed
         );
     }
 }

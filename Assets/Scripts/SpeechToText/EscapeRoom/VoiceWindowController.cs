@@ -2,19 +2,16 @@ using UnityEngine;
 
 public class VoiceWindowController : MonoBehaviour
 {
-    public Transform leftShutter;
-    public Transform rightShutter;
+    public Transform LeftShutter;
+    public Transform RightShutter;
 
-    public float openLeft = -7.5f;
-    public float openRight = 7f;
+    public float OpenLeft = -7.5f;
+    public float OpenRight = 7f;
 
-    public float closeLeft = -2.85f;
-    public float closeRight = 2.15f;
+    public float CloseLeft = -2.85f;
+    public float CloseRight = 2.15f;
 
-    public float speed = 2f;
-    Vector3 leftPos;
-    Vector3 rightPos;
-
+    public float Speed = 2f;
     private bool isOpen = true;
 
     public void OpenWindow()
@@ -27,18 +24,18 @@ public class VoiceWindowController : MonoBehaviour
         isOpen = false;
     }
 
-    public Vector3 ShutterPositions => new(leftShutter.localPosition.x, rightShutter.localPosition.x, 0);
+    public Vector3 ShutterPositions => new(LeftShutter.localPosition.x, RightShutter.localPosition.x, 0);
 
     private void Update()
     {
-        Vector3 leftPos = leftShutter.localPosition;
-        Vector3 rightPos = rightShutter.localPosition;
+        Vector3 leftPos = LeftShutter.localPosition;
+        Vector3 rightPos = RightShutter.localPosition;
 
-        leftPos.x = Mathf.Lerp(leftPos.x, isOpen ? openLeft : closeLeft, Time.deltaTime * speed);
+        leftPos.x = Mathf.Lerp(leftPos.x, isOpen ? OpenLeft : CloseLeft, Time.deltaTime * Speed);
 
-        rightPos.x = Mathf.Lerp(rightPos.x, isOpen ? openRight : closeRight, Time.deltaTime * speed);
+        rightPos.x = Mathf.Lerp(rightPos.x, isOpen ? OpenRight : CloseRight, Time.deltaTime * Speed);
 
-        leftShutter.localPosition = leftPos;
-        rightShutter.localPosition = rightPos;
+        LeftShutter.localPosition = leftPos;
+        RightShutter.localPosition = rightPos;
     }
 }

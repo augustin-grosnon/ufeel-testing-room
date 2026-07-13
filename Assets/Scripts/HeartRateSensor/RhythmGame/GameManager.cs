@@ -6,47 +6,46 @@ using UFeel;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
+    private static WaitForSeconds _waitForSeconds1 = new WaitForSeconds(1f);
+    public static GameManager Instance;
 
-    public bool startPlaying;
+    public bool StartPlaying;
     public BeatScroller bs;
 
-    public int currentScore;
-    public int scorePerNote = 100;
+    public int CurrentScore;
+    public int ScorePerNote = 100;
 
-    public Text scoreText;
-    public Text multiplierText;
+    public Text ScoreText;
+    public Text MultiplierText;
 
-    public int currentMultiplier = 1;
-    public int multiplierTracker = 0;
-    public int multiplierThreshold = 4;
+    public int CurrentMultiplier = 1;
+    public int MultiplierTracker = 0;
+    public int MultiplierThreshold = 4;
 
-    private const int minBpm = 60;
-    private const int maxBpm = 180;
+    private const int MinBpm = 60;
+    private const int MaxBpm = 180;
     private Coroutine actionCoroutine;
     private Coroutine actionCoroutine2;
 
     private bool simulated = false;
-    private const int hpGainScore = 1;
+    private const int HpGainScore = 1;
     public Slider _slider;
 
     public AudioSource _music;
     public AudioSource _ECGBeep;
 
-    private async void Start()
+    private void Start()
     {
-        instance = this;
+        Instance = this;
         _music.volume = 0.5f;
         _ECGBeep.volume = 0.25f;
-
-        // await UFeelAPI.StartAPI();
-        // await Task.Delay(3000);
 
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
 
         UFeelAPI.StartHeartRateDetection();
-        await Task.Delay(3000);
+
+        // await Task.Delay(3000);
 
         actionCoroutine = StartCoroutine(UpdateBPM());
         actionCoroutine2 = StartCoroutine(PlayECGBeep());
@@ -59,10 +58,10 @@ public class GameManager : MonoBehaviour
             simulated = !simulated;
             UFeelAPI.ToggleHeartRateSimulation(simulated);
         }
-        if (!startPlaying && Input.anyKeyDown)
+        if (!StartPlaying && Input.anyKeyDown)
         {
-            startPlaying = true;
-            bs.started = true;
+            StartPlaying = true;
+            bs.Started = true;
             _music.Play();
         }
         if (_slider.value <= 0)
@@ -73,27 +72,27 @@ public class GameManager : MonoBehaviour
 
     public void NoteHit()
     {
-        multiplierTracker++;
+        MultiplierTracker++;
 
-        if (multiplierTracker >= multiplierThreshold)
+        if (MultiplierTracker >= MultiplierThreshold)
         {
-            multiplierTracker = 0;
-            multiplierThreshold *= 2;
-            currentMultiplier++;
+            MultiplierTracker = 0;
+            MultiplierThreshold *= 2;
+            CurrentMultiplier++;
         }
 
-        currentScore += scorePerNote * currentMultiplier;
-        scoreText.text = "Score: " + currentScore;
-        multiplierText.text = "Multiplier: x" + currentMultiplier;
-        _slider.value = Mathf.Clamp(_slider.value + hpGainScore * currentMultiplier, _slider.minValue, _slider.maxValue);
+        CurrentScore += ScorePerNote * CurrentMultiplier;
+        ScoreText.text = "Score: " + CurrentScore;
+        MultiplierText.text = "Multiplier: x" + CurrentMultiplier;
+        _slider.value = Mathf.Clamp(_slider.value + (HpGainScore * CurrentMultiplier), _slider.minValue, _slider.maxValue);
     }
 
     public void NoteMissed()
     {
-        currentMultiplier = 1;
-        multiplierTracker = 0;
-        multiplierThreshold = 4;
-        multiplierText.text = "Multiplier: x" + currentMultiplier;
+        CurrentMultiplier = 1;
+        MultiplierTracker = 0;
+        MultiplierThreshold = 4;
+        MultiplierText.text = "Multiplier: x" + CurrentMultiplier;
         _slider.value = Mathf.Clamp(_slider.value - 5, _slider.minValue, _slider.maxValue);
     }
 
@@ -106,10 +105,10 @@ public class GameManager : MonoBehaviour
             if (bpm == 0)
                 yield break;
 
-            bs.bpm = bpm;
-            _music.pitch = (float)bpm / (float)minBpm;
+            bs.Bpm = bpm;
+            _music.pitch = bpm / (float)MinBpm;
 
-            yield return new WaitForSeconds(1f);
+            yield return _waitForSeconds1;
         }
     }
 
@@ -119,7 +118,7 @@ public class GameManager : MonoBehaviour
         {
             _ECGBeep.Play();
 
-            yield return new WaitForSeconds(1f / ((float)bs.bpm / 60f));
+            yield return new WaitForSeconds(1f / (bs.Bpm / 60f));
         }
     }
 
@@ -130,6 +129,6 @@ public class GameManager : MonoBehaviour
         if (currentBPM == 0)
             return currentBPM;
 
-        return Mathf.Clamp(currentBPM, minBpm, maxBpm);
+        return Mathf.Clamp(currentBPM, MinBpm, MaxBpm);
     }
 }
