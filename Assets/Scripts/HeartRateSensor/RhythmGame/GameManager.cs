@@ -38,8 +38,8 @@ public class GameManager : MonoBehaviour
 		_music.volume = 0.5f;
 		_ECGBeep.volume = 0.25f;
 
-        // await UFeelAPI.StartAPI();
-        // await Task.Delay(3000);
+        await UFeelAPI.StartAPI();
+        await Task.Delay(3000);
 
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
@@ -65,7 +65,6 @@ public class GameManager : MonoBehaviour
 		if (_slider.value <= 0) {
 			// DISPLAY GAME OVER SCREEN
 		}
-		//Debug.Log(bs.bpm);
     }
 
     public void NoteHit()
