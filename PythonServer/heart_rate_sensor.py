@@ -21,7 +21,7 @@ class HeartRateGenerator:
         self.min_hr = min_hr
         self.max_hr = max_hr
         self.max_step = max_step
-        self.source = 0 # source: 0 = external sensor, 1 = simulated
+        self.source = False # source: 0 = external sensor, 1 = simulated
 
         self.sensor_value = -1
         self.running = True
@@ -62,6 +62,7 @@ class HeartRateSensor(ClientBase):
         super().__init__("127.0.0.1", 3800)
         self.handlers = {
             "heart_rate_detection": self.toggle_heart_rate_detection,
+            "simulated": self.change_data_source
         }
 
         self.process_enable = False

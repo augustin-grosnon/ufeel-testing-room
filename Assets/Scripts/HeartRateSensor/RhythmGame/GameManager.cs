@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
 	private Coroutine actionCoroutine;
 	private Coroutine actionCoroutine2;
 
+	private bool simulated = false;
 	private const int hpGainScore = 1;
 	public Slider _slider;
 
@@ -61,6 +62,11 @@ public class GameManager : MonoBehaviour
                 bs.started = true;
 				_music.Play();
             }
+			if (Input.GetKeyUp(KeyCode.N))
+			{
+				simulated = !simulated;
+				UFeelAPI.ToggleHeartRateSimulation(simulated);
+			}
         }
 		if (_slider.value <= 0) {
 			// DISPLAY GAME OVER SCREEN

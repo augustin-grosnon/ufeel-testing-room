@@ -389,6 +389,12 @@ namespace UFeel
             _heartRateSensorReceiver?.SendData(bytes);
         }
 
+        public static void ToggleHeartRateSimulation(bool simulated)
+        {
+            byte[] bytes = ClientBase.CreateData("simulated", simulated.ToString().ToLower());
+            _heartRateSensorReceiver?.SendData(bytes);
+        }
+
         public static void StartHeartRateDetection()
         {
             if (!_heartRateSensorReceiver.ClientConnected)
