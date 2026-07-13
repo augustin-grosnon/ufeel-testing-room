@@ -339,8 +339,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ff63ec44c0e49f5bbb2566d0abf933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  amplitude: 0.5
-  frequency: 1
+  Amplitude: 0.5
+  Frequency: 1
 --- !u!114 &137624875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -730,6 +730,7 @@ MonoBehaviour:
   accelerationForce: 800
   steeringTorque: 300
   maxSpeed: 20
+  sequenceTimeout: 2.5
   centerOfMass: {fileID: 16946836}
 --- !u!54 &504246957
 Rigidbody:
@@ -999,7 +1000,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1055629086}
-  - component: {fileID: 1055629085}
   m_Layer: 0
   m_Name: FloatingObjectManager
   m_TagString: Untagged
@@ -1007,26 +1007,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1055629085
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1055629084}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e31f4e781afcee339cdf784c7e324cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _sphere: {fileID: 137624870}
-  playerCamera: {fileID: 0}
-  interactionDisabler: {fileID: 137624875}
-  sphereDistance: 4
-  angularMovementRange: {x: 30, y: 20}
-  smoothSpeed: 5
-  gazeHoldThreshold: 0.25
-  gazeReleaseCooldown: 0.5
 --- !u!4 &1055629086
 Transform:
   m_ObjectHideFlags: 0

@@ -110,6 +110,11 @@ public class VehicleController : MonoBehaviour
         previousLeft = directions.left;
         previousRight = directions.right;
 
+        if (canMove)
+        {
+            return;
+        }
+
         switch (activationStep)
         {
             case ActivationStep.WaitBlink:
