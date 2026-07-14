@@ -15,10 +15,10 @@ Instructions for testing and debugging the UFeel package across the main Testing
 
 ### Testing Steps for Emotion Detection
 
-- From the base scene, enter the **TestingRoom_EmotionDetection** scene via the carousel.
+- From the base scene, enter the **Maze** scene via the carousel.
 - The camera feed should activate automatically.
-- Try displaying emotions like **happiness**, **surprise**, or **anger** as required by door labels.
-- Doors will open only when the correct emotion is held for a sufficient time.
+- Try displaying emotions like **happiness**, **surprise**, or **anger** as required by fog door labels.
+- The path will open only when the correct emotion is held for a sufficient time.
 
 ### Troubleshooting Emotion Detection
 
@@ -26,16 +26,13 @@ Instructions for testing and debugging the UFeel package across the main Testing
   - Check for sufficient front-facing light.
   - Ensure your face is fully visible in the webcam's field of view.
 
-- **Door doesn’t respond?**
-  - Confirm `EmotionGameManager` is attached and listening to `UFeel` emotion data.
-
 ## Eye Tracking Scene
 
 **Scene Purpose:** Controls a vehicle using gaze-based direction.
 
 ### Testing Steps for Eye Tracking
 
-- From the base scene, enter the **TestingRoom_EyeTracking** scene via the carousel.
+- From the base scene, enter the **Car** scene via the carousel.
 - Ensure the eye-tracking logic works (gaze affects vehicle direction).
 
 ### Troubleshooting Eye Tracking
@@ -50,7 +47,7 @@ Instructions for testing and debugging the UFeel package across the main Testing
 
 ### Testing Steps for Testing Room
 
-- Run `BaseScene.unity`.
+- Run `TestingRoom.unity`.
 - Use the carousel to enter **EyeTracking** and **Emotion** scenes.
 - Return to base between tests to ensure transitions preserve webcam availability.
 

@@ -11,15 +11,13 @@ These shortcuts are available in all scenes:
 | **P**                         | Permanently stop the Python camera process |
 | **,** (M on QWERTY keyboards) | Open the debug/menu interface              |
 
----
+## Base Scene (TestingRoom)
 
-# Base Scene (TestingRoom)
-
-## Role
+### Role
 
 Main hub used to access all available experiences.
 
-## Features
+### Features
 
 * First-person controller.
 * Mouse controls camera rotation.
@@ -30,11 +28,9 @@ Main hub used to access all available experiences.
 
 All other scenes can be accessed by entering the corresponding door.
 
----
+## Emotion-Based Experiences
 
-# Emotion-Based Experiences
-
-## Maze
+### Maze
 
 **Role:** Emotion-driven labyrinth experience.
 
@@ -42,9 +38,7 @@ All other scenes can be accessed by entering the corresponding door.
 
 **See also:** [Maze README](../Emotions/Maze/README.md)
 
----
-
-## Animals
+### Animals
 
 **Role:** Emotion-based memory game.
 
@@ -52,11 +46,9 @@ All other scenes can be accessed by entering the corresponding door.
 
 **See also:** [Animals README](../Emotions/Animals/README.md)
 
----
+## Eye Tracking Experiences
 
-# Eye Tracking Experiences
-
-## Car
+### Car
 
 **Role:** Vehicle control using eye tracking.
 
@@ -64,19 +56,15 @@ All other scenes can be accessed by entering the corresponding door.
 
 **See also:** [Eye Tracking README](../EyeTracking/Car/README.md)
 
----
-
-## Survivor
+### Survivor
 
 **Role:** Eye-tracking survival experience.
 
 **Status:** Planned for future development.
 
----
+## Speech-To-Text Experiences
 
-# Speech-To-Text Experiences
-
-## EscapeRoom
+### EscapeRoom
 
 **Role:** Voice-controlled escape room.
 
@@ -84,11 +72,9 @@ All other scenes can be accessed by entering the corresponding door.
 
 **See also:** [EscapeRoom README](../SpeechToText/EscapeRoom/README.md)
 
----
+## Heart Rate Experiences
 
-# Heart Rate Experiences
-
-## RhythmGame
+### RhythmGame
 
 **Role:** Heart-rate-adaptive rhythm game.
 
