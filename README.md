@@ -29,7 +29,7 @@ A Unity project demonstrating the [UFeel](Packages/com.ufcorp.ufeel) input packa
 ## Quick Start
 
 1. Clone the repository.
-2. Open in Unity Hub (TODO: add version).
+2. Open in Unity Hub.
 3. Open the `TestingRoom` scene and press Play.
 
 Note: A webcam is required for most features.
