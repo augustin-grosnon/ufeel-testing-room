@@ -32,30 +32,7 @@ A Unity project demonstrating the [UFeel](Packages/com.ufcorp.ufeel) input packa
 2. Open in Unity Hub (TODO: add version).
 3. Open the `TestingRoom` scene and press Play.
 
-A webcam is required for most features.
-
-## Build Modes
-
-This project is intended to support two build profiles:
-
-* **Development** – enables debug tools, extended logging, and testing utilities.
-* **Production** – excludes development-only code and debug systems.
-
-Separation will be handled using Unity Build Profiles and a `DEV` scripting define symbol.
-
-Code wrapped in:
-
-```csharp
-#if DEV
-// development-only code
-#endif
-```
-
-will only be compiled in Development builds.
-
-This setup is currently only planned and may be automated in a future update.
-TODO: implement in the project
-TODO: update this README
+Note: A webcam is required for most features.
 
 ## License
 
