@@ -101,3 +101,4 @@ Assets/TextMesh Pro.meta
 venv
 
 BUILDS
+.coverage
