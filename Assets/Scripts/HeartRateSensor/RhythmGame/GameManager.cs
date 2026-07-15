@@ -43,16 +43,24 @@ public class GameManager : MonoBehaviour
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
 
-        UFeelAPI.StartHeartRateDetection();
-
-        // await Task.Delay(3000);
+        InitializeDetection();
 
         actionCoroutine = StartCoroutine(UpdateBPM());
         actionCoroutine2 = StartCoroutine(PlayECGBeep());
     }
 
+    private static void InitializeDetection()
+    {
+        UFeelAPI.StartHeartRateDetection();
+        UFeelAPI.Status();
+    }
+
     private void Update()
     {
+        if (Input.GetKeyUp(KeyCode.V))
+        {
+            InitializeDetection();
+        }
         if (Input.GetKeyUp(KeyCode.N))
         {
             simulated = !simulated;

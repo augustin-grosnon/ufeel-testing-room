@@ -26,7 +26,7 @@ public sealed class CarEyeTrackingManager : MonoBehaviour
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
 
-        UFeelAPI.StartEyeTrackingDetection();
+        InitializeDetection();
 
         if (playerCamera == null)
         {
@@ -36,8 +36,18 @@ public sealed class CarEyeTrackingManager : MonoBehaviour
         }
     }
 
+    private static void InitializeDetection()
+    {
+        UFeelAPI.StartEyeTrackingDetection();
+        UFeelAPI.Status();
+    }
+
     private void Update()
     {
+        if (Input.GetKeyUp(KeyCode.V))
+        {
+            InitializeDetection();
+        }
         if (playerCamera == null || _sphere == null) return;
 
         UpdateGazeStatus();

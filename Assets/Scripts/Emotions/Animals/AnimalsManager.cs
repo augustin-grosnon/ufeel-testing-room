@@ -59,8 +59,8 @@ public class AnimalsManager : MonoBehaviour
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
 
-        UFeelAPI.StartEmotionDetection();
-        UFeelAPI.Status();
+        InitializeDetection();
+
         if (EmotionProgressBar != null)
         {
             barFillImage = EmotionProgressBar.fillRect.GetComponent<Image>();
@@ -243,8 +243,18 @@ public class AnimalsManager : MonoBehaviour
         };
     }
 
+    private static void InitializeDetection()
+    {
+        UFeelAPI.StartEmotionDetection();
+        UFeelAPI.Status();
+    }
+
     private void Update()
     {
+        if (Input.GetKeyUp(KeyCode.V))
+        {
+            InitializeDetection();
+        }
         if (!isLevelActive || !isTrackingEmotion || currentAnimalGO == null) return;
 
         EmotionData.EmotionType? dominantEmotion = UFeelAPI.DominantEmotion;

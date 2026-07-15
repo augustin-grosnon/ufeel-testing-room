@@ -67,8 +67,7 @@ public class SpeechManager : MonoBehaviour
         UFeelAPI.ToggleOffEverything();
         UFeelDebugHUD.Clear();
 
-        UFeelAPI.StartSpeechDetection();
-        UFeelAPI.Status();
+        InitializeDetection();
 
         radioLoopCoroutine = StartCoroutine(PlayRadioWithDelay());
         LightStep();
@@ -164,8 +163,18 @@ public class SpeechManager : MonoBehaviour
         StartCoroutine(ShowEndScreen());
     }
 
+    private static void InitializeDetection()
+    {
+        UFeelAPI.StartSpeechDetection();
+        UFeelAPI.Status();
+    }
+
     private void Update()
     {
+        if (Input.GetKeyUp(KeyCode.V))
+        {
+            InitializeDetection();
+        }
         string currentSpeech = UFeelAPI.CurrentSpeech;
 
         if (string.IsNullOrEmpty(currentSpeech) || currentSpeech == lastProcessedSpeech) return;
