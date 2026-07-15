@@ -5,7 +5,7 @@ import threading
 
 logging.basicConfig(
     filename="client_base.log",
-    filemode="a",
+    filemode="w",
     format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.DEBUG
 )
@@ -21,7 +21,7 @@ class ClientBase:
 
         try:
             self.socket.connect((self.server_ip, self.server_port))
-            logging.info(f"Connected to server at {self.server_ip}:{self.server_port}")
+            # logging.info(f"Connected to server at {self.server_ip}:{self.server_port}")
         except ConnectionRefusedError as e:
             logging.error(f"Connection refused: {e}")
             self.socket = None
@@ -35,7 +35,7 @@ class ClientBase:
             try:
                 message = json.dumps(obj) + "\n"
                 self.socket.sendall(message.encode("utf-8"))
-                logging.info(f"Sent: {message.strip()}")
+                # logging.info(f"Sent: {message.strip()}")
             except Exception as e:
                 logging.error(f"Error sending JSON: {e}")
 
@@ -81,7 +81,7 @@ class ClientBase:
 
     def listen(self):
         while self.running and self.socket:
-            logging.info("hihi")
+            # logging.info("hihi")
             self.receive()
 
     def close(self):
@@ -89,6 +89,6 @@ class ClientBase:
         if self.socket:
             try:
                 self.socket.close()
-                logging.info("Socket closed")
+                # logging.info("Socket closed")
             except Exception as e:
                 logging.error(f"Error closing socket: {e}")

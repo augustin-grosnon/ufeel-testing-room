@@ -9,7 +9,7 @@ import random
 
 logging.basicConfig(
     filename="client_base.log",
-    filemode="a",
+    filemode="w",
     format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.DEBUG
 )
@@ -76,7 +76,7 @@ class HeartRateSensor(ClientBase):
     def toggle_heart_rate_detection(self, state):
         self.process_enable = state
         status = "enabled" if state else "disabled"
-        logging.info(f"Heart Rate detection {status} {state}")
+        # logging.info(f"Heart Rate detection {status} {state}")
 
     def change_data_source(self, source):
         self.hr_gen.source = source

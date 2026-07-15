@@ -1,51 +1,3 @@
-# import speech_recognition as sr
-# import socket
-# import json
-
-# class SpeechToText:
-#     def __init__(self):
-#         self.UDP_IP = "127.0.0.1"
-#         self.UDP_PORT = 4244
-#         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#         self.recognizer = sr.Recognizer()
-#         self.language = "fr-FR"
-#         self.recognizer.pause_threshold = 0.5
-#         self.recognizer.energy_threshold = 300
-#         self._adjusted = False
-
-
-
-
-#     def process(self, phrase_time_limit=2):
-#         while True:
-#             self.sock.sendto(json.dumps({"text": "Bonjour"}).encode(), (self.UDP_IP, self.UDP_PORT))
-#             print("Sent Bonjour")
-#         # with sr.Microphone() as source:
-#         #     self.recognizer.adjust_for_ambient_noise(source, duration=1)
-#         #     print("Say something...")
-
-#         #     while True:
-#         #         self.sock.sendto(json.dumps({"text": "Bonjour"}).encode(), (self.UDP_IP, self.UDP_PORT))
-
-#                 # try:
-#                 #     audio_data = self.recognizer.listen(source, timeout=None, phrase_time_limit=phrase_time_limit)
-#                 #     text = self.recognizer.recognize_google(audio_data, language=self.language)
-#                 #     self.sock.sendto(json.dumps({"text": text}).encode(), (self.UDP_IP, self.UDP_PORT))
-#                 #     print(f"the text is: {text}")
-#                 # except sr.UnknownValueError:
-#                 #     print("Could not understand.")
-#                 # except sr.RequestError as e:
-#                 #     print(f"Could not request results; {e}")
-
-#     def close(self):
-#         self.sock.close()
-
-# # pip install SpeechRecognition pyaudio keyboard -> put in requirement file
-
-# # recognize_google() API Google
-# # try Vosk (~50–200 Mo), Whisper (more accurate but lourd, 150 Mo à 3 Go)
-
-
 import cv2
 import json
 import sounddevice as sd
@@ -58,7 +10,7 @@ import unicodedata
 
 logging.basicConfig(
     filename="client_base.log",
-    filemode="a",  # Append mode
+    filemode="w",  # Append mode
     format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.DEBUG  # Use DEBUG level to log everything
 )
@@ -84,7 +36,7 @@ class SpeechToText(ClientBase):
     def toggle_speech_detection(self, state):
         self.process_enable = state
         status = "enabled" if state else "disabled"
-        logging.info(f"Speech detection {status} {state}")
+        # logging.info(f"Speech detection {status} {state}")
 
     def _start_thread(self):
         if self.thread is not None and self.thread.is_alive():

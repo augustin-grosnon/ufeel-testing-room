@@ -16,7 +16,7 @@ from emotion_detection import (
 
 logging.basicConfig(
     filename="client_base.log",
-    filemode="a",
+    filemode="w",
     format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.DEBUG,
 )
@@ -61,7 +61,7 @@ class EmotionDetector(ClientBase):
     def toggle_emotion_detection(self, state):
         self.process_enable = state
         status = "enabled" if state else "disabled"
-        logging.info(f"Emotion detection {status} {state}")
+        # logging.info(f"Emotion detection {status} {state}")
 
     def process(self, frame, counter, show_window=True):
         if not self.process_enable:
