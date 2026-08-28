@@ -19,12 +19,12 @@ Main hub used to access all available experiences.
 
 ### Features
 
-* First-person controller.
-* Mouse controls camera rotation.
-* **W**: Move forward.
-* **S**: Move backward.
-* Scene selection through interactive doors.
-* Lighting is intentionally disabled.
+- First-person controller.
+- Mouse controls camera rotation.
+- **W**: Move forward.
+- **S**: Move backward.
+- Scene selection through interactive doors.
+- Lighting is intentionally disabled.
 
 All other scenes can be accessed by entering the corresponding door.
 
