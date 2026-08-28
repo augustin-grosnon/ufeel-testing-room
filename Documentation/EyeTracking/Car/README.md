@@ -2,6 +2,8 @@
 
 > [<- Scene Reference](../../TestingRoom/Scenes.md)
 
+![](../../Assets/car.png)
+
 ## Role
 
 Vehicle navigation using eye tracking.

@@ -2,6 +2,8 @@
 
 > [<- Scene Reference](../../TestingRoom/Scenes.md)
 
+![](../../Assets/rhythm_game.png)
+
 ## Role
 
 Heart-rate-adaptive rhythm game.

@@ -2,6 +2,8 @@
 
 > [<- Scene Reference](../../TestingRoom/Scenes.md)
 
+![](../../Assets/animals.png)
+
 ## Role
 
 Emotion-based memory game.

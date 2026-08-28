@@ -2,6 +2,8 @@
 
 > [<- Scene Reference](../../TestingRoom/Scenes.md)
 
+![](../../Assets/maze.png)
+
 ## Role
 
 Emotion-driven labyrinth experience.

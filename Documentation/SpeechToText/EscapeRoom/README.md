@@ -2,6 +2,8 @@
 
 > [<- Scene Reference](../../TestingRoom/Scenes.md)
 
+![](../../Assets/escape_room.png)
+
 ## Role
 
 Voice-controlled escape room experience.
