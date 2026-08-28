@@ -3,7 +3,7 @@
 [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/TxYTDXMJkM)](https://discord.gg/TxYTDXMJkM)
 
 [![Discord](https://img.shields.io/discord/1461581735631523900.svg)](https://discord.gg/TxYTDXMJkM)
-[![Apache 2.0 License](https://img.shields.io/badge/apache-2.0-license)](https://opensource.org/licenses/)
+[![MIT License](https://img.shields.io/badge/mit-license)](https://opensource.org/licenses/)
 ![Unity](https://img.shields.io/badge/Unity-%23000000.svg?logo=unity&logoColor=white)
 ![Linux](https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black)
 
@@ -36,4 +36,4 @@ Note: A webcam is required for most features.
 
 ## License
 
-Apache License 2.0 - see [LICENSE](LICENSE).
+MIT License - see [LICENSE](LICENSE).
