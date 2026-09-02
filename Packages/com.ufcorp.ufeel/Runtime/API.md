@@ -4,10 +4,10 @@
 
 `UFeelAPI` is a static singleton MonoBehaviour for reacting to player biometric signals in real time:
 
-* Emotions
-* Eye tracking (gaze direction)
-* Speech (keywords / phrases)
-* Heart rate
+- Emotions
+- Eye tracking (gaze direction)
+- Speech (keywords / phrases)
+- Heart rate
 
 Define *rules* - condition + action pairs - that fire automatically rather than polling each frame.
 
@@ -19,8 +19,8 @@ All methods are static. Required objects are created automatically if absent fro
 
 A rule has a **condition**, an **action**, and a **mode**:
 
-* `Once` - triggered once, then removed
-* `Continuous` - triggered every frame while the condition holds
+- `Once` - triggered once, then removed
+- `Continuous` - triggered every frame while the condition holds
 
 Rules are evaluated every `Update()`.
 
@@ -215,10 +215,10 @@ Logs the running state of all systems in the Unity Console.
 
 ## Limitations
 
-* Each detector must be started explicitly.
-* Rule actions run every frame - keep them fast.
-* Speech matching uses `Contains`, not exact match.
-* The Python server must be running for data to arrive.
+- Each detector must be started explicitly.
+- Rule actions run every frame - keep them fast.
+- Speech matching uses `Contains`, not exact match.
+- The Python server must be running for data to arrive.
 
 ## Typical Usage Pattern
 

@@ -2,16 +2,18 @@
 
 > [<- Scene Reference](../../TestingRoom/Scenes.md)
 
+![](../../Assets/animals.png)
+
 ## Role
 
 Emotion-based memory game.
 
 ## Gameplay
 
-* Each animal displayed on screen is associated with a specific emotion.
-* The player must perform the matching emotion to score points.
-* New animals and emotions are introduced as the game progresses.
-* Difficulty increases with each completed level.
+- Each animal displayed on screen is associated with a specific emotion.
+- The player must perform the matching emotion to score points.
+- New animals and emotions are introduced as the game progresses.
+- Difficulty increases with each completed level.
 
 ## Objective
 

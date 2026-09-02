@@ -4,6 +4,8 @@
 
 Unity project showcasing the [UFeel](../../Packages/com.ufcorp.ufeel) biometric input package.
 
+![](../Assets/testing_room.png)
+
 ## Features
 
 - Gaze-controlled vehicle navigation

@@ -6,10 +6,10 @@
 
 This project provides software tools and libraries for advanced input systems, including but not limited to:
 
-* Eye tracking
-* Emotion recognition
-* Voice and audio-based input
-* Physiological signal processing (e.g., heart rate)
+- Eye tracking
+- Emotion recognition
+- Voice and audio-based input
+- Physiological signal processing (e.g., heart rate)
 
 This list is not exhaustive.
 
@@ -19,9 +19,9 @@ System performance depends on external hardware, software configuration, and env
 
 All input data is captured using third-party hardware. This includes, but is not limited to:
 
-* Microphones
-* Cameras
-* Heart rate sensors and other biometric devices
+- Microphones
+- Cameras
+- Heart rate sensors and other biometric devices
 
 This list is not exhaustive.
 
@@ -29,9 +29,9 @@ The project does not design, manufacture, calibrate, or control such hardware. H
 
 As a result:
 
-* Different devices may produce materially different results
-* Low-quality, misconfigured, or poorly calibrated hardware may reduce accuracy
-* Environmental factors may introduce noise, latency, distortion, or bias
+- Different devices may produce materially different results
+- Low-quality, misconfigured, or poorly calibrated hardware may reduce accuracy
+- Environmental factors may introduce noise, latency, distortion, or bias
 
 These effects are inherent to the hardware and environment and do not constitute software defects.
 
@@ -39,10 +39,10 @@ These effects are inherent to the hardware and environment and do not constitute
 
 Non-exhaustive examples include:
 
-* Voice recognition accuracy affected by microphone quality, background noise, compression, and sampling rate
-* Eye tracking accuracy affected by camera resolution, frame rate, lighting, positioning, and user physiology
-* Emotion recognition affected by image quality, occlusions, lighting, facial visibility, and individual or cultural variation
-* Physiological signal processing affected by sensor precision, skin contact, motion artifacts, and calibration
+- Voice recognition accuracy affected by microphone quality, background noise, compression, and sampling rate
+- Eye tracking accuracy affected by camera resolution, frame rate, lighting, positioning, and user physiology
+- Emotion recognition affected by image quality, occlusions, lighting, facial visibility, and individual or cultural variation
+- Physiological signal processing affected by sensor precision, skin contact, motion artifacts, and calibration
 
 This list is not exhaustive.
 
@@ -50,11 +50,11 @@ This list is not exhaustive.
 
 The project provides no guarantee of:
 
-* Detection correctness
-* Real-time performance
-* Consistency across devices
-* Freedom from bias or error
-* Suitability for medical, psychological, diagnostic, legal, or regulatory purposes
+- Detection correctness
+- Real-time performance
+- Consistency across devices
+- Freedom from bias or error
+- Suitability for medical, psychological, diagnostic, legal, or regulatory purposes
 
 All outputs must be treated as approximate signals and probabilistic estimates, not authoritative measurements.
 
@@ -62,11 +62,11 @@ All outputs must be treated as approximate signals and probabilistic estimates, 
 
 This project must not be used in:
 
-* Life-threatening or safety-critical systems
-* Military or weapons-related applications
-* Medical diagnosis, treatment, or monitoring
-* Emergency response systems
-* Systems where failure could cause physical harm, significant financial loss, or legal consequences
+- Life-threatening or safety-critical systems
+- Military or weapons-related applications
+- Medical diagnosis, treatment, or monitoring
+- Emergency response systems
+- Systems where failure could cause physical harm, significant financial loss, or legal consequences
 
 This list is not exhaustive.
 
@@ -76,11 +76,11 @@ If uncertain, contact the project maintainers before proceeding.
 
 Anyone integrating or deploying this project is responsible for:
 
-* Selecting appropriate hardware
-* Validating performance on target devices
-* Assessing risks associated with incorrect or degraded input
-* Implementing safeguards, fallbacks, and human oversight where appropriate
-* Informing end users about limitations and potential inaccuracies
+- Selecting appropriate hardware
+- Validating performance on target devices
+- Assessing risks associated with incorrect or degraded input
+- Implementing safeguards, fallbacks, and human oversight where appropriate
+- Informing end users about limitations and potential inaccuracies
 
 This project does not assume responsibility for consequences arising from improper deployment, misuse, or reliance on system outputs.
 
@@ -88,10 +88,10 @@ This project does not assume responsibility for consequences arising from improp
 
 The project is intended for:
 
-* Research
-* Prototyping
-* Experimental interaction systems
-* Non-critical software features
+- Research
+- Prototyping
+- Experimental interaction systems
+- Non-critical software features
 
 This list is not exhaustive.
 
