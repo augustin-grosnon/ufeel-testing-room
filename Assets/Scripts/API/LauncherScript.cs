@@ -18,7 +18,7 @@ public class LauncherScript : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.N))
         {
             currentStep++;
-            currentStep = Mathf.Clamp(currentStep, 0, 5);
+            currentStep = Mathf.Clamp(currentStep, 0, 6);
 
             ApplyStep();
         }
@@ -26,7 +26,7 @@ public class LauncherScript : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.B))
         {
             currentStep--;
-            currentStep = Mathf.Clamp(currentStep, 0, 5);
+            currentStep = Mathf.Clamp(currentStep, 0, 6);
 
             ApplyStep();
         }
@@ -59,29 +59,32 @@ public class LauncherScript : MonoBehaviour
         switch (currentStep)
         {
             case 0:
+                break;
+
+            case 1:
                 Debug.Log("=== Emotion Detection ===");
                 UFeelAPI.StartEmotionDetection();
                 break;
 
-            case 1:
+            case 2:
                 Debug.Log("=== Eye Tracking Detection ===");
                 UFeelAPI.StartEyeTrackingDetection();
                 break;
 
-            case 2:
+            case 3:
                 Debug.Log("=== Speech Detection ===");
                 UFeelAPI.StartSpeechDetection();
                 break;
 
-            case 3:
+            case 4:
                 Debug.Log("=== Heart Rate Detection ===");
                 UFeelAPI.StartHeartRateDetection();
                 break;
 
-            case 4:
+            case 5:
                 break;
 
-            case 5:
+            case 6:
                 Debug.Log("=== End ===");
                 StopUnity();
                 break;
