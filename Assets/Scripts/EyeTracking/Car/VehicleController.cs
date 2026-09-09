@@ -14,6 +14,7 @@ public class VehicleController : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private Transform centerOfMass;
+    [SerializeField] private Transform respawnPosition;
 
     private Rigidbody rb;
 
@@ -58,6 +59,16 @@ public class VehicleController : MonoBehaviour
         UpdateEngineSequence(directions, blinkStatus);
 
         throttleInput = canMove ? Input.GetAxis("Vertical") : 0f;
+
+        HandleInputs();
+    }
+
+    private void HandleInputs()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Respawn();
+        }
     }
 
     private void FixedUpdate()
@@ -163,5 +174,10 @@ public class VehicleController : MonoBehaviour
     private void ToggleEngine()
     {
         canMove = !canMove;
+    }
+
+    private void Respawn()
+    {
+        rb.position = respawnPosition.position;
     }
 }
