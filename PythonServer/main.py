@@ -1,5 +1,8 @@
 import os
 from sys import argv
+import logging
+
+logging.disable()
 
 def suppress_stderr():
     devnull_fd = os.open(os.devnull, os.O_WRONLY)
