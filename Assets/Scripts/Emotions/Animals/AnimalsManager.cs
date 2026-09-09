@@ -138,13 +138,16 @@ public class AnimalsManager : MonoBehaviour
     {
         List<AnimalType> pool = new() { AnimalType.Cat };
         if (level >= 2) pool.Add(AnimalType.Deer);
-        if (level >= 5) pool.Add(AnimalType.Spider);
-        if (level >= 3) pool.Add(AnimalType.Tiger);
-        if (level >= 4) pool.Add(AnimalType.Penguin);
+        if (level >= 3) pool.Add(AnimalType.Spider);
+        if (level >= 4) pool.Add(AnimalType.Tiger);
+        if (level >= 5) pool.Add(AnimalType.Penguin);
 
         List<AnimalType> result = new();
         int totalTarget = GetAnimalNumber(level);
         const int minPerAnimal = 2;
+
+        AnimalType firstAnimal = (AnimalType)(level - 1);
+        result.Add(firstAnimal);
 
         // adding at least 2 of each type in the pool
         foreach (AnimalType type in pool)
