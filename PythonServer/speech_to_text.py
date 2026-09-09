@@ -95,7 +95,8 @@ class SpeechToText(ClientBase):
 
     def _run_audio_loop(self):
         try:
-            with sd.RawInputStream(samplerate=16000, blocksize=8000, dtype="int16", channels=1, callback=self._callback):
+            # with sd.RawInputStream(samplerate=16000, blocksize=8000, dtype="int16", channels=1, callback=self._callback):
+            with sd.RawInputStream(samplerate=16000, blocksize=3200, dtype="int16", channels=1, callback=self._callback):
                 while not self.stop_event.is_set():
                     sd.sleep(5)
         except Exception as e:
