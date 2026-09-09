@@ -22,3 +22,11 @@ Maintain accuracy while adapting to the changing rhythm of the game.
 ## Main Script
 
 `GameManager`
+
+## Keyboard Shortcuts
+
+| Key | Action |
+|---|---|
+| **Arrow keys** | Press key note |
+| **Q** | Move camera to the left |
+| **D** | Move camera to the right |

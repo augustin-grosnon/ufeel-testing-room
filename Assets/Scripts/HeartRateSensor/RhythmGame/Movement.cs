@@ -15,11 +15,11 @@ public class Movement : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.Q))
         {
             transform.rotation = Quaternion.Euler(0f, LimitRotation(transform.localEulerAngles.y, -1f), 0f);
         }
-        if (Input.GetKey(KeyCode.F))
+        if (Input.GetKey(KeyCode.D))
         {
             transform.rotation = Quaternion.Euler(0f, LimitRotation(transform.localEulerAngles.y, 1f), 0f);
         }
