@@ -732,7 +732,7 @@ GameObject:
   - component: {fileID: 2128694441}
   - component: {fileID: 2128694440}
   m_Layer: 0
-  m_Name: LabyrinthManager
+  m_Name: MazeManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
