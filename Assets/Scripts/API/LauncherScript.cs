@@ -63,13 +63,13 @@ public class LauncherScript : MonoBehaviour
                 break;
 
             case 1:
-                Debug.Log("=== Emotion Detection ===");
-                UFeelAPI.StartEmotionDetection();
+                Debug.Log("=== Eye Tracking Detection ===");
+                UFeelAPI.StartEyeTrackingDetection();
                 break;
 
             case 2:
-                Debug.Log("=== Eye Tracking Detection ===");
-                UFeelAPI.StartEyeTrackingDetection();
+                Debug.Log("=== Emotion Detection ===");
+                UFeelAPI.StartEmotionDetection();
                 break;
 
             case 3:
