@@ -73,6 +73,31 @@ public class SpeechManager : MonoBehaviour
         LightStep();
     }
 
+    private void DisplayHint()
+    {
+        string hint = currentStep switch
+        {
+            EscapeStep.Light => "Dites :\n\"allume la lumière\"",
+            EscapeStep.Radio => "Dites :\n\"éteins la radio\"",
+            EscapeStep.Window => "Dites :\n\"ferme la fenêtre\"",
+            EscapeStep.BlueLight => "Dites :\n\"lumière violette\"",
+            EscapeStep.TV => "Dites :\n\"allume l'écran\"",
+            EscapeStep.Door => "Dites :\n\"ouvre la porte\"",
+            EscapeStep.Finished => "",
+            _ => ""
+        };
+
+        if (string.IsNullOrEmpty(hint))
+            return;
+
+        if (activeShowHintCoroutine != null)
+        {
+            StopCoroutine(activeShowHintCoroutine);
+            activeShowHintCoroutine = null;
+        }
+        activeShowHintCoroutine = StartCoroutine(ShowHint(hint));
+    }
+
     private void LightStep()
     {
         currentStep = EscapeStep.Light;
@@ -175,6 +200,11 @@ public class SpeechManager : MonoBehaviour
         {
             InitializeDetection();
         }
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            DisplayHint();
+        }
+
         string currentSpeech = UFeelAPI.CurrentSpeech;
 
         if (string.IsNullOrEmpty(currentSpeech) || currentSpeech == lastProcessedSpeech) return;

@@ -9,7 +9,7 @@ public class LauncherScript : MonoBehaviour
     private async void Start()
     {
         await UFeelAPI.StartAPI();
-        UFeelAPI.ToggleHeartRateSimulation(false);
+        UFeelAPI.ToggleHeartRateSimulation(true);
 
         ApplyStep();
     }
