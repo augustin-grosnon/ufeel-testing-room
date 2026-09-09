@@ -147,6 +147,7 @@ public class AnimalsManager : MonoBehaviour
         const int minPerAnimal = 2;
 
         AnimalType firstAnimal = (AnimalType)(level - 1);
+        Debug.Log($"First animal for level {level} is {firstAnimal}");
         result.Add(firstAnimal);
 
         // adding at least 2 of each type in the pool
@@ -173,7 +174,7 @@ public class AnimalsManager : MonoBehaviour
     // Fisher-Yates shuffle algorithm to randomize the order of animals in the list
     private static void Shuffle<T>(List<T> list)
     {
-        for (int i = 0; i < list.Count; i++)
+        for (int i = 1; i < list.Count; i++)
         {
             T temp = list[i];
             int randomIndex = Random.Range(i, list.Count);
