@@ -16,21 +16,21 @@ public class UFeelDebugHUD : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void AutoCreate()
     {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+// #if UNITY_EDITOR || DEVELOPMENT_BUILD
         if (_instance != null)
             return;
 
         GameObject obj = new("UFeelDebugHUD");
         _instance = obj.AddComponent<UFeelDebugHUD>();
         DontDestroyOnLoad(obj);
-#endif
+// #endif
     }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+// #if UNITY_EDITOR || DEVELOPMENT_BUILD
     internal const bool DEBUG_MODE = true;
-#else
-    internal const bool DEBUG_MODE = false;
-#endif
+// #else
+//     internal const bool DEBUG_MODE = false;
+// #endif
 
     private static readonly Dictionary<string, Func<string>> _entries = new();
 
