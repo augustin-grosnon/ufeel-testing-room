@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UFeel;
 using UnityEditor;
 using UnityEngine;
@@ -9,7 +10,6 @@ public class LauncherScript : MonoBehaviour
     private async void Start()
     {
         await UFeelAPI.StartAPI();
-        UFeelAPI.ToggleHeartRateSimulation(true);
 
         ApplyStep();
     }
@@ -79,6 +79,7 @@ public class LauncherScript : MonoBehaviour
 
             case 4:
                 Debug.Log("=== Heart Rate Detection ===");
+                UFeelAPI.ToggleHeartRateSimulation(true);
                 UFeelAPI.StartHeartRateDetection();
                 break;
 
