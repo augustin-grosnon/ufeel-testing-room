@@ -31,7 +31,7 @@ class DataProcessor:
         self.heartbeat_counter = 0
         self.heartbeat_freq = 60
 
-        self.scale_factor = 1.3
+        self.scale_factor = 0.8
         self.calibration = calibration
 
         self.target_hz = 30

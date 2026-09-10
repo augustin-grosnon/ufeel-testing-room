@@ -24,6 +24,8 @@ class MTCNNCropTransform:
             select_largest=True,
             device=self.device
         )
+        self.last_face_box: np.ndarray | None = None
+
 
     def _align_and_crop(self, img: Image.Image, box: list[float], landmarks: np.ndarray) -> Image.Image:
         x1, y1, x2, y2 = box
@@ -68,8 +70,13 @@ class MTCNNCropTransform:
                 face_crop = self._align_and_crop(img, box, face_landmarks)
                 face_final = self._resize_and_pad(face_crop)
                 results.append(face_final)
+
+            self.last_face_box = boxes_list[0] if boxes_list is not None else None
         except Exception as exc:
             logger.warning("MTCNN batch failed (%s)", exc)
             results = [img.convert("RGB") for img in imgs]
 
         return results
+
+    def get_last_face_box(self) -> np.ndarray:
+        return self.last_face_box

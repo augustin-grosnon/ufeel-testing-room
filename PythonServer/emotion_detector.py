@@ -2,6 +2,7 @@ import cv2
 import torch
 from PIL import Image
 import logging
+import numpy as np
 
 from client_base import ClientBase
 
@@ -55,7 +56,7 @@ class EmotionDetector(ClientBase):
             HeadCalibration(thresholds=model_cfg["thresholds"])
         )
 
-        self.process_enable = False
+        self.process_enable = True
         self.selected = []
 
     def toggle_emotion_detection(self, state):
@@ -96,6 +97,21 @@ class EmotionDetector(ClientBase):
     def _draw(self, frame, probs, selected):
         font = cv2.FONT_HERSHEY_SIMPLEX
         scale = 0.7
+        face_box = self.pipeline.face_crop.get_last_face_box()
+
+        def draw_box(face_box):
+            if face_box is None:
+                return
+
+            x1, y1, x2, y2 = map(int, face_box[0])
+
+            cv2.rectangle(
+                frame,
+                (x1, y1),
+                (x2, y2),
+                (255, 255, 255),
+                2
+            )
 
         def draw_text(text, pos, color):
             cv2.putText(
@@ -119,8 +135,9 @@ class EmotionDetector(ClientBase):
                 cv2.LINE_AA,
             )
 
-        y = 30
+        draw_box(face_box)
 
+        y = 30
         label_x = 10
 
         max_width = max(
