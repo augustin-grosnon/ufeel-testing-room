@@ -3,7 +3,7 @@ model:
 
   thresholds:
     angry: 0.3
-    contemptuous: 0.4
+    contemptuous: 0.8
     disgusted: 0.3
     fearful: 0.15
     happy: 0.5

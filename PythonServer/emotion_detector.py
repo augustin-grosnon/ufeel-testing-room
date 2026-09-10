@@ -56,7 +56,7 @@ class EmotionDetector(ClientBase):
             HeadCalibration(thresholds=model_cfg["thresholds"])
         )
 
-        self.process_enable = True
+        self.process_enable = False
         self.selected = []
 
     def toggle_emotion_detection(self, state):
