@@ -9,9 +9,9 @@ public enum AnimalType
 {
     Cat,
     Deer,
-    Spider,
     Tiger,
-    Penguin
+    Penguin,
+    Spider
 }
 
 public class AnimalsManager : MonoBehaviour
@@ -40,9 +40,9 @@ public class AnimalsManager : MonoBehaviour
     {
         { AnimalType.Cat, EmotionData.EmotionType.Happiness },
         { AnimalType.Deer, EmotionData.EmotionType.Surprise },
-        { AnimalType.Spider, EmotionData.EmotionType.Fear },
         { AnimalType.Tiger, EmotionData.EmotionType.Anger },
-        { AnimalType.Penguin, EmotionData.EmotionType.Sadness }
+        { AnimalType.Penguin, EmotionData.EmotionType.Sadness },
+        { AnimalType.Spider, EmotionData.EmotionType.Fear }
     };
 
     public Slider EmotionProgressBar;
@@ -102,9 +102,9 @@ public class AnimalsManager : MonoBehaviour
         {
             case 1: newAnimalInfo = "Cat -> Happiness"; break;
             case 2: newAnimalInfo = "Deer -> Surprise"; break;
-            case 3: newAnimalInfo = "Spider -> Fear"; break;
-            case 4: newAnimalInfo = "Tiger -> Anger"; break;
-            case 5: newAnimalInfo = "Penguin -> Sadness"; break;
+            case 3: newAnimalInfo = "Tiger -> Anger"; break;
+            case 4: newAnimalInfo = "Penguin -> Sadness"; break;
+            case 5: newAnimalInfo = "Spider -> Fear"; break;
         }
 
         InstructionText.text = $"LEVEL {level}\n\n{newAnimalInfo}";
@@ -138,19 +138,18 @@ public class AnimalsManager : MonoBehaviour
     {
         List<AnimalType> pool = new() { AnimalType.Cat };
         if (level >= 2) pool.Add(AnimalType.Deer);
-        if (level >= 3) pool.Add(AnimalType.Spider);
-        if (level >= 4) pool.Add(AnimalType.Tiger);
-        if (level >= 5) pool.Add(AnimalType.Penguin);
+        if (level >= 3) pool.Add(AnimalType.Tiger);
+        if (level >= 4) pool.Add(AnimalType.Penguin);
+        if (level >= 5) pool.Add(AnimalType.Spider);
 
         List<AnimalType> result = new();
         int totalTarget = GetAnimalNumber(level);
-        const int minPerAnimal = 2;
+        const int minPerAnimal = 1;
 
         AnimalType firstAnimal = (AnimalType)(level - 1);
         Debug.Log($"First animal for level {level} is {firstAnimal}");
         result.Add(firstAnimal);
 
-        // adding at least 2 of each type in the pool
         foreach (AnimalType type in pool)
         {
             for (int i = 0; i < minPerAnimal; i++)
@@ -238,12 +237,12 @@ public class AnimalsManager : MonoBehaviour
     {
         return level switch
         {
-            1 => 3,
-            2 => 5,
-            3 => 7,
-            4 => 9,
-            5 => 12,
-            _ => 3,
+            1 => 1,
+            2 => 2,
+            3 => 3,
+            4 => 4,
+            5 => 5,
+            _ => 1,
         };
     }
 
